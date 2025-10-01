@@ -1,0 +1,1133 @@
+<div class="module-header" style="padding: 90px 20px 20px 20px; font-size: 14px;">
+<link rel="stylesheet" href="/static/css/custom-scrollbar.css">
+  <h1>Ferramentas</h1>
+  
+<!-- Filtros e busca de ferramentas -->
+<div class="search-filters" style="margin-bottom: 20px; padding: 15px; background-color: rgba(19, 4, 60, 0.69); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #9B64E3; border-radius: 10px;">
+    <div class="search-container" style="display: flex; margin-bottom: 15px;">
+        <input type="text" id="searchFerramenta" placeholder="Pesquisar ferramenta..." style="flex: 1; padding: 10px; border: 0.2px solid #9B64E3; border-radius: 5px 0 0 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+        <button type="button" id="searchButton" style="padding: 10px 15px; background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9b63e3; border-left: none; border-radius: 0 5px 5px 0; color: white; cursor: pointer;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+            <i class="search-icon">&#128269;</i>
+        </button>
+    </div>
+</div>
+
+<div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+    <button class="btn-primary btn-incluir-ferramenta" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="openFerramentaModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nova Ferramenta
+    </button>
+</div>
+
+<div class="ferramentas-list-container" style="background-color: var(--order-card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="ferramentas-list-header" style="display: grid; grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1.5fr 0.8fr; gap: 15px; font-weight: bold; padding: 15px 20px; border-bottom: 2px solid var(--cor-destaque, #9B64E3); color: var(--column-title-text);">
+        <div>Nome da Ferramenta</div>
+        <div>Tipo</div>
+        <div>Status</div>
+        <div>Localização</div>
+        <div>Estado</div>
+        <div>Responsável</div>
+        <div>Ações</div>
+    </div>
+    <div class="ferramentas-list" style="margin-top: 10px;">
+        <!-- Dados das ferramentas serão carregados dinamicamente aqui -->
+    </div>
+</div>
+
+<!-- Modal para Nova Ferramenta -->
+<div id="ferramentaModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeFerramentaModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Nova Ferramenta</h2>
+        <div class="modal-body">
+            <form id="ferramentaForm">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="ferramentaNome">Nome da Ferramenta:</label>
+                            <input type="text" id="ferramentaNome" name="nome" required style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaCodigo">Código:</label>
+                            <input type="text" id="ferramentaCodigo" name="codigo" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaTipo">Tipo:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="ferramentaTipo" style="width: 95%;">
+                                <button type="button" tabindex="0">Selecione o tipo de ferramenta</button>
+                                <div class="dropdown-content">
+                                    <div data-value="manual">Manual</div>
+                                    <div data-value="eletrica">Elétrica</div>
+                                    <div data-value="pneumatica">Pneumática</div>
+                                    <div data-value="hidraulica">Hidráulica</div>
+                                    <div data-value="corte">Corte</div>
+                                    <div data-value="medicao">Medição</div>
+                                    <div data-value="fixacao">Fixação</div>
+                                    <div data-value="acabamento">Acabamento</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaDescricao">Descrição:</label>
+                            <textarea id="ferramentaDescricao" name="descricao" rows="3" style="width: 90%;"></textarea>
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="ferramentaStatus">Status:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="ferramentaStatus" style="width: 95%;">
+                                <button type="button" tabindex="0">Selecione o status</button>
+                                <div class="dropdown-content">
+                                    <div data-value="disponivel">Disponível</div>
+                                    <div data-value="em_uso">Em Uso</div>
+                                    <div data-value="manutencao">Manutenção</div>
+                                    <div data-value="danificada">Danificada</div>
+                                    <div data-value="inativa">Inativa</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaLocalizacao">Localização:</label>
+                            <input type="text" id="ferramentaLocalizacao" name="localizacao" style="width: 90%;" placeholder="Ex: Oficina A, Prateleira 2">
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaEstado">Estado de Conservação:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="ferramentaEstado" style="width: 95%;">
+                                <button type="button" tabindex="0">Selecione o estado</button>
+                                <div class="dropdown-content">
+                                    <div data-value="excelente">Excelente</div>
+                                    <div data-value="bom">Bom</div>
+                                    <div data-value="regular">Regular</div>
+                                    <div data-value="ruim">Ruim</div>
+                                    <div data-value="pessimo">Péssimo</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaResponsavel">Responsável:</label>
+                            <input type="text" id="ferramentaResponsavel" name="responsavel" style="width: 90%;" placeholder="Nome do responsável">
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 30px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="ferramentaMarca">Marca:</label>
+                            <input type="text" id="ferramentaMarca" name="marca" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaModelo">Modelo:</label>
+                            <input type="text" id="ferramentaModelo" name="modelo" style="width: 90%;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="ferramentaDataAquisicao">Data de Aquisição:</label>
+                            <input type="date" id="ferramentaDataAquisicao" name="data_aquisicao" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="ferramentaObservacoes">Observações:</label>
+                            <textarea id="ferramentaObservacoes" name="observacoes" rows="2" style="width: 90%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Ferramenta</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeConfirmationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="confirmationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#FFC107">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M12 8V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="6" stroke-dashoffset="6">
+                    <animate attributeName="stroke-dashoffset" values="6;0" dur="0.3s" begin="0.3s" fill="freeze"/>
+                </path>
+                <circle cx="12" cy="16" r="1" fill="white">
+                    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="0.6s" fill="freeze"/>
+                </circle>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        </div>
+        <h2>Confirmação</h2>
+        <p id="confirmationModalMessage"></p>
+        <div class="modal-buttons" style="display: flex; justify-content: center; gap: 5px;">
+            <button class="btn-secondary" onclick="closeConfirmationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Cancelar</button>
+            <button id="confirmBtn" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'" disabled>Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificação -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeNotificationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="notificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+        <h2 id="notificationModalTitle"></h2>
+        <p id="notificationModalMessage"></p>
+        <div id="notificationDebugInfo" style="display: none; margin-top: 10px; padding: 8px; background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #FF9800;"></div>
+        <button class="btn-primary" onclick="closeNotificationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; margin-top: 15px;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">OK</button>
+    </div>
+</div>
+
+<style>
+    /* Estilos para o dropdown customizado */
+    .custom-select {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Z-index específico para evitar sobreposição entre dropdowns */
+    #ferramentaStatus {
+        z-index: 30;
+    }
+
+    #ferramentaEstado {
+        z-index: 20;
+    }
+
+    #ferramentaTipo {
+        z-index: 25;
+    }
+
+    /* Quando dropdown está ativo, aumentar z-index */
+    .custom-select.active {
+        z-index: 50 !important;
+    }
+
+    .custom-select > button {
+        padding: 10px;
+        background: transparent;
+        border: none;
+        color: white;
+        text-align: left;
+        font-size: 0.9em;
+        width: 100%;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .custom-select > button:after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9B64E3;
+        font-size: 0.8em;
+        pointer-events: none;
+    }
+
+    .custom-select > div {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease-in-out;
+        position: absolute;
+        width: calc(100% - 12px);
+        left: 6px;
+        background-color: rgba(19, 4, 60, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        margin-top: 5px;
+        z-index: 999;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* Z-index específico para conteúdo dos dropdowns */
+    #ferramentaStatus > div {
+        z-index: 35;
+    }
+
+    #ferramentaEstado > div {
+        z-index: 25;
+    }
+
+    #ferramentaTipo > div {
+        z-index: 30;
+    }
+
+    .custom-select:hover > div,
+    .custom-select:focus-within > div {
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute !important;
+        width: calc(100% - 12px) !important;
+        left: 6px !important;
+        background-color: rgba(19, 4, 60, 0.7) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px !important;
+        margin-top: 5px !important;
+        z-index: 10000 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        min-height: 40px !important;
+    }
+    
+    /* Força visibilidade quando display é block */
+    .dropdown-content[style*="display: block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .custom-select > div > div {
+        display: block;
+        padding: 10px;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+        transition: background-color 0.2s ease;
+    }
+
+    .custom-select > div > div:hover,
+    .custom-select > div > div:focus {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #D8CEFE);
+    }
+
+    .modal {
+        display: none; /* Oculto por padrão */
+        position: fixed; /* Fica fixo na tela */
+        z-index: 100; /* Fica sobre todos os outros elementos */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; /* Habilita scroll se necessário */
+        background-color: rgba(0,0,0,0.4); /* Fundo preto com opacidade */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: rgba(59, 12, 121, 0.29);
+        color: var(--sidebar-text-color, white);
+        margin: 0;
+        padding: 12px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 8px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .modal-body {
+        padding: 8px;
+        max-height: none;
+    }
+
+    .close-button {
+        color: var(--sidebar-text-color, white);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--cor-destaque, #D8CEFE);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-content h2 {
+        color: var(--sidebar-text-color, white);
+        margin-top: 0;
+        border-bottom: 1px solid var(--cor-destaque, #9B64E3);
+        padding-bottom: 10px;
+    }
+
+    .modal-content form .form-group {
+        margin-bottom: 8px;
+    }
+
+    .modal-content form label {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 3px;
+        font-weight: bold;
+        color: var(--sidebar-text-color, white);
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"],
+    .modal-content form input[type="date"],
+    .modal-content form textarea {
+        width: calc(100% - 22px);
+        padding: 6px;
+        margin-bottom: 3px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"]:hover,
+    .modal-content form input[type="date"]:hover,
+    .modal-content form textarea:hover {
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    .modal-content form button[type="submit"] {
+        background-color: rgba(155, 100, 227, 0.1);
+        border: 1px solid #9B64E3;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+    .modal-content form button[type="submit"]:hover {
+        background-color: #D8CEFE;
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    /* Estilos para os modais de confirmação e notificação */
+    .notification-modal-content {
+        max-width: 400px;
+        text-align: center;
+        padding: 30px;
+    }
+    .notification-modal-content .btn-primary {
+        margin: 0 auto; /* Centraliza o botão OK */
+        display: block; /* Garante que o margin auto funcione */
+    }
+    .notification-modal-content h2 {
+        border-bottom: none;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+    .notification-modal-content p {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+    }
+    .notification-modal-content .btn-primary {
+        margin-top: 0;
+        padding: 10px 20px;
+    }
+    .notification-modal-content.success h2 {
+        color: #4CAF50; /* Verde para sucesso */
+    }
+    .notification-modal-content.error h2 {
+        color: #F44336; /* Vermelho para erro */
+    }
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px auto 0;
+        width: 100%;
+        max-width: 300px;
+    }
+    .modal-buttons button {
+        min-width: 100px;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-buttons button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Estilos para a lista de ferramentas */
+    .ferramentas-item {
+        display: grid;
+        grid-template-columns: 2fr 1.5fr 1fr 1fr 1fr 1.5fr 0.8fr;
+        gap: 15px;
+        padding: 12px 20px;
+        margin: 8px 0;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        align-items: center;
+        background-color: var(--order-card-bg);
+    }
+
+    .ferramentas-item:hover {
+        background-color: var(--order-card-hover-bg);
+    }
+
+    .ferramentas-actions {
+        display: flex;
+        gap: 5px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+        color: var(--action-icon-color);
+        position: relative;
+    }
+
+    .action-btn:hover {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #9B64E3);
+    }
+
+    .action-btn[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 5px;
+    }
+
+    :root {
+        --action-icon-color: #9B64E3;
+        --order-card-hover-bg: rgba(155, 100, 227, 0.1);
+    }
+
+    /* Custom scrollbar styles para todos os elementos */
+    /* Webkit browsers (Chrome, Safari, Edge) */
+    .modal-body::-webkit-scrollbar,
+    .dropdown-content::-webkit-scrollbar,
+    .custom-select > div::-webkit-scrollbar,
+    #ferramentasListContent::-webkit-scrollbar,
+    #ferramentaModal .modal-body::-webkit-scrollbar,
+    textarea::-webkit-scrollbar,
+    .ferramentas-list::-webkit-scrollbar,
+    .ferramentas-list-container::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .modal-body::-webkit-scrollbar-track,
+    .dropdown-content::-webkit-scrollbar-track,
+    .custom-select > div::-webkit-scrollbar-track,
+    #ferramentasListContent::-webkit-scrollbar-track,
+    #ferramentaModal .modal-body::-webkit-scrollbar-track,
+    textarea::-webkit-scrollbar-track,
+    .ferramentas-list::-webkit-scrollbar-track,
+    .ferramentas-list-container::-webkit-scrollbar-track {
+        background: rgba(155, 100, 227, 0.1);
+        border-radius: 4px;
+        margin-right: 2px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb,
+    .dropdown-content::-webkit-scrollbar-thumb,
+    .custom-select > div::-webkit-scrollbar-thumb,
+    #ferramentasListContent::-webkit-scrollbar-thumb,
+    #ferramentaModal .modal-body::-webkit-scrollbar-thumb,
+    textarea::-webkit-scrollbar-thumb,
+    .ferramentas-list::-webkit-scrollbar-thumb,
+    .ferramentas-list-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #9B64E3, #D8CEFE);
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(155, 100, 227, 0.3);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover,
+    .dropdown-content::-webkit-scrollbar-thumb:hover,
+    .custom-select > div::-webkit-scrollbar-thumb:hover,
+    #ferramentasListContent::-webkit-scrollbar-thumb:hover,
+    #ferramentaModal .modal-body::-webkit-scrollbar-thumb:hover,
+    textarea::-webkit-scrollbar-thumb:hover,
+    .ferramentas-list::-webkit-scrollbar-thumb:hover,
+    .ferramentas-list-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8A4FD3, #C7B7FE);
+        box-shadow: 0 4px 8px rgba(155, 100, 227, 0.5);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    /* Firefox */
+    .modal-body,
+    .dropdown-content,
+    .custom-select > div,
+    #ferramentasListContent,
+    #ferramentaModal .modal-body,
+    textarea,
+    .ferramentas-list,
+    .ferramentas-list-container {
+        scrollbar-width: thin;
+        scrollbar-color: #9B64E3 rgba(155, 100, 227, 0.1);
+    }
+
+    /* Scrollbar para elementos específicos dos modais */
+    #ferramentaModal .modal-body::-webkit-scrollbar,
+    #confirmationModal .modal-body::-webkit-scrollbar,
+    #notificationModal .modal-body::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    #ferramentaModal .modal-body::-webkit-scrollbar-track,
+    #confirmationModal .modal-body::-webkit-scrollbar-track,
+    #notificationModal .modal-body::-webkit-scrollbar-track {
+        background: rgba(155, 100, 227, 0.1);
+        border-radius: 4px;
+    }
+
+    #ferramentaModal .modal-body::-webkit-scrollbar-thumb,
+    #confirmationModal .modal-body::-webkit-scrollbar-thumb,
+    #notificationModal .modal-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #9B64E3, #D8CEFE);
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(155, 100, 227, 0.3);
+    }
+
+    #ferramentaModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #confirmationModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #notificationModal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8A4FD3, #C7B7FE);
+        box-shadow: 0 4px 8px rgba(155, 100, 227, 0.5);
+    }
+
+    /* Firefox para elementos específicos dos modais */
+    #ferramentaModal .modal-body,
+    #confirmationModal .modal-body,
+    #notificationModal .modal-body {
+        scrollbar-width: thin;
+        scrollbar-color: #9B64E3 rgba(155, 100, 227, 0.1);
+    }
+</style>
+
+<script>
+function openFerramentaModal() {
+    document.getElementById('ferramentaModal').style.display = 'block';
+}
+
+function closeFerramentaModal() {
+    document.getElementById('ferramentaModal').style.display = 'none';
+    document.getElementById('ferramentaForm').reset();
+    
+    // Resetar o título do modal
+    const modalTitle = document.querySelector('#ferramentaModal h2');
+    modalTitle.textContent = 'Nova Ferramenta';
+    
+    // Resetar o botão de submissão
+    const form = document.getElementById('ferramentaForm');
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.textContent = 'Salvar Ferramenta';
+    
+    // Remover atributos de modo de edição
+    form.removeAttribute('data-edit-mode');
+    form.removeAttribute('data-ferramenta-id');
+    
+    // Resetar os dropdowns customizados
+    const dropdowns = document.querySelectorAll('#ferramentaModal .custom-select');
+    dropdowns.forEach(dropdown => {
+        const button = dropdown.querySelector('button');
+        const originalText = button.getAttribute('data-original-text') || button.textContent;
+        button.textContent = originalText;
+        button.removeAttribute('data-selected');
+    });
+}
+
+async function carregarListaFerramentas() {
+    try {
+        const response = await fetch('/api/ferramentas');
+        const result = await response.json();
+
+        if (response.ok) {
+            const ferramentasListDiv = document.querySelector('.ferramentas-list');
+            ferramentasListDiv.innerHTML = '';
+
+            if (result.status === 'success' && result.ferramentas && result.ferramentas.length > 0) {
+                result.ferramentas.forEach(ferramenta => {
+                    const ferramentaItem = document.createElement('div');
+                    ferramentaItem.classList.add('ferramentas-item');
+                    
+                    ferramentaItem.innerHTML = `
+                        <div>${ferramenta.nome}</div>
+                        <div>${ferramenta.tipo || '-'}</div>
+                        <div>${ferramenta.status || '-'}</div>
+                        <div>${ferramenta.localizacao || '-'}</div>
+                        <div>${ferramenta.estado || '-'}</div>
+                        <div>${ferramenta.responsavel || '-'}</div>
+                        <div class="ferramentas-actions">
+                            <button class="action-btn" data-tooltip="Editar" onclick="editarFerramenta(${ferramenta.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                                    <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="action-btn" data-tooltip="Excluir" onclick="excluirFerramenta(${ferramenta.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    ferramentasListDiv.appendChild(ferramentaItem);
+                });
+            } else {
+                ferramentasListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-color);">Nenhuma ferramenta cadastrada.</div>';
+            }
+        } else {
+            console.error('Erro ao carregar ferramentas:', result.message);
+            showNotification('error', 'Erro ao carregar ferramentas: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar ferramentas:', error);
+        showNotification('error', 'Erro ao carregar ferramentas. Por favor, tente novamente.');
+    }
+}
+
+async function salvarFerramenta(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Verificar se está em modo de edição
+    const isEditMode = form.getAttribute('data-edit-mode') === 'true';
+    const ferramentaId = form.getAttribute('data-ferramenta-id');
+    
+    // Obter valores dos dropdowns customizados
+    const tipoButton = document.querySelector('#ferramentaTipo button');
+    const statusButton = document.querySelector('#ferramentaStatus button');
+    const estadoButton = document.querySelector('#ferramentaEstado button');
+    
+    const tipo = tipoButton.getAttribute('data-selected');
+    const status = statusButton.getAttribute('data-selected');
+    const estado = estadoButton.getAttribute('data-selected');
+    
+    // Converter FormData para objeto
+    const ferramentaData = {};
+    for (let [key, value] of formData.entries()) {
+        ferramentaData[key] = value;
+    }
+    
+    // Adicionar valores das seleções
+    if (tipo) ferramentaData.tipo = tipo;
+    if (status) ferramentaData.status = status;
+    if (estado) ferramentaData.estado = estado;
+    
+    // Validações
+    if (!ferramentaData.nome) {
+        showNotification('error', 'Por favor, preencha o nome da ferramenta.');
+        return;
+    }
+
+    try {
+        const url = isEditMode ? `/api/ferramentas/${ferramentaId}` : '/api/ferramentas';
+        const method = isEditMode ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(ferramentaData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            const successMessage = isEditMode ? 'Ferramenta atualizada com sucesso!' : 'Ferramenta cadastrada com sucesso!';
+            showNotification('success', successMessage);
+            closeFerramentaModal();
+            carregarListaFerramentas();
+        } else {
+            const errorMessage = isEditMode ? 'Erro ao atualizar ferramenta: ' : 'Erro ao cadastrar ferramenta: ';
+            showNotification('error', errorMessage + result.message);
+        }
+    } catch (error) {
+        console.error('Erro ao salvar ferramenta:', error);
+        const errorMessage = isEditMode ? 'Erro ao atualizar ferramenta. Por favor, tente novamente.' : 'Erro ao cadastrar ferramenta. Por favor, tente novamente.';
+        showNotification('error', errorMessage);
+    }
+}
+
+async function editarFerramenta(id) {
+    try {
+        // Buscar os dados da ferramenta
+        const response = await fetch(`/api/ferramentas/${id}`);
+        const result = await response.json();
+
+        if (response.ok && result.status === 'success') {
+            const ferramenta = result.ferramenta;
+            
+            // Alterar título do modal para edição
+            const modalTitle = document.querySelector('#ferramentaModal h2');
+            modalTitle.textContent = 'Editar Ferramenta';
+            
+            // Pré-popular os campos do formulário
+            document.getElementById('ferramentaNome').value = ferramenta.nome || '';
+            document.getElementById('ferramentaCodigo').value = ferramenta.codigo || '';
+            document.getElementById('ferramentaDescricao').value = ferramenta.descricao || '';
+            document.getElementById('ferramentaLocalizacao').value = ferramenta.localizacao || '';
+            document.getElementById('ferramentaResponsavel').value = ferramenta.responsavel || '';
+            document.getElementById('ferramentaMarca').value = ferramenta.marca || '';
+            document.getElementById('ferramentaModelo').value = ferramenta.modelo || '';
+            document.getElementById('ferramentaDataAquisicao').value = ferramenta.data_aquisicao || '';
+            document.getElementById('ferramentaObservacoes').value = ferramenta.observacoes || '';
+            
+            // Pré-selecionar os dropdowns
+            preencherDropdown('ferramentaTipo', ferramenta.tipo);
+            preencherDropdown('ferramentaStatus', ferramenta.status);
+            preencherDropdown('ferramentaEstado', ferramenta.estado);
+            
+            // Marcar o formulário como modo edição
+            const form = document.getElementById('ferramentaForm');
+            form.setAttribute('data-edit-mode', 'true');
+            form.setAttribute('data-ferramenta-id', id);
+            
+            // Alterar texto do botão
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.textContent = 'Atualizar Ferramenta';
+            
+            // Abrir o modal
+            document.getElementById('ferramentaModal').style.display = 'block';
+            
+        } else {
+            showNotification('error', 'Erro ao carregar dados da ferramenta: ' + (result.message || 'Erro desconhecido'));
+        }
+    } catch (error) {
+        console.error('Erro ao carregar ferramenta para edição:', error);
+        showNotification('error', 'Erro ao carregar ferramenta. Por favor, tente novamente.');
+    }
+}
+
+function preencherDropdown(dropdownId, valor) {
+    if (!valor) return;
+    
+    const dropdown = document.getElementById(dropdownId);
+    const button = dropdown.querySelector('button');
+    const options = dropdown.querySelectorAll('.dropdown-content div[data-value]');
+    
+    // Encontrar a opção correspondente
+    options.forEach(option => {
+        if (option.getAttribute('data-value') === valor) {
+            button.textContent = option.textContent;
+            button.setAttribute('data-selected', valor);
+        }
+    });
+}
+
+function excluirFerramenta(id) {
+    showConfirmationModal('Tem certeza que deseja excluir esta ferramenta?', async () => {
+        try {
+            const response = await fetch(`/api/ferramentas/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            
+            if (response.ok) {
+                showNotification('success', 'Ferramenta excluída com sucesso!');
+                carregarListaFerramentas();
+            } else {
+                showNotification('error', 'Erro ao excluir ferramenta: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showNotification('error', 'Erro ao excluir ferramenta. Por favor, tente novamente.');
+        }
+    });
+}
+
+// Namespace para ferramentas para evitar conflitos
+window.FerramentasModule = window.FerramentasModule || {};
+
+// Função para mostrar o modal de confirmação
+FerramentasModule.confirmationTimer = null;
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const msg = document.getElementById('confirmationModalMessage');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa qualquer timer existente
+    if (FerramentasModule.confirmationTimer) {
+        clearInterval(FerramentasModule.confirmationTimer);
+    }
+    
+    msg.textContent = message;
+    modal.style.display = 'block';
+    
+    // Remove qualquer onclick existente e desabilita o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    let secondsLeft = 5;
+    confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+    
+    // Inicia o contador
+    FerramentasModule.confirmationTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(FerramentasModule.confirmationTimer);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirmar';
+            
+            // Só adiciona o onclick depois do tempo
+            confirmBtn.onclick = function() {
+                closeConfirmationModal();
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            };
+        } else {
+            confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+        }
+    }, 1000);
+}
+
+// Função para fechar o modal de confirmação
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa o timer e reseta o botão
+    if (FerramentasModule.confirmationTimer) {
+        clearInterval(FerramentasModule.confirmationTimer);
+        FerramentasModule.confirmationTimer = null;
+    }
+    
+    // Remove o onclick e reseta o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirmar';
+    
+    modal.style.display = 'none';
+}
+
+// Função para mostrar notificações
+function showNotification(type, message, errorCode = null) {
+    const iconContainer = document.getElementById('notificationIcon');
+    
+    if (type === 'success') {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    } else {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F44336">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                </path>
+                <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    }
+    
+    const modal = document.getElementById('notificationModal');
+    const title = document.getElementById('notificationModalTitle');
+    const msg = document.getElementById('notificationModalMessage');
+    const content = modal.querySelector('.notification-modal-content');
+    const debugContainer = document.getElementById('notificationDebugInfo');
+    
+    title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+    msg.textContent = message;
+    content.className = 'modal-content notification-modal-content ' + type;
+    
+    // Exibir informações de debug se houver um código de erro
+    if (errorCode && debugContainer) {
+        debugContainer.textContent = `Código de erro: ${errorCode}`;
+        debugContainer.style.display = 'block';
+    } else if (debugContainer) {
+        debugContainer.style.display = 'none';
+    }
+    
+    modal.style.display = 'block';
+}
+
+// Função para fechar o modal de notificação
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+
+// Configurar dropdowns
+function configurarDropdowns() {
+    console.log('Configurando dropdowns...');
+    
+    document.querySelectorAll('.custom-select').forEach((dropdown, index) => {
+        console.log(`Configurando dropdown ${index}:`, dropdown.id);
+        
+        const button = dropdown.querySelector('button');
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        
+        if (!button || !dropdownContent) {
+            console.log('Elementos não encontrados para dropdown:', dropdown.id);
+            return;
+        }
+        
+        // Armazenar texto original se não existe
+        if (!button.getAttribute('data-original-text')) {
+            button.setAttribute('data-original-text', button.textContent);
+        }
+        
+        // CONFIGURAR clique no botão (simples e direto)
+        button.onclick = function(e) {
+            console.log('🖱️ CLIQUE no botão do dropdown:', dropdown.id);
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Fechar todos os outros dropdowns
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                if (content !== dropdownContent) {
+                    content.style.display = 'none';
+                }
+            });
+            
+            // Toggle do dropdown atual
+            if (dropdownContent.style.display === 'block') {
+                dropdownContent.style.display = 'none';
+                console.log('🔒 Dropdown fechado');
+            } else {
+                dropdownContent.style.display = 'block';
+                console.log('🔓 Dropdown aberto');
+            }
+        };
+        
+        // CONFIGURAR clique nas opções (simples e direto)
+        Array.from(dropdownContent.children).forEach(option => {
+            option.onclick = function(e) {
+                console.log('🎯 CLIQUE na opção do dropdown:', this.textContent);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Definir valor selecionado
+                button.textContent = this.textContent;
+                button.setAttribute('data-selected', this.getAttribute('data-value'));
+                
+                // Fechar dropdown
+                dropdownContent.style.display = 'none';
+                
+                console.log('✅ Opção selecionada:', this.textContent);
+            };
+        });
+        
+        console.log(`✅ Dropdown ${dropdown.id} configurado com sucesso`);
+    });
+    
+    // Fechar dropdowns ao clicar fora (simples)
+    document.onclick = function(e) {
+        if (!e.target.closest('.custom-select')) {
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.style.display = 'none';
+            });
+        }
+    };
+    
+    console.log('✅ Configuração de dropdowns concluída');
+}
+
+// Fechar modal ao clicar fora
+window.onclick = function(event) {
+    const ferramentaModal = document.getElementById('ferramentaModal');
+    const confirmationModal = document.getElementById('confirmationModal');
+    const notificationModal = document.getElementById('notificationModal');
+    
+    if (event.target == ferramentaModal) {
+        closeFerramentaModal();
+    } else if (event.target == confirmationModal) {
+        closeConfirmationModal();
+    } else if (event.target == notificationModal) {
+        closeNotificationModal();
+    }
+};
+
+// Funcionalidade de busca
+document.getElementById('searchFerramenta').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const ferramentaItems = document.querySelectorAll('.ferramentas-item');
+    
+    ferramentaItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+            item.style.display = 'grid';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+});
+
+// Função global para inicializar os scripts de ferramentas
+function initializeFerramentasScripts() {
+    console.log('Inicializando scripts de ferramentas...');
+    carregarListaFerramentas();
+    configurarDropdowns();
+    
+    // Event listener para o formulário de ferramenta
+    const ferramentaForm = document.getElementById('ferramentaForm');
+    if (ferramentaForm && !ferramentaForm.hasAttribute('data-listeners-added')) {
+        ferramentaForm.setAttribute('data-listeners-added', 'true');
+        ferramentaForm.addEventListener('submit', salvarFerramenta);
+    }
+}
+
+// Tornar as funções disponíveis globalmente
+window.openFerramentaModal = openFerramentaModal;
+window.closeFerramentaModal = closeFerramentaModal;
+window.editarFerramenta = editarFerramenta;
+window.excluirFerramenta = excluirFerramenta;
+window.showConfirmationModal = showConfirmationModal;
+window.closeConfirmationModal = closeConfirmationModal;
+window.showNotification = showNotification;
+window.closeNotificationModal = closeNotificationModal;
+window.initializeFerramentasScripts = initializeFerramentasScripts;
+
+// Inicializar página
+document.addEventListener('DOMContentLoaded', () => {
+    initializeFerramentasScripts();
+});
+</script>
+</div>

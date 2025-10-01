@@ -1,0 +1,2893 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDV - Midnight</title>
+    <style>
+        .pdv-container {
+            padding: 20px;
+            margin-top: 70px;
+        }
+
+        .pdv-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            min-height: calc(100vh - 200px);
+        }
+
+        @media (max-width: 768px) {
+            .pdv-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* These styles will be populated as we add functionality */
+        .product-list {
+            background: rgba(155, 100, 227, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #9B64E3;
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(82, 40, 136, 0.4);
+            border-radius: 8px;
+            border: 1px solid #9B64E3;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(155, 100, 227, 0.2);
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #9B64E3;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(155, 100, 227, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-color);
+        }
+
+        .search-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .barcode-btn {
+            padding: 10px;
+            border: 1px solid #9B64E3;
+            border-radius: 6px;
+            background: rgba(155, 100, 227, 0.1);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .barcode-btn:hover {
+            background: rgba(155, 100, 227, 0.2);
+            box-shadow: 0 0 10px rgba(155, 100, 227, 0.3);
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            transition: all 0.3s ease;
+            border-radius: 50%;
+        }
+
+        .refresh-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
+        }
+
+        .refresh-btn.refreshing {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(155, 100, 227, 0.2);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(155, 100, 227, 0.3);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .favorite-btn.active:hover {
+            background: rgba(255, 107, 107, 0.3);
+        }
+
+        .favorites-container {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .favorites-container.has-favorites {
+            display: block;
+        }
+
+        .favorites-title {
+            color: var(--text-color);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+        }
+
+        .product-card {
+            background: rgba(82, 40, 136, 0.4);
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #9B64E3;
+            box-shadow: 0 2px 5px rgba(155, 100, 227, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(155, 100, 227, 0.4);
+            border-color: #9B64E3;
+            background: rgba(82, 40, 136, 0.6);
+        }
+
+        .product-card:active {
+            transform: translateY(0px) scale(0.98);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f0f0f0;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            font-size: 0.9rem;
+            line-height: 1.2;
+        }
+
+        .product-price {
+            color: #9B64E3;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+
+        .product-stock {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .quantity-btn {
+            width: 36px;
+            height: 28px;
+            border: 1px solid #9B64E3;
+            background: rgba(155, 100, 227, 0.1);
+            color: var(--text-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(155, 100, 227, 0.2);
+        }
+
+        .quantity-input {
+            width: 50px;
+            text-align: center;
+            border: 1px solid #9B64E3;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-color);
+            border-radius: 4px;
+            padding: 4px;
+            font-size: 0.9rem;
+            cursor: text;
+        }
+
+        .add-to-cart-btn {
+            background: rgba(155, 100, 227, 0.2);
+            border: 1px solid #9B64E3;
+            color: var(--text-color);
+            border-radius: 4px;
+            padding: 4px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            min-height: 28px;
+        }
+
+        .add-to-cart-btn:hover {
+            background: rgba(155, 100, 227, 0.3);
+        }
+
+        .add-to-cart-btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .cart-panel {
+            background: rgba(155, 100, 227, 0.05);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid #9B64E3;
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.1);
+            position: sticky;
+            top: 90px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cart-title {
+            color: var(--text-color);
+            margin: 0;
+            font-size: 1.2em;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(155, 100, 227, 0.3);
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: calc(100vh - 350px);
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            background: rgba(82, 40, 136, 0.2);
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(155, 100, 227, 0.3);
+        }
+
+        .cart-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .cart-item-name {
+            color: var(--text-color);
+            font-size: 0.9em;
+            margin: 0 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .cart-item-price {
+            color: #9B64E3;
+            font-size: 0.85em;
+            margin: 2px 0;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+
+        .cart-quantity-btn {
+            width: 24px;
+            height: 24px;
+            border: 1px solid #9B64E3;
+            background: rgba(155, 100, 227, 0.1);
+            color: var(--text-color);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .cart-quantity-btn:hover {
+            background: rgba(155, 100, 227, 0.2);
+        }
+
+        .cart-quantity {
+            color: var(--text-color);
+            font-weight: bold;
+            min-width: 20px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .cart-item-total-price {
+            color: #9B64E3;
+            font-size: 0.85em;
+            margin: 2px 0 0 0;
+            font-weight: bold;
+        }
+
+        .cart-item-quantity {
+            color: var(--text-secondary);
+            font-size: 0.8em;
+            margin: 0;
+        }
+
+        .cart-item-total {
+            color: #9B64E3;
+            font-weight: bold;
+            font-size: 0.95em;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .cart-item-remove {
+            background: rgba(255, 50, 50, 0.1);
+            border: 1px solid rgba(255, 50, 50, 0.3);
+            color: rgba(255, 50, 50, 0.8);
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+        }
+
+        .cart-item-remove:hover {
+            background: rgba(255, 50, 50, 0.2);
+        }
+
+        .cart-summary {
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid rgba(155, 100, 227, 0.3);
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-color);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .cart-total-value {
+            color: #9B64E3;
+            font-weight: bold;
+        }
+
+        .discount-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: rgba(155, 100, 227, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            border-radius: 6px;
+        }
+
+        .discount-title {
+            color: var(--text-color);
+            font-size: 1em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .discount-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .discount-type-btn {
+            flex: 1;
+            padding: 8px 12px;
+            background: transparent;
+            border: 1px solid rgba(155, 100, 227, 0.5);
+            color: var(--text-color);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .discount-type-btn.active {
+            background: rgba(155, 100, 227, 0.3);
+            border-color: #9B64E3;
+        }
+
+        .discount-type-btn:hover {
+            background: rgba(155, 100, 227, 0.2);
+        }
+
+        .discount-input-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .discount-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            color: var(--text-color);
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        .discount-input:focus {
+            outline: none;
+            border-color: #9B64E3;
+            box-shadow: 0 0 0 2px rgba(155, 100, 227, 0.2);
+        }
+
+        .discount-info {
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 4px;
+            color: #22c55e;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        .subtotal-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-color);
+            font-size: 0.95em;
+            margin-bottom: 5px;
+        }
+
+        .discount-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #22c55e;
+            font-size: 0.95em;
+            margin-bottom: 5px;
+            display: none;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: rgba(155, 100, 227, 0.2);
+            border: 1px solid #9B64E3;
+            color: var(--text-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .checkout-btn:hover {
+            background: rgba(155, 100, 227, 0.3);
+        }
+
+        .cart-empty {
+            color: var(--text-secondary);
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        @keyframes addToCartAnimation {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.5);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        .add-to-cart-animation {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        .favorite-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(155, 100, 227, 0.2);
+            border: 1px solid #9B64E3;
+            color: var(--text-color);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .favorite-btn.active {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .favorite-btn:hover {
+            background: rgba(155, 100, 227, 0.3);
+            transform: scale(1.1);
+        }
+
+        .favorite-btn.active:hover {
+            background: rgba(255, 107, 107, 0.3);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .favorites-container {
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .favorites-container.has-favorites {
+            display: block;
+        }
+
+        .favorites-title {
+            color: var(--text-color);
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        /* Modal de Checkout */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow: hidden;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .checkout-modal {
+            background-color: rgba(59, 12, 121, 0.29);
+            color: white;
+            border: 1px solid #9B64E3;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: min(950px, 100vw - 40px);
+            width: 95%;
+            max-height: 85vh;
+            margin-top: 80px; /* Margem para não sobrepor navbar */
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(155, 100, 227, 0.3);
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .modal-close:hover {
+            color: #9B64E3;
+            text-shadow: 0 0 8px rgba(155, 100, 227, 0.8);
+        }
+
+        .checkout-section {
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .checkout-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            min-height: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Otimização específica para tablets 1024x768 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .checkout-modal {
+                max-width: min(900px, 100vw - 60px);
+                width: 92%;
+                max-height: 80vh;
+                margin-top: 70px;
+                padding: 15px;
+            }
+            
+            .checkout-content {
+                gap: 15px;
+            }
+            
+            .modal-header {
+                margin-bottom: 10px;
+                padding-bottom: 8px;
+            }
+            
+            .checkout-section {
+                margin-bottom: 12px;
+            }
+        }
+
+        /* Para telas menores, voltar ao layout vertical */
+        @media (max-width: 768px) {
+            .checkout-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .checkout-modal {
+                max-width: 500px;
+                width: 90%;
+                margin-top: 100px;
+            }
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Para tablets, métodos de pagamento em linha */
+        @media (min-width: 769px) {
+            .payment-methods {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+        }
+
+        .payment-method {
+            padding: 12px;
+            background: rgba(155, 100, 227, 0.1);
+            border: 2px solid rgba(155, 100, 227, 0.3);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: white;
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            width: 100%;
+            min-width: 0;
+        }
+
+        /* Para tablets, botões de pagamento menores */
+        @media (min-width: 769px) {
+            .payment-method {
+                padding: 10px;
+                min-height: 60px;
+            }
+            
+            .cash-section {
+                padding: 12px;
+                margin-top: 8px;
+            }
+            
+            .seller-section {
+                padding: 12px;
+                margin-top: 12px;
+            }
+            
+            .seller-select {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            
+            .section-title {
+                margin-bottom: 8px;
+                font-size: 1.0em;
+            }
+        }
+
+        .payment-method:hover {
+            background: rgba(155, 100, 227, 0.2);
+        }
+
+        .payment-method.selected {
+            background: rgba(155, 100, 227, 0.3);
+            border-color: #9B64E3;
+        }
+
+        .payment-method-icon {
+            font-size: 1.5em;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 24px;
+        }
+
+        .payment-method-icon img {
+            width: 20px;
+            height: 20px;
+            filter: brightness(0) invert(1); /* Força a cor branca */
+        }
+
+        .installments-section {
+            display: none;
+            margin-top: 15px;
+        }
+
+        .cash-section {
+            display: none;
+            margin-top: 10px;
+            background: rgba(155, 100, 227, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .seller-section {
+            margin-top: 12px;
+            background: rgba(155, 100, 227, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .seller-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(155, 100, 227, 0.5);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.0em;
+            box-sizing: border-box;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 12px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .seller-select:focus {
+            outline: none;
+            border-color: #9B64E3;
+            box-shadow: 0 0 8px rgba(155, 100, 227, 0.5);
+        }
+
+        .seller-select option {
+            background: #3B0C79;
+            color: white;
+            padding: 8px;
+        }
+
+        .cash-input-group {
+            margin-bottom: 10px;
+        }
+
+        .cash-input-group label {
+            display: block;
+            color: white;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .cash-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(155, 100, 227, 0.5);
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.1em;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        /* Para tablets, input maior */
+        @media (min-width: 769px) {
+            .cash-input {
+                padding: 15px;
+                font-size: 1.3em;
+            }
+        }
+
+        .cash-input:focus {
+            outline: none;
+            border-color: #9B64E3;
+            box-shadow: 0 0 8px rgba(155, 100, 227, 0.5);
+        }
+
+        .troco-display {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid #22c55e;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .troco-display.negative {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+        }
+
+        .troco-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #22c55e;
+        }
+
+        .troco-value.negative {
+            color: #ef4444;
+        }
+
+        .troco-label {
+            color: white;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .installments-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        /* Para tablets, mais opções de parcelamento por linha */
+        @media (min-width: 769px) {
+            .installments-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 10px;
+            }
+        }
+
+        .installment-option {
+            padding: 10px;
+            background: rgba(155, 100, 227, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .installment-option:hover {
+            background: rgba(155, 100, 227, 0.2);
+        }
+
+        .installment-option.selected {
+            background: rgba(155, 100, 227, 0.3);
+            border-color: #9B64E3;
+        }
+
+        .order-summary {
+            background: rgba(155, 100, 227, 0.1);
+            border: 1px solid rgba(155, 100, 227, 0.3);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: white;
+            font-size: 1em;
+        }
+
+        .summary-row.total {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #9B64E3;
+            padding-top: 12px;
+            border-top: 1px solid rgba(155, 100, 227, 0.3);
+            margin-top: 8px;
+        }
+
+        /* Para tablets, texto maior no resumo */
+        @media (min-width: 769px) {
+            .order-summary {
+                padding: 25px;
+            }
+            
+            .summary-row {
+                font-size: 1.1em;
+                margin-bottom: 12px;
+            }
+            
+            .summary-row.total {
+                font-size: 1.3em;
+                padding-top: 15px;
+            }
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-shrink: 0;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 50px;
+        }
+
+        /* Para tablets, botões maiores */
+        @media (min-width: 769px) {
+            .modal-btn {
+                padding: 15px 20px;
+                font-size: 1.1em;
+                min-height: 50px;
+            }
+            
+            .modal-actions {
+                margin-top: 10px;
+            }
+        }
+
+        .modal-btn.cancel {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .modal-btn.cancel:hover {
+            background: rgba(239, 68, 68, 0.3);
+        }
+
+        .modal-btn.confirm {
+            background: rgba(155, 100, 227, 0.2);
+            border: 1px solid #9B64E3;
+            color: white;
+        }
+
+        .modal-btn.confirm:hover:not(:disabled) {
+            background: #9B64E3;
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.8);
+        }
+
+        .modal-btn.confirm:disabled {
+            background: rgba(155, 100, 227, 0.1);
+            border-color: rgba(155, 100, 227, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+        }
+
+        .modal-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal de Notificação PDV */
+        .pdv-notification-modal {
+            background-color: rgba(59, 12, 121, 0.29);
+            color: white;
+            border: 1px solid #9B64E3;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            margin-top: 80px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .pdv-notification-modal .close-button {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            position: absolute;
+            right: 15px;
+            top: 15px;
+        }
+
+        .pdv-notification-modal .close-button:hover {
+            color: #9B64E3;
+            text-shadow: 0 0 8px rgba(155, 100, 227, 0.8);
+        }
+
+        .pdv-notification-modal h2 {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 0 0 15px 0;
+            border-bottom: none;
+        }
+
+        .pdv-notification-modal p {
+            color: white;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .pdv-notification-modal.success h2 {
+            color: #4CAF50;
+        }
+
+        .pdv-notification-modal.error h2 {
+            color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="pdv-container">
+        <div class="pdv-content">
+            <div class="product-list">
+                <div class="search-container">
+                    <input type="text" id="productSearch" placeholder="Buscar produtos... (Digite para buscar)" class="search-input">
+                    <div class="search-buttons">
+                        <button class="barcode-btn" onclick="openBarcodeScanner()">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 5v14h18V5H3zm3 12h-1V7h1v10zm2 0h-1V7h1v10zm2 0h-1V7h1v10zm2 0h-1V7h1v10zm2 0h-1V7h1v10zm2 0h-1V7h1v10zm2 0h-1V7h1v10z"/>
+                            </svg>
+                        </button>
+                        <button id="refreshBtn" onclick="refreshProducts()" class="refresh-btn barcode-btn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="23 4 23 10 17 10"></polyline>
+                                <polyline points="1 20 1 14 7 14"></polyline>
+                                <path d="m3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="favorites-container" id="favoritesContainer">
+                    <div class="favorites-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m12 21-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.18L12 21z"/>
+                        </svg>
+                        Produtos Favoritos
+                    </div>
+                    <div class="favorites-grid" id="favoritesGrid">
+                        <!-- Favorite products will be loaded here -->
+                    </div>
+                </div>
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+            <div class="cart-panel">
+                <h3 class="cart-title">Carrinho de Compras</h3>
+                <div class="cart-items" id="cartItems">
+                    <!-- Cart items will be added here -->
+                </div>
+                <div class="discount-section">
+                    <div class="discount-title">Aplicar Desconto</div>
+                    <div class="discount-type-selector">
+                        <button class="discount-type-btn active" data-type="percentage" onclick="setDiscountType('percentage')">Porcentagem (%)</button>
+                        <button class="discount-type-btn" data-type="value" onclick="setDiscountType('value')">Valor (R$)</button>
+                    </div>
+                    <div class="discount-input-container">
+                        <input type="text" id="discountInput" class="discount-input" placeholder="0" oninput="handleDiscountInput(this)">
+                    </div>
+                    <div class="discount-info" id="discountInfo">
+                        Desconto aplicado: <span id="discountDescription"></span>
+                    </div>
+                </div>
+                <div class="cart-summary">
+                    <div class="subtotal-row">
+                        <span>Subtotal:</span>
+                        <span id="cartSubtotal">R$ 0,00</span>
+                    </div>
+                    <div class="discount-row" id="discountRow">
+                        <span>Desconto:</span>
+                        <span id="discountAmount">- R$ 0,00</span>
+                    </div>
+                    <div class="cart-total">
+                        <span>Total:</span>
+                        <span class="cart-total-value" id="cartTotal">R$ 0,00</span>
+                    </div>
+                    <button class="checkout-btn" onclick="checkout()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                        </svg>
+                        Finalizar Venda
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Checkout -->
+    <div class="modal-overlay" id="checkoutModal">
+        <div class="checkout-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Finalizar Venda</h2>
+                <button class="modal-close" onclick="closeCheckoutModal()">&times;</button>
+            </div>
+
+            <div class="checkout-content">
+                <!-- Coluna 1: Resumo do Pedido -->
+                <div class="checkout-section">
+                    <h3 class="section-title">Resumo do Pedido</h3>
+                    <div class="order-summary" id="orderSummary">
+                        <!-- Será preenchido dinamicamente -->
+                    </div>
+                    
+                    <!-- Seleção de Vendedor -->
+                    <div class="seller-section">
+                        <h4 class="section-title">Vendedor</h4>
+                        <select id="checkoutSellerSelect" class="seller-select">
+                            <option value="">Selecione um vendedor</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Método de Pagamento -->
+                <div class="checkout-section">
+                    <h3 class="section-title">Método de Pagamento</h3>
+                    <div class="payment-methods">
+                        <div class="payment-method" data-method="dinheiro" onclick="selectPaymentMethod('dinheiro')">
+                            <div class="payment-method-icon">
+                                <img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQuNzUgMi41SDEuMjVBMS4yNSAxLjI1IDAgMCAwIDAgMy43NXY4LjVhMS4yNSAxLjI1IDAgMCAwIDEuMjUgMS4yNWgxMy41QTEuMjUgMS4yNSAwIDAgMCAxNiAxMi4yNXYtOC41YTEuMjUgMS4yNSAwIDAgMC0xLjI1LTEuMjV6TTEuMjUgMy43NWgyYTEuODYgMS44NiAwIDAgMS0yIDEuNzV6bTAgOC41VjEwLjVhMS44NiAxLjg2IDAgMCAxIDIgMS43NXptMTMuNSAwSDEyLjhhMS44NiAxLjg2IDAgMCAxIDEuOTUtMS43NXptMC0zYTMuMSAzLjEgMCAwIDAtMy4yIDNoLTcuMWEzLjEgMy4xIDAgMCAwLTMuMi0zdi0yLjVhMy4xIDMuMSAwIDAgMCAzLjItM2g3LjFhMy4xIDMuMSAwIDAgMCAzLjIgM3ptMC0zLjc1YTEuODYgMS44NiAwIDAgMS0xLjk1LTEuNzVoMS45NXoiLz48cGF0aCBkPSJNOCA1YTMuMSAzLjEgMCAwIDAtMy4yIDNBMy4xIDMuMSAwIDAgMCA4IDExYTMuMSAzLjEgMCAwIDAgMy4yLTNBMy4xIDMuMSAwIDAgMCA4IDV6bTAgNC43NUExLjg2IDEuODYgMCAwIDEgNi4wNSA4IDEuODYgMS44NiAwIDAgMSA4IDYuMjUgMS44NiAxLjg2IDAgMCAxIDEwIDhhMS44NiAxLjg2IDAgMCAxLTIgMS43NXoiLz48L3N2Zz4=" alt="Dinheiro" style="width: 20px; height: 20px;">
+                            </div>
+                            <div>Dinheiro</div>
+                        </div>
+                        <div class="payment-method" data-method="pix" onclick="selectPaymentMethod('pix')">
+                            <div class="payment-method-icon">
+                                <img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuOTE3IDExLjcxYTIuMDQ2IDIuMDQ2IDAgMCAxLTEuNDU0LS42MDJsLTIuMS0yLjFhLjQuNCAwIDAgMC0uNTUxIDBsLTIuMTA4IDIuMTA4YTIuMDQ0IDIuMDQ0IDAgMCAxLTEuNDU0LjYwMmgtLjQxNGwyLjY2IDIuNjZjLjgzLjgzIDIuMTc3LjgzIDMuMDA3IDBsMi42NjctMi42NjhoLS4yNTN6TTQuMjUgNC4yODJjLjU1IDAgMS4wNjYuMjE0IDEuNDU0LjYwMmwyLjEwOCAyLjEwOGEuMzkuMzkgMCAwIDAgLjU1MiAwbDIuMS0yLjFhMi4wNDQgMi4wNDQgMCAwIDEgMS40NTMtLjYwMmguMjUzTDkuNTAzIDEuNjIzYTIuMTI3IDIuMTI3IDAgMCAwLTMuMDA3IDBsLTIuNjYgMi42NmguNDE0eiIvPjxwYXRoIGQ9Im0xNC4zNzcgNi40OTYtMS42MTItMS42MTJhLjMwNy4zMDcgMCAwIDEtLjExNC4wMjNoLS43MzNjLS4zNzkgMC0uNzUuMTU0LTEuMDE3LjQyMmwtMi4xIDIuMWExLjAwNSAxLjAwNSAwIDAgMS0xLjQyNSAwTDUuMjY4IDUuMzJhMS40NDggMS40NDggMCAwIDAtMS4wMTgtLjQyMmgtLjlhLjMwNi4zMDYgMCAwIDEtLjEwOS0uMDIxTDEuNjIzIDYuNDk2Yy0uODMuODMtLjgzIDIuMTc3IDAgMy4wMDhsMS42MTggMS42MThhLjMwNS4zMDUgMCAwIDEgLjEwOC0uMDIyaC45MDFjLjM4IDAgLjc1LS4xNTMgMS4wMTgtLjQyMUw3LjM3NSA4LjU3YTEuMDM0IDEuMDM0IDAgMCAxIDEuNDI2IDBsMi4xIDIuMWMuMjY3LjI2OC42MzguNDIxIDEuMDE3LjQyMWguNzMzYy4wNCAwIC4wNzkuMDEuMTE0LjAyNGwxLjYxMi0xLjYxMmMuODMtLjgzLjgzLTIuMTc4IDAtMy4wMDh6Ii8+PC9zdmc+" alt="PIX" style="width: 20px; height: 20px;">
+                            </div>
+                            <div>PIX</div>
+                        </div>
+                        <div class="payment-method" data-method="debito" onclick="selectPaymentMethod('debito')">
+                            <div class="payment-method-icon">
+                                <img src="data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjI0IiB3aWR0aD0iMjQiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB2aWV3Qm94PSIwIDAgNTAyLjY4NSA1MDIuNjg1IiBmaWxsPSIjZmZmZmZmIj48Zz48Zz48cGF0aCBkPSJNNDgyLjc5NywyNzYuOTI0YzQuNTMtNS44MjQsNi43My0xMy4zMzEsNC43MjQtMjAuOTg4TDQyOC4wNSwzMC41MjFjLTMuNDUxLTEzLjAyOS0xNi44NDctMjAuODM3LTI5Ljg1NC0xNy4zODZMMTguMTg0LDExMy4zMzFDNS4yMiwxMTYuNzYxLTIuNjEsMTMwLjIsMC43OTgsMTQzLjIwN0w2MC4yNjksMzY4LjZjMy40MDgsMTMuMDA3LDE2Ljg2OCwyMC44MTYsMjkuODc2LDE3LjQwOGwxMzQuMjc4LTM1LjQxOXY3NS40NzZjMCw0Mi4yMTQsNjkuOTU0LDY0LjMwMywxMzkuMTEsNjQuMzAzYzY5LjExMywwLDEzOS4xNTMtMjIuMDg5LDEzOS4xNTMtNjQuMzAyVjMxMS42MUM1MDIuNjg1LDI5Ny44NjksNDk1LjE1NywyODYuMzA3LDQ4Mi43OTcsMjc2LjkyNHogTTQzOS43NjMsMTk5LjIyNmw2LjIxMiwyMy40NjlsLTc1LjU0MSwxOS45NTNsLTYuMTY5LTIzLjUxMkw0MzkuNzYzLDE5OS4yMjZ6IE0zOTUuOTMxLDUwLjczM2wxMS43OTksNDQuNjk1bC0xMTguMDE0LDMxLjE0OGwtMTEuNzk5LTQ0LjY5NUwzOTUuOTMxLDUwLjczM3ogTTM0Mi45NzUsMjI0Ljc0NGw2LjA0LDIyLjk1MWMtMjcuOTM0LDEuMjUxLTU1LjExMyw2LjEyNi03Ni45NDMsMTQuNDUybC00LjYxNi0xNy40MjlMMzQyLjk3NSwyMjQuNzQ0eiBNNzkuOTg0LDMxOS4yMjRsLTYuMTY5LTIzLjQyNmw3NS41MTktMTkuOTc1bDYuMjEyLDIzLjU1NUw3OS45ODQsMzE5LjIyNHogTTE3MC42MjUsMjcwLjIzN2w3NS40NzYtMTkuOTUzbDUuNzE2LDIxLjUwNmMtMS44MzQsMS4xMjItMy41NTksMi4yODYtNS4yNDIsMy40NzNsLTY5Ljc4MSwxOC40MjFMMTcwLjYyNSwyNzAuMjM3eiBNNDc3LjQ5MSw0MjQuMjA5YzAsMjQuNjEyLTUwLjk5Myw0NC41NDQtMTEzLjk1OCw0NC41NDRjLTYyLjksMC0xMTMuOTM3LTE5Ljk1My0xMTMuOTM3LTQ0LjU0NHYtMjcuNzE4YzAtMC45MjgsMC41MzktMS43NjksMC42OS0yLjY1M2MzLjYwMiwyMy4zNCw1Mi42NTQsNDEuODQ3LDExMy4yNDcsNDEuODQ3YzYwLjYxNCwwLDEwOS42ODctMTguNTA4LDExMy4yNjgtNDEuODQ3YzAuMTUxLDAuODg0LDAuNjksMS43MjYsMC42OSwyLjY1M1Y0MjQuMjA5eiBNNDc3LjQ5MSwzNjkuNjc4YzAsMjQuNTkxLTUwLjk5Myw0NC41MjItMTEzLjk1OCw0NC41MjJjLTYyLjksMC0xMTMuOTM3LTE5LjkzMS0xMTMuOTM3LTQ0LjUyMlYzNDEuOTZjMC0wLjkwNiwwLjUzOS0xLjc2OSwwLjY5LTIuNjUzYzMuNjAyLDIzLjMxOCw1Mi42NTQsNDEuODY5LDExMy4yNDcsNDEuODY5YzYwLjYxNCwwLDEwOS42ODctMTguNTUxLDExMy4yNjgtNDEuODY5YzAuMTUxLDAuODg0LDAuNjksMS43NDcsMC42OSwyLjY1M1YzNjkuNjc4eiBNMzYzLjUzMiwzNTYuMTFjLTYyLjksMC0xMTMuOTM3LTE5LjkzMS0xMTMuOTM3LTQ0LjUwMWMwLTI0LjU2OSw1MS4wMzYtNDQuNSwxMTMuOTM3LTQ0LjVjNjIuOTY1LDAsMTEzLjk1OCwxOS45MzEsMTEzLjk1OCw0NC41QzQ3Ny40OTEsMzM2LjE3OSw0MjYuNDk3LDM1Ni4xMSwzNjMuNTMyLDM1Ni4xMXoiLz48L2c+PC9nPjwvc3ZnPg==" alt="Débito" style="width: 20px; height: 20px;">
+                            </div>
+                            <div>Débito</div>
+                        </div>
+                        <div class="payment-method" data-method="credito" onclick="selectPaymentMethod('credito')">
+                            <div class="payment-method-icon">
+                                <img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmZmZmZmIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiB2aWV3Qm94PSIwIDAgNTEyLjAwMiA1MTIuMDAyIj48Zz48Zz48Zz48cGF0aCBkPSJNNDgxLjUxOSwxMjMuMjJoLTAuMDA5bC0yMC43MS0yLjIyN3YtMTQuMzI3SDB2NTEuMmg0NDMuNzMzdjE3LjA2N0gwdjE3OS4yYzAsMTUuNDI4LDEwLjM1MSwyOC4zNDgsMjQuNDIyLDMyLjU2M2MtMC4wMDksNy43NzQsMi40NDksMTUuMjkyLDcuMzk4LDIxLjQzNmM1LjcxNyw3LjEsMTMuODY3LDExLjUzNywyMi44ODYsMTIuNTFsMzk0LjA2MSw0NC4yMjhjMS4yMjksMC4xMzcsMi40NDksMC4xOTYsMy42NjEsMC4xOTZjMTcuMjAzLDAsMzIuMDQzLTEzLjAxMywzMy45MzctMzAuNjAxbDI1LjQzOC0yNzMuNjU2QzUxMy44MTgsMTQyLjEwNCw1MDAuMjMzLDEyNS4yMzQsNDgxLjUxOSwxMjMuMjJ6IE0yNjQuNTMzLDI1Mi4wMzFjMC00LjcxOSwzLjgyMy04LjUzMyw4LjUzMy04LjUzM0g0MDkuNmM0LjcxLDAsOC41MzMsMy44MTQsOC41MzMsOC41MzN2NzYuNTAxYzAsNC43MTktMy44MjMsOC41MzMtOC41MzMsOC41MzNIMjczLjA2N2MtNC43MSwwLTguNTMzLTMuODE0LTguNTMzLTguNTMzVjI1Mi4wMzF6IE0xNDUuMDY3LDIwOS4wNjVoNjguMjY3YzQuNzEsMCw4LjUzMywzLjgyMyw4LjUzMyw4LjUzM2MwLDQuNzE5LTMuODIzLDguNTMzLTguNTMzLDguNTMzaC02OC4yNjdjLTQuNzEsMC04LjUzMy0zLjgxNC04LjUzMy04LjUzM0MxMzYuNTMzLDIxMi44ODgsMTQwLjM1NiwyMDkuMDY1LDE0NS4wNjcsMjA5LjA2NXogTTIyMS44NjcsMjUxLjczMmMwLDQuNzE5LTMuODIzLDguNTMzLTguNTMzLDguNTMzaC0yNS42Yy00LjcxLDAtOC41MzMtMy44MTQtOC41MzMtOC41MzNjMC00LjcxLDMuODIzLTguNTMzLDguNTMzLTguNTMzaDI1LjZDMjE4LjA0NCwyNDMuMTk5LDIyMS44NjcsMjQ3LjAyMiwyMjEuODY3LDI1MS43MzJ6IE00Mi42NjcsMjA5LjA2NWg2OC4yNjdjNC43MSwwLDguNTMzLDMuODIzLDguNTMzLDguNTMzYzAsNC43MTktMy44MjMsOC41MzMtOC41MzMsOC41MzNINDIuNjY3Yy00LjcxLDAtOC41MzMtMy44MTQtOC41MzMtOC41MzNDMzQuMTMzLDIxMi44ODgsMzcuOTU2LDIwOS4wNjUsNDIuNjY3LDIwOS4wNjV6IE0zNC4xMzMsMjUxLjczMmMwLTQuNzEsMy44MjMtOC41MzMsOC41MzMtOC41MzNIMTUzLjZjNC43MSwwLDguNTMzLDMuODIzLDguNTMzLDguNTMzYzAsNC43MTktMy44MjMsOC41MzMtOC41MzMsOC41MzNINDIuNjY3QzM3Ljk1NiwyNjAuMjY1LDM0LjEzMywyNTYuNDUxLDM0LjEzMywyNTEuNzMyeiBNNDk0LjgyMiwxNTkuMTAzTDQ2OS4zODUsNDMyLjc1Yy0xLjAwNyw5LjM2MS05LjM4NywxNi4xNTQtMTguNzU2LDE1LjE1NUw1Ni41NjcsNDAzLjY3N2MtNC41MzEtMC40ODYtOC42MDItMi43MDUtMTEuNDYtNi4yNTVjLTIuMTQyLTIuNjYyLTMuNDEzLTUuODI4LTMuNzEyLTkuMTU2aDM4NS4yNzFjMTguODI1LDAsMzQuMTMzLTE1LjMsMzQuMTMzLTM0LjEzM3YtMTc5LjJ2LTE3LjA2N3YtMTkuNzAzbDE4Ljg5MywyLjAyMkM0ODkuMDQ1LDE0MS4yLDQ5NS44MzgsMTQ5LjYzMSw0OTQuODIyLDE1OS4xMDN6Ii8+PHJlY3QgeD0iMjgxLjYwMiIgeT0iMjYwLjU2IiB3aWR0aD0iMTE5LjQ2NyIgaGVpZ2h0PSI1OS40NDMiLz48cGF0aCBkPSJNNDYwLjgwMiw4MS4wN2MwLTE4LjgyNS0xNS4zMDktMzQuMTMzLTM0LjEzMy0zNC4xMzNIMzQuMTM1Yy0xOC44MjUsMC0zNC4xMzMsMTUuMzA5LTM0LjEzMywzNC4xMzN2OC41MzNoNDYwLjhWODEuMDd6Ii8+PC9nPjwvZz48L2c+PC9zdmc+" alt="Crédito" style="width: 20px; height: 20px;">
+                            </div>
+                            <div>Crédito</div>
+                        </div>
+                    </div>
+
+                    <div class="installments-section" id="installmentsSection">
+                        <h4 class="section-title">Parcelamento</h4>
+                        <div class="installments-grid" id="installmentsGrid">
+                            <!-- Será preenchido dinamicamente -->
+                        </div>
+                    </div>
+
+                    <div class="cash-section" id="cashSection">
+                        <h4 class="section-title">Pagamento em Dinheiro</h4>
+                        <div class="cash-input-group">
+                            <label for="valorRecebido">Valor Recebido:</label>
+                            <input type="text" id="valorRecebido" class="cash-input" placeholder="R$ 0,00" oninput="formatCashInput(this); calculateChange();">
+                        </div>
+                        <div id="trocoDisplay" class="troco-display" style="display: none;">
+                            <div class="troco-label">Troco:</div>
+                            <div id="trocoValue" class="troco-value">R$ 0,00</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="modal-btn cancel" onclick="closeCheckoutModal()">Cancelar</button>
+                <button class="modal-btn confirm" id="confirmSaleBtn" onclick="confirmSale()" disabled>Confirmar Venda</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Notificação PDV -->
+    <div id="pdvNotificationModal" class="modal-overlay">
+        <div class="pdv-notification-modal">
+            <span class="close-button" onclick="closePdvNotificationModal()">&times;</span>
+            <div id="pdvNotificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+            <h2 id="pdvNotificationModalTitle"></h2>
+            <p id="pdvNotificationModalMessage"></p>
+            <button class="modal-btn confirm" onclick="closePdvNotificationModal()">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let selectedUserId = null;
+        let favorites = [];
+        let usuarioLogado = null; // Usuário logado na sessão
+        let products = []; // Array global de produtos
+        let checkoutData = {
+            paymentMethod: null,
+            installments: 1,
+            valorRecebido: 0,
+            troco: 0
+        };
+
+        // Carregar usuário logado da sessão
+        async function carregarUsuarioLogado() {
+            try {
+                console.log('[USER-SESSION] 🔐 Iniciando carregamento do usuário logado...');
+                
+                // Log via Flask
+                var xhr_user_start = new XMLHttpRequest();
+                xhr_user_start.open('POST', '/api/debug-log', true);
+                xhr_user_start.setRequestHeader('Content-Type', 'application/json');
+                xhr_user_start.send(JSON.stringify({
+                    message: '🔐 [PDV] CARREGANDO USUÁRIO LOGADO - Fazendo fetch /api/user-session',
+                    level: 'INFO',
+                    source: 'PDV-USER-SESSION'
+                }));
+                
+                const response = await fetch('/api/user-session');
+                console.log('[USER-SESSION] Response recebido:', response.status, response.ok);
+                
+                const data = await response.json();
+                console.log('[USER-SESSION] Dados da sessão:', data);
+                
+                // Log detalhado via Flask
+                var xhr_user_data = new XMLHttpRequest();
+                xhr_user_data.open('POST', '/api/debug-log', true);
+                xhr_user_data.setRequestHeader('Content-Type', 'application/json');
+                xhr_user_data.send(JSON.stringify({
+                    message: '👤 [PDV] RESPOSTA SESSÃO - Status: ' + data.status + ' | User: ' + (data.user ? data.user.nome : 'null') + ' | Message: ' + (data.message || 'N/A'),
+                    level: data.status === 'success' ? 'SUCCESS' : 'WARNING',
+                    source: 'PDV-USER-DATA'
+                }));
+                
+                if (data.status === 'success') {
+                    usuarioLogado = data.user;
+                    console.log('[USER-SESSION] ✅ Usuário logado:', usuarioLogado);
+                    
+                    // Auto-selecionar usuário como vendedor
+                    autoSelecionarVendedor();
+                } else {
+                    console.warn('[USER-SESSION] ⚠️ Usuário não logado:', data.message);
+                }
+            } catch (error) {
+                console.error('[USER-SESSION] 💥 Erro ao carregar usuário logado:', error);
+                
+                // Log erro via Flask
+                var xhr_user_error = new XMLHttpRequest();
+                xhr_user_error.open('POST', '/api/debug-log', true);
+                xhr_user_error.setRequestHeader('Content-Type', 'application/json');
+                xhr_user_error.send(JSON.stringify({
+                    message: '💥 [PDV] ERRO SESSÃO - ' + error.name + ': ' + error.message,
+                    level: 'ERROR',
+                    source: 'PDV-USER-ERROR'
+                }));
+            }
+        }
+
+        // Auto-selecionar vendedor se for o usuário logado
+        function autoSelecionarVendedor() {
+            console.log('[VENDOR-SELECT] 👤 Auto-selecionando vendedor...');
+            console.log('[VENDOR-SELECT] usuarioLogado:', usuarioLogado);
+            
+            if (!usuarioLogado) {
+                console.log('[VENDOR-SELECT] ⚠️ Nenhum usuário logado disponível');
+                
+                // Log via Flask
+                var xhr_no_user = new XMLHttpRequest();
+                xhr_no_user.open('POST', '/api/debug-log', true);
+                xhr_no_user.setRequestHeader('Content-Type', 'application/json');
+                xhr_no_user.send(JSON.stringify({
+                    message: '⚠️ [PDV] NENHUM USUÁRIO LOGADO - Não é possível auto-selecionar vendedor',
+                    level: 'WARNING',
+                    source: 'PDV-NO-USER'
+                }));
+                return;
+            }
+            
+            // Definir o selectedUserId diretamente como o usuário logado
+            selectedUserId = usuarioLogado.id;
+            console.log(`[VENDOR-SELECT] ✅ Vendedor auto-selecionado: ${usuarioLogado.nome} (ID: ${selectedUserId})`);
+            
+            // Log via Flask
+            var xhr_vendor = new XMLHttpRequest();
+            xhr_vendor.open('POST', '/api/debug-log', true);
+            xhr_vendor.setRequestHeader('Content-Type', 'application/json');
+            xhr_vendor.send(JSON.stringify({
+                message: '✅ [PDV] VENDEDOR AUTO-SELECIONADO - Nome: ' + usuarioLogado.nome + ' | ID: ' + selectedUserId,
+                level: 'SUCCESS',
+                source: 'PDV-VENDOR-SELECTED'
+            }));
+            
+            // Carregar favoritos do usuário logado
+            console.log('[VENDOR-SELECT] 🌟 Carregando favoritos...');
+            loadUserFavorites();
+        }
+
+        function isFavorite(productId) {
+            return favorites.some(f => f.produto_id == productId);
+        }
+
+        async function toggleFavorite(button) {
+            if (!selectedUserId) {
+                alert('Por favor, selecione um vendedor primeiro.');
+                return;
+            }
+
+            const productId = button.dataset.productId;
+            console.log('[DEBUG] Toggle favorito para produto:', productId);
+            console.log('[DEBUG] Favoritos atuais:', favorites);
+            
+            const product = {
+                id: productId,
+                nome: button.dataset.productNome,
+                preco: parseFloat(button.dataset.productPreco),
+                estoque: parseInt(button.dataset.productEstoque)
+            };
+
+            // Verificar se o produto já está nos favoritos usando produto_id
+            const index = favorites.findIndex(f => f.produto_id == productId);
+            console.log('[DEBUG] Índice encontrado:', index);
+            
+            try {
+                if (index === -1) {
+                    // Adicionar aos favoritos
+                    const response = await fetch('/api/favoritos', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            usuario_id: selectedUserId,
+                            produto_id: productId
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        // Adicionar produto com a estrutura correta (produto_id em vez de id)
+                        const favoriteProduct = {
+                            produto_id: productId,
+                            nome: button.dataset.productNome,
+                            preco: parseFloat(button.dataset.productPreco),
+                            estoque: parseInt(button.dataset.productEstoque)
+                        };
+                        favorites.push(favoriteProduct);
+                        button.classList.add('active');
+                        button.querySelector('svg').setAttribute('fill', 'currentColor');
+                    } else {
+                        throw new Error(result.message);
+                    }
+                } else {
+                    // Remover dos favoritos
+                    const response = await fetch(`/api/favoritos/${selectedUserId}/${productId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        favorites.splice(index, 1);
+                        button.classList.remove('active');
+                        button.querySelector('svg').setAttribute('fill', 'none');
+                    } else {
+                        throw new Error(result.message);
+                    }
+                }
+                localStorage.setItem('pdv_favorites', JSON.stringify(favorites));
+                
+                // Atualizar a exibição dos produtos para refletir mudança nos favoritos
+                searchProducts();
+            } catch (error) {
+                console.error('Erro ao atualizar favoritos:', error);
+                alert('Erro ao atualizar favoritos. Por favor, tente novamente.');
+            }
+        }
+
+        async function loadFavorites() {
+            if (!selectedUserId) {
+                favorites = [];
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/favoritos/${selectedUserId}/produtos`);
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    favorites = data.produtos || [];
+                    console.log('[DEBUG] Favoritos carregados:', favorites.length);
+                } else {
+                    favorites = [];
+                    console.log('[DEBUG] Erro ao carregar favoritos:', data.message);
+                }
+            } catch (error) {
+                console.error('Erro ao carregar favoritos:', error);
+                favorites = [];
+            }
+        }
+
+        function createAddToCartAnimation(button, targetCart) {
+            const buttonRect = button.getBoundingClientRect();
+            const cartRect = targetCart.getBoundingClientRect();
+            
+            const animationElement = document.createElement('div');
+            animationElement.className = 'add-to-cart-animation';
+            animationElement.innerHTML = `
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9B64E3" stroke-width="2">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+            `;
+            
+            animationElement.style.left = `${buttonRect.left}px`;
+            animationElement.style.top = `${buttonRect.top}px`;
+            
+            document.body.appendChild(animationElement);
+            
+            const animation = animationElement.animate([
+                {
+                    transform: 'scale(1)',
+                    left: `${buttonRect.left}px`,
+                    top: `${buttonRect.top}px`,
+                    opacity: 1
+                },
+                {
+                    transform: 'scale(0.5)',
+                    left: `${cartRect.left + cartRect.width/2}px`,
+                    top: `${cartRect.top + cartRect.height/2}px`,
+                    opacity: 0
+                }
+            ], {
+                duration: 600,
+                easing: 'ease-out'
+            });
+            
+            animation.onfinish = () => animationElement.remove();
+        }
+
+        // SVG padrão para produtos sem imagem
+        const defaultProductImage = `data:image/svg+xml;base64,${btoa(`
+            <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <rect width="100" height="100" fill="#522888" opacity="0.2"/>
+                <g transform="scale(0.83)">
+                    <path d="M30 40h60v60H30z" fill="#9B64E3" opacity="0.3"/>
+                    <path d="M35 40h50v55H35z" fill="#522888" opacity="0.5"/>
+                    <path d="M40 35v-5c0-11 9-20 20-20s20 9 20 20v5" stroke="#9B64E3" stroke-width="6" fill="none"/>
+                    <path d="M30 40h60v15L85 95H35L30 55z" fill="#9B64E3"/>
+                    <path d="M35 45h50v5L80 90H40L35 50z" fill="#522888"/>
+                </g>
+            </svg>
+        `)}`;
+
+        // Função para normalizar texto (remover acentos e converter para minúsculas)
+        function normalizeText(text) {
+            return text.normalize('NFD')
+                      .replace(/[\u0300-\u036f]/g, '')
+                      .toLowerCase();
+        }
+
+        // Função para carregar produtos
+        async function loadProducts(search = '') {
+            try {
+                // Log inicial com timestamp
+                var timestamp = new Date().toISOString();
+                console.log('[LOAD-PRODUCTS] ===== INICIANDO CARREGAMENTO =====', timestamp);
+                
+                // Log detalhado do estado atual
+                console.log('[LOAD-PRODUCTS] Termo de busca:', search);
+                console.log('[LOAD-PRODUCTS] Usuário selecionado:', selectedUserId);
+                console.log('[LOAD-PRODUCTS] User Agent:', navigator.userAgent);
+                console.log('[LOAD-PRODUCTS] URL atual:', window.location.href);
+                
+                // Log via API Flask também
+                var xhr_start = new XMLHttpRequest();
+                xhr_start.open('POST', '/api/debug-log', true);
+                xhr_start.setRequestHeader('Content-Type', 'application/json');
+                xhr_start.send(JSON.stringify({
+                    message: '🔍 [PDV] INICIANDO CARREGAMENTO DE PRODUTOS - Busca: "' + search + '" | User: ' + selectedUserId + ' | Device: ' + navigator.userAgent,
+                    level: 'INFO',
+                    source: 'PDV-LOAD-PRODUCTS'
+                }));
+                
+                console.log('[LOAD-PRODUCTS] Fazendo fetch para /api/produtos...');
+                
+                // Sempre carregar todos os produtos
+                const response = await fetch('/api/produtos');
+                console.log('[LOAD-PRODUCTS] Response recebido:', response);
+                console.log('[LOAD-PRODUCTS] Response status:', response.status);
+                console.log('[LOAD-PRODUCTS] Response ok:', response.ok);
+                
+                // Log detalhado do response
+                var xhr_response = new XMLHttpRequest();
+                xhr_response.open('POST', '/api/debug-log', true);
+                xhr_response.setRequestHeader('Content-Type', 'application/json');
+                xhr_response.send(JSON.stringify({
+                    message: '📡 [PDV] RESPONSE RECEBIDO - Status: ' + response.status + ' | OK: ' + response.ok + ' | Headers: ' + JSON.stringify(Array.from(response.headers.entries())),
+                    level: response.ok ? 'SUCCESS' : 'ERROR',
+                    source: 'PDV-API-RESPONSE'
+                }));
+                
+                if (!response.ok) {
+                    console.error('[LOAD-PRODUCTS] ❌ Response não está ok:', response.status, response.statusText);
+                    
+                    // Log erro via Flask
+                    var xhr_error = new XMLHttpRequest();
+                    xhr_error.open('POST', '/api/debug-log', true);
+                    xhr_error.setRequestHeader('Content-Type', 'application/json');
+                    xhr_error.send(JSON.stringify({
+                        message: '❌ [PDV] ERRO NO FETCH - Status: ' + response.status + ' | StatusText: ' + response.statusText,
+                        level: 'ERROR',
+                        source: 'PDV-FETCH-ERROR'
+                    }));
+                    return;
+                }
+                
+                console.log('[LOAD-PRODUCTS] 🔄 Convertendo response para JSON...');
+                const data = await response.json();
+                console.log('[LOAD-PRODUCTS] 📦 Dados recebidos da API:', data);
+                console.log('[LOAD-PRODUCTS] Status da resposta:', data.status);
+                console.log('[LOAD-PRODUCTS] Quantidade de produtos:', data.produtos ? data.produtos.length : 'produtos não encontrados');
+                
+                // Log detalhado dos dados via Flask
+                var xhr_data = new XMLHttpRequest();
+                xhr_data.open('POST', '/api/debug-log', true);
+                xhr_data.setRequestHeader('Content-Type', 'application/json');
+                xhr_data.send(JSON.stringify({
+                    message: '📦 [PDV] DADOS RECEBIDOS - Status: ' + data.status + ' | Qtd produtos: ' + (data.produtos ? data.produtos.length : 0) + ' | Primeiros 3: ' + JSON.stringify((data.produtos || []).slice(0, 3)),
+                    level: data.status === 'success' ? 'SUCCESS' : 'ERROR',
+                    source: 'PDV-DATA-RECEIVED'
+                }));
+                
+                if (data.status === 'success') {
+                    console.log('[LOAD-PRODUCTS] ✅ Status success, procurando elemento productsGrid...');
+                    const productsGrid = document.getElementById('productsGrid');
+                    console.log('[LOAD-PRODUCTS] Elemento productsGrid:', productsGrid);
+                    console.log('[LOAD-PRODUCTS] productsGrid exists:', !!productsGrid);
+                    console.log('[LOAD-PRODUCTS] productsGrid classList:', productsGrid ? productsGrid.classList.toString() : 'N/A');
+                    
+                    if (!productsGrid) {
+                        console.error('[LOAD-PRODUCTS] ❌ Elemento productsGrid não encontrado!');
+                        
+                        // Log erro DOM via Flask
+                        var xhr_dom_error = new XMLHttpRequest();
+                        xhr_dom_error.open('POST', '/api/debug-log', true);
+                        xhr_dom_error.setRequestHeader('Content-Type', 'application/json');
+                        xhr_dom_error.send(JSON.stringify({
+                            message: '❌ [PDV] DOM ERROR - Element productsGrid não encontrado! DOCTYPE: ' + document.doctype + ' | ReadyState: ' + document.readyState,
+                            level: 'ERROR',
+                            source: 'PDV-DOM-ERROR'
+                        }));
+                        return;
+                    }
+                    
+                    console.log('[LOAD-PRODUCTS] 🧹 Limpando grade atual...');
+                    productsGrid.innerHTML = ''; // Limpa a grade atual
+                    
+                    // Log sucesso DOM via Flask
+                    var xhr_dom_ok = new XMLHttpRequest();
+                    xhr_dom_ok.open('POST', '/api/debug-log', true);
+                    xhr_dom_ok.setRequestHeader('Content-Type', 'application/json');
+                    xhr_dom_ok.send(JSON.stringify({
+                        message: '✅ [PDV] DOM OK - Element productsGrid encontrado e limpo!',
+                        level: 'SUCCESS',
+                        source: 'PDV-DOM-SUCCESS'
+                    }));
+
+                    let produtos = data.produtos;
+                    
+                    // Se há busca, aplicar filtro
+                    if (search.trim()) {
+                        const normalizedSearch = normalizeText(search);
+                        console.log('[DEBUG] Termo de busca normalizado:', normalizedSearch);
+                        console.log('[DEBUG] Total de produtos recebidos:', data.produtos.length);
+                        
+                        produtos = data.produtos.filter(product => {
+                            const normalizedName = normalizeText(product.nome || '');
+                            const matches = normalizedName.includes(normalizedSearch);
+                            return matches;
+                        });
+                    }
+                    
+                    // Ordenar produtos: favoritos primeiro, independente de haver busca ou não
+                    if (selectedUserId && favorites.length > 0) {
+                        produtos.sort((a, b) => {
+                            const aIsFavorite = isFavorite(a.id);
+                            const bIsFavorite = isFavorite(b.id);
+                            
+                            if (aIsFavorite && !bIsFavorite) return -1; // a vem primeiro
+                            if (!aIsFavorite && bIsFavorite) return 1;  // b vem primeiro
+                            return 0; // manter ordem original
+                        });
+                    }
+                    
+                    console.log('[LOAD-PRODUCTS] 📊 Produtos a serem exibidos:', produtos.length);
+                    
+                    // Log detalhado dos produtos filtrados via Flask
+                    var xhr_products = new XMLHttpRequest();
+                    xhr_products.open('POST', '/api/debug-log', true);
+                    xhr_products.setRequestHeader('Content-Type', 'application/json');
+                    xhr_products.send(JSON.stringify({
+                        message: '📊 [PDV] PRODUTOS FILTRADOS - Total: ' + produtos.length + ' | Favoritos: ' + favorites.length + ' | Amostra: ' + JSON.stringify(produtos.slice(0, 2).map(p => ({id: p.id, nome: p.nome, preco: p.preco}))),
+                        level: 'INFO',
+                        source: 'PDV-PRODUCTS-FILTERED'
+                    }));
+                    
+                    if (produtos.length === 0) {
+                        console.log('[LOAD-PRODUCTS] ⚠️ Nenhum produto para exibir');
+                        productsGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: var(--text-secondary);">Nenhum produto encontrado</div>';
+                        
+                        // Log produtos vazios
+                        var xhr_empty = new XMLHttpRequest();
+                        xhr_empty.open('POST', '/api/debug-log', true);
+                        xhr_empty.setRequestHeader('Content-Type', 'application/json');
+                        xhr_empty.send(JSON.stringify({
+                            message: '⚠️ [PDV] NENHUM PRODUTO - Lista vazia após filtros. Busca: "' + search + '"',
+                            level: 'WARNING',
+                            source: 'PDV-EMPTY-PRODUCTS'
+                        }));
+                        return;
+                    }
+                    
+                    console.log('[LOAD-PRODUCTS] 🏗️ Criando cards dos produtos...');
+                    var cardsCreated = 0;
+                    
+                    produtos.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'product-card';
+                        
+                        // Formatar o preço se existir
+                        const price = product.preco ? parseFloat(product.preco) : 0;
+                        const priceDisplay = product.preco 
+                            ? price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                            : 'Preço não definido';
+                        
+                        const productId = `product-${product.id}`;
+                        
+                        card.innerHTML = `
+                            <button class="favorite-btn ${isFavorite(product.id) ? 'active' : ''}" data-product-id="${product.id}" data-product-nome="${product.nome}" data-product-preco="${product.preco}" data-product-estoque="${product.estoque || 0}">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="${isFavorite(product.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                                </svg>
+                            </button>
+                            <img src="${defaultProductImage}" alt="${product.nome}" class="product-image">
+                            <h3 class="product-name">${product.nome}</h3>
+                            <p class="product-price">${priceDisplay}</p>
+                            <p class="product-stock">Estoque: ${product.estoque || 0}</p>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="event.stopPropagation(); decrementQuantity('${productId}')">-</button>
+                                <input type="number" id="${productId}-qty" class="quantity-input" value="1" min="1" max="${product.estoque || 999}" onclick="event.stopPropagation()" onchange="validateQuantity('${productId}')">
+                                <button class="quantity-btn" onclick="event.stopPropagation(); incrementQuantity('${productId}')">+</button>
+                                <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCartWithQuantity('${productId}', {
+                                    id: '${product.id}',
+                                    nome: '${product.nome.replace(/'/g, "\\'")}',
+                                    preco: ${product.preco},
+                                    estoque: ${product.estoque || 0}
+                                })">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        `;
+                        
+                        productsGrid.appendChild(card);
+                        cardsCreated++;
+                        
+                        // Adicionar event listener para o botão de favorito
+                        const favoriteBtn = card.querySelector('.favorite-btn');
+                        favoriteBtn.addEventListener('click', (event) => {
+                            event.stopPropagation();
+                            toggleFavorite(favoriteBtn);
+                        });
+                        
+                        // Adicionar event listener para clique no card (adiciona 1 item)
+                        card.addEventListener('click', (event) => {
+                            // Verificar se o clique não foi em um elemento interativo
+                            if (!event.target.closest('.quantity-controls') && 
+                                !event.target.closest('.favorite-btn')) {
+                                addToCartSingle(product.id, {
+                                    id: product.id,
+                                    nome: product.nome,
+                                    preco: product.preco,
+                                    estoque: product.estoque || 0
+                                });
+                            }
+                        });
+                    });
+                    
+                    console.log('[LOAD-PRODUCTS] ✅ Produtos adicionados ao DOM com sucesso! Cards criados:', cardsCreated);
+                    
+                    // Log final de sucesso via Flask
+                    var xhr_success = new XMLHttpRequest();
+                    xhr_success.open('POST', '/api/debug-log', true);
+                    xhr_success.setRequestHeader('Content-Type', 'application/json');
+                    xhr_success.send(JSON.stringify({
+                        message: '✅ [PDV] PRODUTOS RENDERIZADOS COM SUCESSO - ' + cardsCreated + ' cards criados no DOM! Grid children: ' + productsGrid.children.length,
+                        level: 'SUCCESS',
+                        source: 'PDV-RENDER-SUCCESS'
+                    }));
+                } else {
+                    console.error('[LOAD-PRODUCTS] ❌ Erro ao carregar produtos:', data.message);
+                    
+                    // Log erro de status via Flask
+                    var xhr_status_error = new XMLHttpRequest();
+                    xhr_status_error.open('POST', '/api/debug-log', true);
+                    xhr_status_error.setRequestHeader('Content-Type', 'application/json');
+                    xhr_status_error.send(JSON.stringify({
+                        message: '❌ [PDV] ERRO STATUS API - Message: ' + data.message + ' | Full response: ' + JSON.stringify(data),
+                        level: 'ERROR',
+                        source: 'PDV-API-ERROR'
+                    }));
+                }
+            } catch (error) {
+                console.error('[LOAD-PRODUCTS] 💥 EXCEÇÃO ao carregar produtos:', error);
+                console.error('[LOAD-PRODUCTS] Stack trace:', error.stack);
+                console.error('[LOAD-PRODUCTS] Error name:', error.name);
+                console.error('[LOAD-PRODUCTS] Error message:', error.message);
+                
+                // Log exceção via Flask
+                var xhr_exception = new XMLHttpRequest();
+                xhr_exception.open('POST', '/api/debug-log', true);
+                xhr_exception.setRequestHeader('Content-Type', 'application/json');
+                xhr_exception.send(JSON.stringify({
+                    message: '💥 [PDV] EXCEÇÃO CRÍTICA - ' + error.name + ': ' + error.message + ' | Stack: ' + (error.stack || 'N/A').substring(0, 500),
+                    level: 'ERROR',
+                    source: 'PDV-EXCEPTION'
+                }));
+            }
+            
+            console.log('[LOAD-PRODUCTS] === FIM DO CARREGAMENTO DE PRODUTOS ===');
+        }
+
+        // Função para buscar produtos com debounce
+        let searchTimeout;
+        function searchProducts(event) {
+            clearTimeout(searchTimeout);
+            
+            // Se evento não foi passado, pegar valor do input diretamente
+            const searchTerm = event && event.target ? event.target.value : 
+                              (document.getElementById('productSearch')?.value || '');
+            
+            // Busca imediata para termos pequenos
+            if (searchTerm.length <= 2) {
+                loadProducts(searchTerm);
+                return;
+            }
+
+            // Debounce para termos maiores
+            searchTimeout = setTimeout(() => {
+                loadProducts(searchTerm);
+            }, 300);
+        }
+
+        // Função para abrir scanner de código de barras (a ser implementada)
+        function openBarcodeScanner() {
+            // TODO: Implementar integração com scanner de código de barras
+            alert('Funcionalidade de scanner em desenvolvimento');
+        }
+
+        // Funções de controle de quantidade
+        function validateQuantity(productId) {
+            const input = document.getElementById(`${productId}-qty`);
+            let value = parseInt(input.value) || 0;
+            const max = parseInt(input.max);
+            
+            if (value < 1) value = 1;
+            if (value > max) value = max;
+            
+            input.value = value;
+        }
+
+        function incrementQuantity(productId) {
+            const input = document.getElementById(`${productId}-qty`);
+            const currentValue = parseInt(input.value) || 0;
+            const max = parseInt(input.max);
+            
+            if (currentValue < max) {
+                input.value = currentValue + 1;
+            }
+        }
+
+        function decrementQuantity(productId) {
+            const input = document.getElementById(`${productId}-qty`);
+            const currentValue = parseInt(input.value) || 0;
+            
+            if (currentValue > 1) {
+                input.value = currentValue - 1;
+            }
+        }
+
+        // Funções de formatação para valores monetários
+        function formatCurrency(value) {
+            if (isNaN(value) || value === '') return '';
+            const numValue = parseFloat(value);
+            return numValue.toLocaleString('pt-BR', { 
+                style: 'currency', 
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        function unformatCurrency(value) {
+            if (!value) return 0;
+            // Remove R$, espaços, pontos e substitui vírgula por ponto
+            const cleaned = value.toString()
+                .replace(/R\$\s?/g, '')
+                .replace(/\./g, '')
+                .replace(/,/g, '.');
+            return parseFloat(cleaned) || 0;
+        }
+
+        function formatCurrencyInput(input) {
+            const cursorPosition = input.selectionStart;
+            const value = unformatCurrency(input.value);
+            if (value === 0) {
+                input.value = '';
+                return;
+            }
+            const formatted = formatCurrency(value).replace('R$', '').trim();
+            input.value = formatted;
+            
+            // Restaurar posição do cursor (aproximadamente)
+            const newLength = input.value.length;
+            const oldLength = formatted.length;
+            const newPosition = Math.min(cursorPosition + (newLength - oldLength), newLength);
+            setTimeout(() => {
+                input.setSelectionRange(newPosition, newPosition);
+            }, 0);
+        }
+
+        // Gerenciamento do carrinho
+        let cart = [];
+        let currentDiscount = {
+            type: 'percentage', // 'percentage' ou 'value'
+            amount: 0,
+            appliedValue: 0
+        };
+
+        function handleDiscountInput(input) {
+            if (currentDiscount.type === 'value') {
+                formatCurrencyInput(input);
+            }
+            applyDiscountAutomatically();
+        }
+
+        function setDiscountType(type) {
+            currentDiscount.type = type;
+            
+            // Atualizar UI dos botões
+            document.querySelectorAll('.discount-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Atualizar placeholder do input
+            const input = document.getElementById('discountInput');
+            if (type === 'percentage') {
+                input.placeholder = '0';
+                input.type = 'number';
+                input.min = '0';
+                input.max = '100';
+                input.step = '0.01';
+            } else {
+                input.placeholder = '0,00';
+                input.type = 'text';
+                input.removeAttribute('min');
+                input.removeAttribute('max');
+                input.removeAttribute('step');
+            }
+            
+            // Limpar desconto atual se houver
+            if (currentDiscount.amount > 0) {
+                clearDiscount();
+            }
+            
+            // Aplicar automaticamente se houver valor no input
+            applyDiscountAutomatically();
+        }
+
+        function applyDiscountAutomatically() {
+            const input = document.getElementById('discountInput');
+            let amount;
+            
+            if (currentDiscount.type === 'percentage') {
+                amount = parseFloat(input.value) || 0;
+            } else {
+                amount = unformatCurrency(input.value);
+            }
+            
+            // Se não há valor, limpar desconto
+            if (amount <= 0) {
+                currentDiscount.amount = 0;
+                currentDiscount.appliedValue = 0;
+                updateCartDisplay();
+                updateDiscountDisplay();
+                return;
+            }
+            
+            const subtotal = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+            
+            // Se não há produtos no carrinho, não aplicar desconto
+            if (subtotal <= 0) {
+                currentDiscount.amount = 0;
+                currentDiscount.appliedValue = 0;
+                updateCartDisplay();
+                updateDiscountDisplay();
+                return;
+            }
+            
+            if (currentDiscount.type === 'percentage') {
+                // Limitar porcentagem a 100%
+                const limitedAmount = Math.min(amount, 100);
+                if (limitedAmount !== amount) {
+                    input.value = limitedAmount;
+                }
+                currentDiscount.amount = limitedAmount;
+                currentDiscount.appliedValue = (subtotal * limitedAmount) / 100;
+            } else {
+                // Limitar valor ao subtotal
+                const limitedAmount = Math.min(amount, subtotal);
+                if (limitedAmount !== amount) {
+                    input.value = formatCurrency(limitedAmount).replace('R$', '').trim();
+                }
+                currentDiscount.amount = limitedAmount;
+                currentDiscount.appliedValue = limitedAmount;
+            }
+            
+            updateCartDisplay();
+            updateDiscountDisplay();
+        }
+
+        function clearDiscount() {
+            currentDiscount.amount = 0;
+            currentDiscount.appliedValue = 0;
+            document.getElementById('discountInput').value = '';
+            updateCartDisplay();
+            updateDiscountDisplay();
+        }
+
+        function updateDiscountDisplay() {
+            const discountInfo = document.getElementById('discountInfo');
+            const discountDescription = document.getElementById('discountDescription');
+            const discountRow = document.getElementById('discountRow');
+            const discountAmount = document.getElementById('discountAmount');
+            
+            if (currentDiscount.appliedValue > 0) {
+                discountInfo.style.display = 'block';
+                discountRow.style.display = 'flex';
+                
+                if (currentDiscount.type === 'percentage') {
+                    discountDescription.textContent = `${currentDiscount.amount}% - ${currentDiscount.appliedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                } else {
+                    discountDescription.textContent = currentDiscount.appliedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                }
+                
+                discountAmount.textContent = `- ${currentDiscount.appliedValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+            } else {
+                discountInfo.style.display = 'none';
+                discountRow.style.display = 'none';
+            }
+        }
+
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            const cartSubtotal = document.getElementById('cartSubtotal');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<div class="cart-empty">Carrinho vazio</div>';
+                cartTotal.textContent = 'R$ 0,00';
+                cartSubtotal.textContent = 'R$ 0,00';
+                // Limpar desconto quando carrinho vazio (sem recursão)
+                currentDiscount.amount = 0;
+                currentDiscount.appliedValue = 0;
+                document.getElementById('discountInput').value = '';
+                updateDiscountDisplay();
+                return;
+            }
+
+            cartItems.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <h4 class="cart-item-name">${item.nome}</h4>
+                        <p class="cart-item-price">${item.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                        <div class="cart-item-controls">
+                            <button class="cart-quantity-btn" onclick="decrementCartItem('${item.id}')">-</button>
+                            <span class="cart-quantity">${item.quantity}</span>
+                            <button class="cart-quantity-btn" onclick="incrementCartItem('${item.id}')">+</button>
+                        </div>
+                        <p class="cart-item-total-price">Total: ${(item.preco * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</p>
+                    </div>
+                    <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">×</button>
+                </div>
+            `).join('');
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+            const finalTotal = subtotal - currentDiscount.appliedValue;
+            
+            cartSubtotal.textContent = subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            cartTotal.textContent = finalTotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function addToCartWithQuantity(productId, product) {
+            const quantity = parseInt(document.getElementById(`${productId}-qty`).value) || 1;
+            
+            // Garantir que o ID seja tratado como string consistentemente
+            const normalizedProduct = {
+                ...product,
+                id: String(product.id)
+            };
+            
+            const existingItem = cart.find(item => String(item.id) === String(normalizedProduct.id));
+            const maxStock = normalizedProduct.estoque || 999;
+
+            // Verificar se há estoque suficiente
+            if (existingItem) {
+                const newTotal = existingItem.quantity + quantity;
+                if (newTotal > maxStock) {
+                    alert(`Estoque insuficiente. Estoque disponível: ${maxStock}`);
+                    return;
+                }
+                existingItem.quantity = newTotal;
+            } else {
+                if (quantity > maxStock) {
+                    alert(`Estoque insuficiente. Estoque disponível: ${maxStock}`);
+                    return;
+                }
+                cart.push({
+                    ...normalizedProduct,
+                    quantity
+                });
+            }
+
+            // Feedback visual e animação
+            const addButton = document.querySelector(`#${productId}-qty`).nextElementSibling.nextElementSibling;
+            const cartPanel = document.querySelector('.cart-panel');
+            
+            addButton.style.background = 'rgba(155, 100, 227, 0.4)';
+            setTimeout(() => {
+                addButton.style.background = '';
+            }, 200);
+
+            createAddToCartAnimation(addButton, cartPanel);
+
+            // Recalcular desconto automaticamente
+            applyDiscountAutomatically();
+
+            updateCartDisplay();
+        }
+
+        function addToCartSingle(productId, product) {
+            // Garantir que o ID seja tratado como string consistentemente
+            const normalizedProduct = {
+                ...product,
+                id: String(product.id)
+            };
+            
+            const existingItem = cart.find(item => String(item.id) === String(normalizedProduct.id));
+            const maxStock = normalizedProduct.estoque || 999;
+
+            // Verificar se há estoque suficiente
+            if (existingItem) {
+                if (existingItem.quantity >= maxStock) {
+                    alert(`Estoque insuficiente. Estoque disponível: ${maxStock}`);
+                    return;
+                }
+                existingItem.quantity += 1;
+            } else {
+                if (maxStock < 1) {
+                    alert('Produto fora de estoque');
+                    return;
+                }
+                cart.push({ ...normalizedProduct, quantity: 1 });
+            }
+
+            // Feedback visual - destacar o card
+            const productCard = document.querySelector(`[data-product-id="${normalizedProduct.id}"]`)?.closest('.product-card');
+            if (productCard) {
+                productCard.style.background = 'rgba(155, 100, 227, 0.4)';
+                productCard.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    productCard.style.background = '';
+                    productCard.style.transform = '';
+                }, 200);
+
+                // Animação para o carrinho
+                const cartPanel = document.querySelector('.cart-panel');
+                createAddToCartAnimation(productCard, cartPanel);
+            }
+
+            // Recalcular desconto automaticamente
+            applyDiscountAutomatically();
+
+            updateCartDisplay();
+        }
+
+        function removeFromCart(productId) {
+            // Converter para string para garantir compatibilidade
+            const id = String(productId);
+            cart = cart.filter(item => String(item.id) !== id);
+            
+            // Recalcular desconto automaticamente
+            applyDiscountAutomatically();
+            
+            updateCartDisplay();
+        }
+
+        function incrementCartItem(productId) {
+            const id = String(productId);
+            const item = cart.find(item => String(item.id) === id);
+            
+            if (item) {
+                const maxStock = item.estoque || 999;
+                if (item.quantity < maxStock) {
+                    item.quantity += 1;
+                    applyDiscountAutomatically();
+                    updateCartDisplay();
+                } else {
+                    alert(`Estoque insuficiente. Máximo disponível: ${maxStock}`);
+                }
+            }
+        }
+
+        function decrementCartItem(productId) {
+            const id = String(productId);
+            const item = cart.find(item => String(item.id) === id);
+            
+            if (item) {
+                if (item.quantity > 1) {
+                    item.quantity -= 1;
+                    applyDiscountAutomatically();
+                    updateCartDisplay();
+                } else {
+                    // Se quantidade é 1, remover o item
+                    removeFromCart(productId);
+                }
+            }
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('O carrinho está vazio!');
+                return;
+            }
+
+            // Resetar dados do checkout
+            checkoutData.paymentMethod = null;
+            checkoutData.installments = 1;
+            
+            // Atualizar resumo do pedido
+            updateOrderSummary();
+            
+            // Carregar vendedores no modal
+            loadCheckoutSellers();
+            
+            // Mostrar modal
+            document.getElementById('checkoutModal').classList.add('show');
+            
+            // Limpar seleções anteriores
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.classList.remove('selected');
+            });
+            document.getElementById('installmentsSection').style.display = 'none';
+            document.getElementById('confirmSaleBtn').disabled = true;
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.remove('show');
+            
+            // Resetar dados do checkout
+            checkoutData.paymentMethod = null;
+            checkoutData.installments = 1;
+            checkoutData.valorRecebido = 0;
+            checkoutData.troco = 0;
+            
+            // Limpar seções
+            document.getElementById('installmentsSection').style.display = 'none';
+            document.getElementById('cashSection').style.display = 'none';
+            document.getElementById('valorRecebido').value = '';
+            document.getElementById('trocoDisplay').style.display = 'none';
+            
+            // Remover seleções
+            document.querySelectorAll('.payment-method').forEach(element => {
+                element.classList.remove('selected');
+            });
+            document.querySelectorAll('.installment-option').forEach(element => {
+                element.classList.remove('selected');
+            });
+            
+            // Desabilitar botão
+            document.getElementById('confirmSaleBtn').disabled = true;
+        }
+
+        async function loadCheckoutSellers() {
+            // Definir o usuário logado como vendedor padrão
+            const selectElement = document.getElementById('checkoutSellerSelect');
+            if (selectElement && usuarioLogado) {
+                selectElement.innerHTML = `<option value="${usuarioLogado.id}" selected>${usuarioLogado.nome}</option>`;
+                selectElement.value = usuarioLogado.id;
+            }
+        }
+
+        // Funções para o modal de notificação PDV
+        function showPdvNotification(type, message) {
+            const iconContainer = document.getElementById('pdvNotificationIcon');
+            
+            if (type === 'success') {
+                iconContainer.innerHTML = `
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                            <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                        </circle>
+                        <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                            <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                        </path>
+                        <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+                        <animateTransform attributeName="transform" type="rotate" values="-15;0;15;0" dur="0.8s" repeatCount="1" additive="sum"/>
+                    </svg>
+                `;
+            } else {
+                iconContainer.innerHTML = `
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#F44336">
+                            <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                        </circle>
+                        <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                            <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                        </path>
+                        <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                            <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                        </path>
+                        <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+                        <animateTransform attributeName="transform" type="rotate" values="0;15;-15;0" dur="0.8s" repeatCount="1" additive="sum"/>
+                    </svg>
+                `;
+            }
+            
+            const modal = document.getElementById('pdvNotificationModal');
+            const modalContent = modal.querySelector('.pdv-notification-modal');
+            const title = document.getElementById('pdvNotificationModalTitle');
+            const msg = document.getElementById('pdvNotificationModalMessage');
+            
+            title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+            msg.textContent = message;
+            modalContent.className = 'pdv-notification-modal ' + type;
+            modal.classList.add('show');
+        }
+
+        function closePdvNotificationModal() {
+            document.getElementById('pdvNotificationModal').classList.remove('show');
+        }
+
+        function updateOrderSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0);
+            const discount = currentDiscount.appliedValue;
+            const total = subtotal - discount;
+            
+            let summaryHTML = `
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>${subtotal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                </div>
+            `;
+            
+            if (discount > 0) {
+                summaryHTML += `
+                    <div class="summary-row">
+                        <span>Desconto:</span>
+                        <span>- ${discount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                    </div>
+                `;
+            }
+            
+            summaryHTML += `
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span>${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</span>
+                </div>
+            `;
+            
+            document.getElementById('orderSummary').innerHTML = summaryHTML;
+        }
+
+        function selectPaymentMethod(method) {
+            checkoutData.paymentMethod = method;
+            
+            // Atualizar UI
+            document.querySelectorAll('.payment-method').forEach(element => {
+                element.classList.remove('selected');
+            });
+            document.querySelector(`[data-method="${method}"]`).classList.add('selected');
+            
+            // Mostrar/ocultar seções específicas
+            const installmentsSection = document.getElementById('installmentsSection');
+            const cashSection = document.getElementById('cashSection');
+            
+            // Resetar seções
+            installmentsSection.style.display = 'none';
+            cashSection.style.display = 'none';
+            checkoutData.installments = 1;
+            checkoutData.valorRecebido = 0;
+            checkoutData.troco = 0;
+            
+            if (method === 'credito') {
+                installmentsSection.style.display = 'block';
+                generateInstallmentOptions();
+            } else if (method === 'dinheiro') {
+                cashSection.style.display = 'block';
+                // Limpar valor recebido
+                document.getElementById('valorRecebido').value = '';
+                document.getElementById('trocoDisplay').style.display = 'none';
+                // Desabilitar botão até que valor seja inserido
+                document.getElementById('confirmSaleBtn').disabled = true;
+            } else {
+                // Para PIX e débito, habilitar direto
+                document.getElementById('confirmSaleBtn').disabled = false;
+            }
+        }
+
+        function generateInstallmentOptions() {
+            const total = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0) - currentDiscount.appliedValue;
+            const installmentsGrid = document.getElementById('installmentsGrid');
+            
+            let installmentsHTML = '';
+            
+            // À vista
+            installmentsHTML += `
+                <div class="installment-option selected" data-installments="1" onclick="selectInstallments(1)">
+                    <div>À vista</div>
+                    <div>${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                </div>
+            `;
+            
+            // Parcelado (2 a 12x)
+            for (let i = 2; i <= 12; i++) {
+                const installmentValue = total / i;
+                installmentsHTML += `
+                    <div class="installment-option" data-installments="${i}" onclick="selectInstallments(${i})">
+                        <div>${i}x</div>
+                        <div>${installmentValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
+                    </div>
+                `;
+            }
+            
+            installmentsGrid.innerHTML = installmentsHTML;
+            checkoutData.installments = 1;
+        }
+
+        function selectInstallments(installments) {
+            checkoutData.installments = installments;
+            
+            // Atualizar UI
+            document.querySelectorAll('.installment-option').forEach(element => {
+                element.classList.remove('selected');
+            });
+            document.querySelector(`[data-installments="${installments}"]`).classList.add('selected');
+        }
+
+        // Função para formatar input de dinheiro
+        function formatCashInput(input) {
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é dígito
+            
+            if (value === '') {
+                input.value = '';
+                return;
+            }
+            
+            // Converte para número com duas casas decimais
+            value = (parseInt(value) / 100).toFixed(2);
+            
+            // Formata como moeda brasileira
+            input.value = parseFloat(value).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        // Função para calcular o troco
+        function calculateChange() {
+            const valorRecebidoInput = document.getElementById('valorRecebido');
+            const trocoDisplay = document.getElementById('trocoDisplay');
+            const trocoValue = document.getElementById('trocoValue');
+            
+            // Pegar valor recebido sem formatação
+            let valorRecebidoStr = valorRecebidoInput.value.replace(/[^\d,]/g, '').replace(',', '.');
+            const valorRecebido = parseFloat(valorRecebidoStr) || 0;
+            
+            // Calcular total da venda
+            const total = cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0) - currentDiscount.appliedValue;
+            
+            // Calcular troco
+            const troco = valorRecebido - total;
+            
+            // Atualizar dados globais
+            checkoutData.valorRecebido = valorRecebido;
+            checkoutData.troco = troco;
+            
+            // Mostrar display do troco se há valor recebido
+            if (valorRecebido > 0) {
+                trocoDisplay.style.display = 'block';
+                
+                if (troco >= 0) {
+                    // Troco positivo ou zero
+                    trocoDisplay.classList.remove('negative');
+                    trocoValue.classList.remove('negative');
+                    trocoValue.textContent = troco.toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    });
+                    document.querySelector('.troco-label').textContent = 'Troco:';
+                } else {
+                    // Valor insuficiente
+                    trocoDisplay.classList.add('negative');
+                    trocoValue.classList.add('negative');
+                    trocoValue.textContent = Math.abs(troco).toLocaleString('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL'
+                    });
+                    document.querySelector('.troco-label').textContent = 'Valor insuficiente:';
+                }
+                
+                // Habilitar/desabilitar botão de confirmar baseado no valor
+                const confirmBtn = document.getElementById('confirmSaleBtn');
+                if (troco >= 0) {
+                    confirmBtn.disabled = false;
+                } else {
+                    confirmBtn.disabled = true;
+                }
+            } else {
+                trocoDisplay.style.display = 'none';
+                // Desabilitar botão se método é dinheiro mas não há valor
+                if (checkoutData.paymentMethod === 'dinheiro') {
+                    document.getElementById('confirmSaleBtn').disabled = true;
+                }
+            }
+        }
+
+        async function confirmSale() {
+            if (!checkoutData.paymentMethod) {
+                alert('Selecione um método de pagamento');
+                return;
+            }
+            
+            const saleData = {
+                usuario_id: selectedUserId,
+                itens: cart.map(item => ({
+                    produto_id: item.id,
+                    quantidade: item.quantity,
+                    preco_unitario: item.preco,
+                    subtotal: item.preco * item.quantity
+                })),
+                subtotal: cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0),
+                desconto: currentDiscount.appliedValue,
+                total: cart.reduce((sum, item) => sum + (item.preco * item.quantity), 0) - currentDiscount.appliedValue,
+                metodo_pagamento: checkoutData.paymentMethod,
+                parcelas: checkoutData.installments,
+                valor_recebido: checkoutData.valorRecebido || null,
+                troco: checkoutData.troco || null
+            };
+            
+            try {
+                const response = await fetch('/api/vendas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(saleData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    // Usar modal de notificação local do PDV
+                    showPdvNotification('success', 'Venda realizada com sucesso!');
+                    
+                    // Limpar carrinho e fechar modal
+                    cart = [];
+                    // Limpar desconto diretamente (evitar recursão)
+                    currentDiscount.amount = 0;
+                    currentDiscount.appliedValue = 0;
+                    document.getElementById('discountInput').value = '';
+                    updateCartDisplay(); // Esta já vai atualizar o desconto também
+                    closeCheckoutModal();
+                } else {
+                    showPdvNotification('error', 'Erro ao realizar venda: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Erro ao confirmar venda:', error);
+                showPdvNotification('error', 'Erro ao conectar com o servidor. Verifique sua conexão.');
+            }
+        }
+
+        // Função para inicializar o PDV
+        // Carregar lista de usuários
+        // Carregar favoritos do usuário selecionado
+        async function loadUserFavorites() {
+            console.log('[FAVORITES] 🌟 Carregando favoritos para usuário:', selectedUserId);
+            
+            if (!selectedUserId) {
+                console.log('[FAVORITES] ⚠️ Nenhum usuário selecionado, retornando');
+                
+                // Log via Flask
+                var xhr_no_user = new XMLHttpRequest();
+                xhr_no_user.open('POST', '/api/debug-log', true);
+                xhr_no_user.setRequestHeader('Content-Type', 'application/json');
+                xhr_no_user.send(JSON.stringify({
+                    message: '⚠️ [PDV] FAVORITOS - Nenhum usuário selecionado para carregar favoritos',
+                    level: 'WARNING',
+                    source: 'PDV-FAVORITES-NO-USER'
+                }));
+                return;
+            }
+            
+            try {
+                console.log('[FAVORITES] 📡 Fazendo fetch para /api/favoritos/' + selectedUserId);
+                
+                // Log início via Flask
+                var xhr_start = new XMLHttpRequest();
+                xhr_start.open('POST', '/api/debug-log', true);
+                xhr_start.setRequestHeader('Content-Type', 'application/json');
+                xhr_start.send(JSON.stringify({
+                    message: '📡 [PDV] CARREGANDO FAVORITOS - UserID: ' + selectedUserId + ' | Fetch: /api/favoritos/' + selectedUserId,
+                    level: 'INFO',
+                    source: 'PDV-FAVORITES-FETCH'
+                }));
+                
+                const response = await fetch(`/api/favoritos/${selectedUserId}`);
+                console.log('[FAVORITES] Response favoritos:', response.status, response.ok);
+                
+                const data = await response.json();
+                console.log('[FAVORITES] Dados favoritos recebidos:', data);
+                
+                // Log resposta via Flask
+                var xhr_response = new XMLHttpRequest();
+                xhr_response.open('POST', '/api/debug-log', true);
+                xhr_response.setRequestHeader('Content-Type', 'application/json');
+                xhr_response.send(JSON.stringify({
+                    message: '📋 [PDV] FAVORITOS RECEBIDOS - Status: ' + data.status + ' | Qtd: ' + (data.favoritos ? data.favoritos.length : 0) + ' | Response: ' + JSON.stringify(data).substring(0, 200),
+                    level: data.status === 'success' ? 'SUCCESS' : 'ERROR',
+                    source: 'PDV-FAVORITES-DATA'
+                }));
+                
+                if (data.status === 'success') {
+                    favorites = data.favoritos;
+                    console.log('[FAVORITES] ✅ Favoritos atualizados:', favorites);
+                    
+                    const searchValue = document.getElementById('productSearch').value;
+                    console.log('[FAVORITES] 🔄 Recarregando produtos com busca:', searchValue);
+                    loadProducts(searchValue);
+                } else {
+                    console.log('[FAVORITES] ❌ Erro no status dos favoritos:', data.message);
+                }
+            } catch (error) {
+                console.error('[FAVORITES] 💥 Erro ao carregar favoritos:', error);
+                
+                // Log erro via Flask
+                var xhr_error = new XMLHttpRequest();
+                xhr_error.open('POST', '/api/debug-log', true);
+                xhr_error.setRequestHeader('Content-Type', 'application/json');
+                xhr_error.send(JSON.stringify({
+                    message: '💥 [PDV] ERRO FAVORITOS - ' + error.name + ': ' + error.message,
+                    level: 'ERROR',
+                    source: 'PDV-FAVORITES-ERROR'
+                }));
+            }
+        }
+
+        function initializePDV() {
+            var initTimestamp = new Date().toISOString();
+            console.log('[PDV-INIT] 🚀 ===== INICIALIZANDO PDV =====', initTimestamp);
+            console.log('[PDV-INIT] Document ready state:', document.readyState);
+            console.log('[PDV-INIT] URL atual:', window.location.href);
+            console.log('[PDV-INIT] User Agent:', navigator.userAgent);
+            
+            // Log inicial via Flask
+            var xhr_init = new XMLHttpRequest();
+            xhr_init.open('POST', '/api/debug-log', true);
+            xhr_init.setRequestHeader('Content-Type', 'application/json');
+            xhr_init.send(JSON.stringify({
+                message: '🚀 [PDV] INICIALIZANDO PDV - Time: ' + initTimestamp + ' | ReadyState: ' + document.readyState + ' | URL: ' + window.location.href + ' | Device: ' + navigator.userAgent,
+                level: 'INFO',
+                source: 'PDV-INIT'
+            }));
+            
+            // Verificar se elementos essenciais existem
+            console.log('[PDV-INIT] 🔍 Verificando elementos DOM...');
+            var productsGrid = document.getElementById('productsGrid');
+            var searchInput = document.getElementById('productSearch');
+            var cartItems = document.getElementById('cartItems');
+            
+            console.log('[PDV-INIT] productsGrid:', !!productsGrid);
+            console.log('[PDV-INIT] searchInput:', !!searchInput);
+            console.log('[PDV-INIT] cartItems:', !!cartItems);
+            
+            // Log elementos DOM via Flask
+            var xhr_dom = new XMLHttpRequest();
+            xhr_dom.open('POST', '/api/debug-log', true);
+            xhr_dom.setRequestHeader('Content-Type', 'application/json');
+            xhr_dom.send(JSON.stringify({
+                message: '🔍 [PDV] ELEMENTOS DOM - productsGrid: ' + !!productsGrid + ' | searchInput: ' + !!searchInput + ' | cartItems: ' + !!cartItems,
+                level: (productsGrid && searchInput && cartItems) ? 'SUCCESS' : 'ERROR',
+                source: 'PDV-DOM-CHECK'
+            }));
+            
+            // Carregar usuário logado e definir como vendedor
+            console.log('[PDV-INIT] 👤 Carregando usuário logado...');
+            carregarUsuarioLogado();
+            
+            console.log('[PDV-INIT] 📦 Carregando produtos...');
+            loadProducts();
+            
+            // Adicionar evento de busca em tempo real
+            if (searchInput) {
+                console.log('[PDV-INIT] ✅ Adicionando evento de busca...');
+                searchInput.addEventListener('input', searchProducts);
+                
+                // Log sucesso busca via Flask
+                var xhr_search = new XMLHttpRequest();
+                xhr_search.open('POST', '/api/debug-log', true);
+                xhr_search.setRequestHeader('Content-Type', 'application/json');
+                xhr_search.send(JSON.stringify({
+                    message: '✅ [PDV] EVENT LISTENER BUSCA ADICIONADO com sucesso!',
+                    level: 'SUCCESS',
+                    source: 'PDV-SEARCH-EVENT'
+                }));
+            } else {
+                console.error('[PDV-INIT] ❌ Input de busca não encontrado!');
+                
+                // Log erro busca via Flask
+                var xhr_search_error = new XMLHttpRequest();
+                xhr_search_error.open('POST', '/api/debug-log', true);
+                xhr_search_error.setRequestHeader('Content-Type', 'application/json');
+                xhr_search_error.send(JSON.stringify({
+                    message: '❌ [PDV] INPUT DE BUSCA NÃO ENCONTRADO - Element productSearch missing!',
+                    level: 'ERROR',
+                    source: 'PDV-SEARCH-ERROR'
+                }));
+            }
+            
+            console.log('[PDV-INIT] ✅ PDV inicializado com sucesso!');
+            
+            // Log final de inicialização via Flask
+            var xhr_final = new XMLHttpRequest();
+            xhr_final.open('POST', '/api/debug-log', true);
+            xhr_final.setRequestHeader('Content-Type', 'application/json');
+            xhr_final.send(JSON.stringify({
+                message: '✅ [PDV] INICIALIZAÇÃO COMPLETA - Todos os componentes configurados!',
+                level: 'SUCCESS',
+                source: 'PDV-INIT-COMPLETE'
+            }));
+        }
+
+        // Inicializar quando a página é carregada diretamente
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('[PDV-LOADING] 📄 DOMContentLoaded event triggered');
+            
+            // Log via Flask
+            var xhr_dom_loaded = new XMLHttpRequest();
+            xhr_dom_loaded.open('POST', '/api/debug-log', true);
+            xhr_dom_loaded.setRequestHeader('Content-Type', 'application/json');
+            xhr_dom_loaded.send(JSON.stringify({
+                message: '📄 [PDV] DOM CONTENT LOADED - Inicializando PDV via DOMContentLoaded',
+                level: 'INFO',
+                source: 'PDV-DOM-LOADED'
+            }));
+            
+            initializePDV();
+        });
+
+        // Inicializar quando carregado dinamicamente (via dashboard)
+        // Expor a função globalmente para que possa ser chamada pelo dashboard
+        window.initializePDV = initializePDV;
+        
+        // Log de exposição da função global
+        console.log('[PDV-LOADING] 🌐 Função initializePDV exposta globalmente');
+        
+        // Log via Flask da exposição
+        var xhr_global = new XMLHttpRequest();
+        xhr_global.open('POST', '/api/debug-log', true);
+        xhr_global.setRequestHeader('Content-Type', 'application/json');
+        xhr_global.send(JSON.stringify({
+            message: '🌐 [PDV] FUNÇÃO GLOBAL EXPOSTA - window.initializePDV disponível para carregamento dinâmico',
+            level: 'SUCCESS',
+            source: 'PDV-GLOBAL-EXPOSED'
+        }));
+    </script>
+</body>
+</html>

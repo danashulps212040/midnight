@@ -1,0 +1,1432 @@
+<div class="module-header" style="padding: 90px 20px 20px 20px; font-size: 14px;">
+<link rel="stylesheet" href="/static/css/custom-scrollbar.css">
+  <h1>Etapas de Confecção</h1>
+  
+<!-- Filtros e busca de etapas -->
+<div class="search-filters" style="margin-bottom: 20px; padding: 15px; background-color: rgba(19, 4, 60, 0.69); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #9B64E3; border-radius: 10px;">
+    <div class="search-container" style="display: flex; margin-bottom: 15px;">
+        <input type="text" id="searchEtapa" placeholder="Pesquisar etapa..." style="flex: 1; padding: 10px; border: 0.2px solid #9B64E3; border-radius: 5px 0 0 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+        <button type="button" id="searchButton" style="padding: 10px 15px; background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9b63e3; border-left: none; border-radius: 0 5px 5px 0; color: white; cursor: pointer;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+            <i class="search-icon">&#128269;</i>
+        </button>
+    </div>
+</div>
+
+<div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+    <button class="btn-primary btn-incluir-etapa" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="openEtapaModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Nova Etapa
+    </button>
+</div>
+
+<div class="etapas-list-container" style="background-color: var(--order-card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="etapas-list-header" style="display: grid; grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 1fr 1fr 0.8fr; gap: 15px; font-weight: bold; padding: 15px 20px; border-bottom: 2px solid var(--cor-destaque, #9B64E3); color: var(--column-title-text);">
+        <div>Nome da Etapa</div>
+        <div>Tempo Est. (HH:MM:SS)</div>
+        <div>Descrição</div>
+        <div>Máquina</div>
+        <div>Ferramenta</div>
+        <div>Mão de obra</div>
+        <div>Custo por Hora</div>
+        <div>Ações</div>
+    </div>
+    <div class="etapas-list" style="margin-top: 10px;">
+        <!-- Dados das etapas serão carregados dinamicamente aqui -->
+    </div>
+</div>
+
+<!-- Modal para Nova Etapa -->
+<div id="etapaModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeEtapaModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Nova Etapa de Confecção</h2>
+        <div class="modal-body">
+            <form id="etapaForm">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="etapaNome">Nome da Etapa:</label>
+                            <input type="text" id="etapaNome" name="nome" required style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaTempoEstimado" style="display: flex; align-items: center; gap: 5px;">
+                                Tempo Estimado (HH:MM:SS):
+                                <div class="tooltip-container" style="position: relative; cursor: help;">
+                                    <img src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMiIgZGF0YS1uYW1lPSJMYXllciAyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMzIuOTUgMjE2LjYyIj4KICA8ZGVmcz4KICAgIDxzdHlsZT4KICAgICAgLmNscy0xIHsKICAgICAgICBmaWxsOiAjOUI2NEUzOwogICAgICB9CgogICAgICAuY2xzLTIgewogICAgICAgIGZpbGw6ICM3QjY0RTM7CiAgICAgIH0KCiAgICAgIC5jbHMtMyB7CiAgICAgICAgZmlsbDogIzZCNTREMzsKICAgICAgfQoKICAgICAgLmNscy00IHsKICAgICAgICBmaWxsOiAjQUI3NEYzOwogICAgICB9CgogICAgICAuY2xzLTUgewogICAgICAgIGZpbGw6ICM4QjY0RTM7CiAgICAgIH0KCiAgICAgIC5jbHMtNiB7CiAgICAgICAgZmlsbDogIzVCNDRDMzsKICAgICAgfQogICAgPC9zdHlsZT4KICA8L2RlZnM+CiAgPGcgaWQ9Im9iamVjdHMiPgogICAgPGc+CiAgICAgIDxnPgogICAgICAgIDxnPgogICAgICAgICAgPHBhdGggY2xhc3M9ImNscy0yIiBkPSJNMzkuNzQsMTg1LjV2MTkuMzdjMCw2LjQ5LDYuMiwxMS43NSwxMy44NSwxMS43NWgxMS43N2M3LjY1LDAsMTMuODUtNS4yNiwxMy44NS0xMS43NXYtMTkuMzdoLTM5LjQ2WiIvPgogICAgICAgICAgPHBhdGggY2xhc3M9ImNscy0zIiBkPSJNNTkuNDMsMTg1LjVoLTE5LjY5djE5LjM3YzAsNi40OSw2LjIsMTEuNzUsMTMuODUsMTEuNzVoNS44NHYtMzEuMTJaIi8+CiAgICAgICAgPC9nPgogICAgICAgIDxnPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy01IiB4PSIzOS43NCIgeT0iMTg1LjUiIHdpZHRoPSIzOS40NiIgaGVpZ2h0PSIxNS42NyIvPgogICAgICAgICAgPHJlY3QgY2xhc3M9ImNscy02IiB4PSIzOS43NCIgeT0iMTg1LjUiIHdpZHRoPSIxOS42OSIgaGVpZ2h0PSIxNS42NyIvPgogICAgICAgIDwvZz4KICAgICAgICA8Zz4KICAgICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMiIgZD0iTTMyLjE4LDE2Mi4yOHYxOS4zN2MwLDYuNDgsOC42NCwxMS43NCwxOS4yOSwxMS43NGgxNi4zOWMxMC42NSwwLDE5LjI5LTUuMjYsMTkuMjktMTEuNzR2LTE5LjM3aC01NC45N1oiLz4KICAgICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTU5LjQzLDE2Mi4yOGgtMjcuMjV2MTkuMzdjMCw2LjQ4LDguNjQsMTEuNzQsMTkuMjksMTEuNzRoNy45NXYtMzEuMTJaIi8+CiAgICAgICAgPC9nPgogICAgICA8L2c+CiAgICAgIDxnPgogICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtNCIgZD0iTTU5LjA0LDE1Ni40OWMtOC42NiwwLTE2LjMzLTUuNC0xNy44NS0xMy4wNS03LjMyLTM2LjgzLDE2LjMyLTUwLjY4LDMxLjk2LTU5Ljg0LDguMjUtNC44MywxNS4zOC05LjAxLDE5LjE3LTE1LjgxLDYuMS0xMC45Myw1Ljg0LTE5LjkyLS43OS0yNi43NC03Ljc0LTcuOTYtMjIuOTUtMTEuNjItMzUuMzgtOC41MS0xMS4yLDIuOC0xOC4xNCwxMC41Ny0yMC4wNSwyMi40Ny0xLjM4LDguNi0xMC41NCwxNC42LTIwLjQ3LDEzLjRDNS43MSw2Ny4yLTEuMjEsNTkuMjYuMTgsNTAuNjZDNC4xLDI2LjI2LDIwLjg0LDguNjQsNDYuMSwyLjMzYzI2LjE1LTYuNTQsNTYuMjQsMS4wNSw3My4xNywxOC40NiwxNS45OSwxNi40NCwxOC4wNywzOC41Nyw1LjcsNjAuNy04LjA1LDE0LjQxLTIxLjA1LDIyLjAzLTMxLjUsMjguMTUtMTQuNDYsOC40Ny0xOS44NywxMS42NS0xNi41MywyOC40NiwxLjcsOC41Ni00LjkyLDE2LjY5LTE0Ljc5LDE4LjE2LTEuMDQuMTYtMi4wOC4yMy0zLjEuMjNaIi8+CiAgICAgICAgPGc+CiAgICAgICAgICA8cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik02MC44NCw5MS40MWMtMTMuMDIsOS40OC0yNS4xOSwyNC4xOS0xOS42NSw1Mi4wMywxLjUyLDcuNjUsOS4xOCwxMy4wNSwxNy44NSwxMy4wNS42LDAsMS4yLS4wMywxLjgtLjA4di02NVoiLz4KICAgICAgICAgIDxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTU2LjE1LDMyLjUzYzEuNTMtLjM4LDMuMS0uNjYsNC42OS0uODRWLjEzYy00Ljk4LjI3LTkuOTMuOTktMTQuNzQsMi4yQzIwLjg0LDguNjQsNC4xLDI2LjI2LjE4LDUwLjY2Yy0xLjM4LDguNiw1LjU0LDE2LjU0LDE1LjQ2LDE3Ljc0LDkuOTIsMS4yLDE5LjA4LTQuOCwyMC40Ny0xMy40LDEuOTItMTEuOSw4Ljg1LTE5LjY3LDIwLjA1LTIyLjQ3WiIvPgogICAgICAgIDwvZz4KICAgICAgPC9nPgogICAgPC9nPgogIDwvZz4KPC9zdmc+" alt="Dica" style="height: 1em; width: auto; opacity: 0.7; transition: all 0.3s ease; vertical-align: baseline;" onmouseover="this.style.opacity='1'; this.style.transform='scale(1.1)'" onmouseout="this.style.opacity='0.7'; this.style.transform='scale(1)'">
+                                    <div class="tooltip-text" style="visibility: hidden; width: 250px; background-color: rgba(19, 4, 60, 0.69); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #9B64E3; color: white; text-align: center; border-radius: 10px; padding: 12px; position: absolute; z-index: 1000; bottom: 125%; left: 50%; margin-left: -125px; opacity: 0; transition: opacity 0.3s; font-size: 12px; font-weight: normal; box-shadow: 0 4px 15px rgba(155, 100, 227, 0.3);">
+                                        Use o scroll do mouse sobre horas, minutos ou segundos para ajustar
+                                        <div style="position: absolute; top: 100%; left: 50%; margin-left: -5px; width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 5px solid #9B64E3;"></div>
+                                    </div>
+                                </div>
+                            </label>
+                            <div id="timeInputContainer" style="display: flex; align-items: center; width: 70%; position: relative;">
+                                <input type="text" id="etapaTempoEstimado" name="tempo_estimado" placeholder="00:30:00" pattern="^([0-9]{1,2}):([0-5][0-9]):([0-5][0-9])$" style="width: 100%; padding: 6px; border: 1px solid #9B64E3; border-radius: 4px; background-color: rgba(255, 255, 255, 0.1); color: white; font-family: monospace; font-size: 14px;" oninput="calcularCustoEtapa()" onmousemove="updateTimeHover(event)" onwheel="handleTimeWheel(event)">
+                                <div id="timeHoverIndicator" style="position: absolute; bottom: -2px; height: 2px; background-color: #9B64E3; width: 0; transition: all 0.2s ease; border-radius: 1px;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaDescricao">Descrição:</label>
+                            <textarea id="etapaDescricao" name="descricao" rows="3" style="width: 90%;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaObservacoes">Observações:</label>
+                            <textarea id="etapaObservacoes" name="observacoes" rows="3" style="width: 90%;"></textarea>
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="etapaMaquina">Máquina:</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="custom-select-display" id="etapaMaquina" style="width: calc(85% - 70px); position: relative;">
+                                    <button type="button" style="pointer-events: none; cursor: default;">Selecione uma máquina</button>
+                                    <button type="button" id="clearMaquinaBtn" onclick="limparSelecaoMaquina()" style="display: none; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #9B64E3; cursor: pointer; padding: 4px; border-radius: 3px; font-size: 16px; line-height: 1; width: 20px; height: 20px; align-items: center; justify-content: center;" onmouseover="this.style.backgroundColor='rgba(155, 100, 227, 0.2)'; this.style.color='#D8CEFE'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#9B64E3'" title="Remover seleção">
+                                        &times;
+                                    </button>
+                                </div>
+                                <button type="button" onclick="openMaquinaSelectionModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 8px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaFerramenta">Ferramenta:</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="custom-select-display" id="etapaFerramenta" style="width: calc(85% - 70px); position: relative;">
+                                    <button type="button" style="pointer-events: none; cursor: default;">Selecione uma ferramenta</button>
+                                    <button type="button" id="clearFerramentaBtn" onclick="limparSelecaoFerramenta()" style="display: none; position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #9B64E3; cursor: pointer; padding: 4px; border-radius: 3px; font-size: 16px; line-height: 1; width: 20px; height: 20px; align-items: center; justify-content: center;" onmouseover="this.style.backgroundColor='rgba(155, 100, 227, 0.2)'; this.style.color='#D8CEFE'" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#9B64E3'" title="Remover seleção">
+                                        &times;
+                                    </button>
+                                </div>
+                                <button type="button" onclick="openFerramentaSelectionModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 8px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaMaoObra">Mão de obra:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="etapaMaoObra" style="width: 85%;">
+                                <button type="button" tabindex="0">Selecione o tipo de mão de obra</button>
+                                <div class="dropdown-content">
+                                    <div data-value="operador">Operador</div>
+                                    <div data-value="tecnico">Técnico</div>
+                                    <div data-value="especialista">Especialista</div>
+                                    <div data-value="supervisor">Supervisor</div>
+                                    <div data-value="coordenador">Coordenador</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="etapaCustoPorHora">Custo por Hora:</label>
+                            <input type="text" id="etapaCustoPorHora" name="custo_por_hora" style="width: 70%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Etapa</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Seleção de Máquinas -->
+<div id="maquinaSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content selection-modal" style="max-width: 700px; max-height: 80vh; width: 95%; overflow: hidden;">
+        <span class="close-button" onclick="closeMaquinaSelectionModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Selecionar Máquina</h2>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto; overflow-x: hidden; padding-right: 8px;">
+            <!-- Filtro de busca -->
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="maquinaSearchInput" placeholder="Pesquisar máquina..." style="width: calc(100% - 20px); padding: 10px; border: 1px solid #9B64E3; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; box-sizing: border-box;" oninput="filtrarMaquinas()">
+            </div>
+            
+            <!-- Lista de máquinas -->
+            <div id="maquinasList" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; font-weight: bold; padding: 10px 0; border-bottom: 2px solid #9B64E3; color: white; margin-bottom: 10px; min-width: 0;">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tipo</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Status</div>
+            </div>
+            <div id="maquinasListContent">
+                <!-- Máquinas serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Seleção de Ferramentas -->
+<div id="ferramentaSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content selection-modal" style="max-width: 700px; max-height: 80vh; width: 95%; overflow: hidden;">
+        <span class="close-button" onclick="closeFerramentaSelectionModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Selecionar Ferramenta</h2>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto; overflow-x: hidden; padding-right: 8px;">
+            <!-- Filtro de busca -->
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="ferramentaSearchInput" placeholder="Pesquisar ferramenta..." style="width: calc(100% - 20px); padding: 10px; border: 1px solid #9B64E3; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; box-sizing: border-box;" oninput="filtrarFerramentas()">
+            </div>
+            
+            <!-- Lista de ferramentas -->
+            <div id="ferramentasList" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; font-weight: bold; padding: 10px 0; border-bottom: 2px solid #9B64E3; color: white; margin-bottom: 10px; min-width: 0;">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Nome</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Tipo</div>
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Status</div>
+            </div>
+            <div id="ferramentasListContent">
+                <!-- Ferramentas serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeConfirmationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="confirmationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#FFC107">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M12 8V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="6" stroke-dashoffset="6">
+                    <animate attributeName="stroke-dashoffset" values="6;0" dur="0.3s" begin="0.3s" fill="freeze"/>
+                </path>
+                <circle cx="12" cy="16" r="1" fill="white">
+                    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="0.6s" fill="freeze"/>
+                </circle>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        </div>
+        <h2>Confirmação</h2>
+        <p id="confirmationModalMessage"></p>
+        <div class="modal-buttons" style="display: flex; justify-content: center; gap: 5px;">
+            <button class="btn-secondary" onclick="closeConfirmationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Cancelar</button>
+            <button id="confirmBtn" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'" disabled>Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificação -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeNotificationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="notificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+        <h2 id="notificationModalTitle"></h2>
+        <p id="notificationModalMessage"></p>
+        <div id="notificationDebugInfo" style="display: none; margin-top: 10px; padding: 8px; background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #FF9800;"></div>
+        <button class="btn-primary" onclick="closeNotificationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; margin-top: 15px;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">OK</button>
+    </div>
+</div>
+
+<style>
+    /* Estilos para o dropdown customizado */
+    .custom-select {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .custom-select > button {
+        padding: 10px;
+        background: transparent;
+        border: none;
+        color: white;
+        text-align: left;
+        font-size: 0.9em;
+        width: 100%;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .custom-select > button:after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9B64E3;
+        font-size: 0.8em;
+        pointer-events: none;
+    }
+
+    .custom-select > div {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease-in-out;
+        position: absolute;
+        width: calc(100% - 12px);
+        left: 6px;
+        background-color: rgba(19, 4, 60, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        margin-top: 5px;
+        z-index: 11;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .custom-select:hover > div,
+    .custom-select:focus-within > div {
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .custom-select > div > div {
+        display: block;
+        padding: 10px;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+        transition: background-color 0.2s ease;
+    }
+
+    .custom-select > div > div:hover,
+    .custom-select > div > div:focus {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #D8CEFE);
+    }
+
+    /* Estilos para os campos de exibição apenas (máquina e ferramenta) */
+    .custom-select-display {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        position: relative;
+    }
+
+    .custom-select-display > button {
+        padding: 10px;
+        background: transparent;
+        border: none;
+        color: white;
+        text-align: left;
+        font-size: 0.9em;
+        width: 100%;
+        position: relative;
+    }
+
+    .modal {
+        display: none; /* Oculto por padrão */
+        position: fixed; /* Fica fixo na tela */
+        z-index: 100; /* Fica sobre todos os outros elementos */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto; /* Habilita scroll se necessário */
+        background-color: rgba(0,0,0,0.4); /* Fundo preto com opacidade */
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: rgba(59, 12, 121, 0.29);
+        color: var(--sidebar-text-color, white);
+        margin: 0;
+        padding: 12px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 8px;
+        width: 90%;
+        max-width: 900px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .modal-body {
+        padding: 8px;
+        max-height: none;
+    }
+
+    .close-button {
+        color: var(--sidebar-text-color, white);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--cor-destaque, #D8CEFE);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-content h2 {
+        color: var(--sidebar-text-color, white);
+        margin-top: 0;
+        border-bottom: 1px solid var(--cor-destaque, #9B64E3);
+        padding-bottom: 10px;
+    }
+
+    .modal-content form .form-group {
+        margin-bottom: 8px;
+    }
+
+    .modal-content form label {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 3px;
+        font-weight: bold;
+        color: var(--sidebar-text-color, white);
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"],
+    .modal-content form input[type="number"],
+    .modal-content form textarea {
+        width: calc(100% - 22px);
+        padding: 6px;
+        margin-bottom: 3px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 4px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"]:hover,
+    .modal-content form input[type="number"]:hover,
+    .modal-content form textarea:hover {
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    .modal-content form button[type="submit"] {
+        background-color: rgba(155, 100, 227, 0.1);
+        border: 1px solid #9B64E3;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin-top: 20px;
+    }
+    .modal-content form button[type="submit"]:hover {
+        background-color: #D8CEFE;
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    /* Estilos para os modais de confirmação e notificação */
+    .notification-modal-content {
+        max-width: 400px;
+        text-align: center;
+        padding: 30px;
+    }
+    .notification-modal-content .btn-primary {
+        margin: 0 auto; /* Centraliza o botão OK */
+        display: block; /* Garante que o margin auto funcione */
+    }
+    .notification-modal-content h2 {
+        border-bottom: none;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+    .notification-modal-content p {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+    }
+    .notification-modal-content .btn-primary {
+        margin-top: 0;
+        padding: 10px 20px;
+    }
+    .notification-modal-content.success h2 {
+        color: #4CAF50; /* Verde para sucesso */
+    }
+    .notification-modal-content.error h2 {
+        color: #F44336; /* Vermelho para erro */
+    }
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px auto 0;
+        width: 100%;
+        max-width: 300px;
+    }
+    .modal-buttons button {
+        min-width: 100px;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-buttons button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    /* Estilos para a lista de etapas */
+    .etapas-item {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1.5fr 1fr 1fr 1fr 1fr 0.8fr;
+        gap: 15px;
+        padding: 12px 20px;
+        margin: 8px 0;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        align-items: center;
+        background-color: var(--order-card-bg);
+    }
+
+    .etapas-item:hover {
+        background-color: var(--order-card-hover-bg);
+    }
+
+    .etapas-actions {
+        display: flex;
+        gap: 5px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+        color: var(--action-icon-color);
+        position: relative;
+    }
+
+    .action-btn:hover {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #9B64E3);
+    }
+
+    .action-btn[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 5px;
+    }
+
+    :root {
+        --action-icon-color: #9B64E3;
+        --order-card-hover-bg: rgba(155, 100, 227, 0.1);
+    }
+
+    /* Estilos para o tooltip */
+    .tooltip-container:hover .tooltip-text {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .tooltip-text {
+        pointer-events: none;
+    }
+</style>
+
+<script>
+function formatarMoeda(input) {
+    let valor = input.value.replace(/\D/g, '');
+    valor = (valor/100).toFixed(2);
+    valor = valor.replace('.', ',');
+    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    input.value = valor.length > 0 ? `R$ ${valor}` : '';
+}
+
+function openEtapaModal() {
+    document.getElementById('etapaModal').style.display = 'block';
+}
+
+function closeEtapaModal() {
+    document.getElementById('etapaModal').style.display = 'none';
+    document.getElementById('etapaForm').reset();
+    
+    // Resetar variável global da máquina
+    maquinaSelecionada = null;
+    
+    // Resetar os dropdowns customizados
+    const maquinaDropdown = document.getElementById('etapaMaquina');
+    const maquinaButton = maquinaDropdown.querySelector('button');
+    const clearMaquinaBtn = document.getElementById('clearMaquinaBtn');
+    if (maquinaButton) {
+        maquinaButton.textContent = 'Selecione uma máquina';
+        maquinaButton.removeAttribute('data-selected');
+    }
+    if (clearMaquinaBtn) {
+        clearMaquinaBtn.style.display = 'none';
+    }
+    
+    const ferramentaDropdown = document.getElementById('etapaFerramenta');
+    const ferramentaButton = ferramentaDropdown.querySelector('button');
+    const clearFerramentaBtn = document.getElementById('clearFerramentaBtn');
+    if (ferramentaButton) {
+        ferramentaButton.textContent = 'Selecione uma ferramenta';
+        ferramentaButton.removeAttribute('data-selected');
+    }
+    if (clearFerramentaBtn) {
+        clearFerramentaBtn.style.display = 'none';
+    }
+    
+    // Resetar dropdown de mão de obra
+    const maoObraDropdown = document.getElementById('etapaMaoObra');
+    const maoObraButton = maoObraDropdown.querySelector('button');
+    if (maoObraButton) {
+        maoObraButton.textContent = 'Selecione o tipo de mão de obra';
+        maoObraButton.removeAttribute('data-selected');
+    }
+    
+    // Limpar campo de custo
+    const custoInput = document.getElementById('etapaCustoPorHora');
+    custoInput.value = '';
+}
+
+
+async function carregarListaEtapas() {
+    try {
+        const response = await fetch('/api/etapas_confeccao');
+        const result = await response.json();
+
+        if (response.ok) {
+            const etapasListDiv = document.querySelector('.etapas-list');
+            etapasListDiv.innerHTML = '';
+
+            if (result.status === 'success' && result.etapas && result.etapas.length > 0) {
+                result.etapas.forEach(etapa => {
+                    const etapaItem = document.createElement('div');
+                    etapaItem.classList.add('etapas-item');
+                    
+                    const custoFormatado = etapa.custo_por_hora ? 
+                        `R$ ${parseFloat(etapa.custo_por_hora).toFixed(2).replace('.', ',')}` : 
+                        'R$ 0,00';
+                    
+                    etapaItem.innerHTML = `
+                        <div>${etapa.nome}</div>
+                        <div>${etapa.tempo_estimado || '-'}</div>
+                        <div>${etapa.descricao || '-'}</div>
+                        <div>${etapa.maquina_nome || '-'}</div>
+                        <div>${etapa.ferramenta_nome || '-'}</div>
+                        <div>${etapa.mao_obra || '-'}</div>
+                        <div>${custoFormatado}</div>
+                        <div class="etapas-actions">
+                            <button class="action-btn" data-tooltip="Editar" onclick="editarEtapa(${etapa.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                                    <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                                </svg>
+                            </button>
+                            <button class="action-btn" data-tooltip="Excluir" onclick="excluirEtapa(${etapa.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    etapasListDiv.appendChild(etapaItem);
+                });
+            } else {
+                etapasListDiv.innerHTML = '<div style="text-align: center; padding: 20px; color: var(--text-color);">Nenhuma etapa cadastrada.</div>';
+            }
+        } else {
+            console.error('Erro ao carregar etapas:', result.message);
+            showNotification('error', 'Erro ao carregar etapas: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar etapas:', error);
+        showNotification('error', 'Erro ao carregar etapas. Por favor, tente novamente.');
+    }
+}
+
+async function salvarEtapa(event) {
+    event.preventDefault();
+    
+    const form = event.target;
+    const formData = new FormData(form);
+    
+    // Obter valores dos dropdowns customizados
+    const maquinaButton = document.querySelector('#etapaMaquina button');
+    const ferramentaButton = document.querySelector('#etapaFerramenta button');
+    const maoObraButton = document.querySelector('#etapaMaoObra button');
+    
+    const maquinaId = maquinaButton.getAttribute('data-selected');
+    const ferramentaId = ferramentaButton.getAttribute('data-selected');
+    const maoObra = maoObraButton.getAttribute('data-selected');
+    
+    // Converter FormData para objeto
+    const etapaData = {};
+    for (let [key, value] of formData.entries()) {
+        etapaData[key] = value;
+    }
+    
+    // Adicionar IDs das seleções
+    if (maquinaId) etapaData.maquina_id = maquinaId;
+    if (ferramentaId) etapaData.ferramenta_id = ferramentaId;
+    if (maoObra) etapaData.mao_obra = maoObra;
+    
+    // Validações
+    if (!etapaData.nome) {
+        showNotification('error', 'Por favor, preencha o nome da etapa.');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/etapas_confeccao', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(etapaData)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            showNotification('success', 'Etapa cadastrada com sucesso!');
+            closeEtapaModal();
+            carregarListaEtapas();
+        } else {
+            showNotification('error', 'Erro ao cadastrar etapa: ' + result.message);
+        }
+    } catch (error) {
+        console.error('Erro ao salvar etapa:', error);
+        showNotification('error', 'Erro ao cadastrar etapa. Por favor, tente novamente.');
+    }
+}
+
+async function editarEtapa(id) {
+    // Implementar a lógica de edição
+    console.log('Editar etapa:', id);
+}
+
+function excluirEtapa(id) {
+    showConfirmationModal('Tem certeza que deseja excluir esta etapa?', async () => {
+        try {
+            const response = await fetch(`/api/etapas_confeccao/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            
+            if (response.ok) {
+                showNotification('success', 'Etapa excluída com sucesso!');
+                carregarListaEtapas();
+            } else {
+                showNotification('error', 'Erro ao excluir etapa: ' + result.message);
+            }
+        } catch (error) {
+            console.error('Erro:', error);
+            showNotification('error', 'Erro ao excluir etapa. Por favor, tente novamente.');
+        }
+    });
+}
+
+// Funções para os modais de seleção
+function openMaquinaSelectionModal() {
+    document.getElementById('maquinaSelectionModal').style.display = 'block';
+    carregarMaquinasParaSelecao();
+}
+
+function closeMaquinaSelectionModal() {
+    document.getElementById('maquinaSelectionModal').style.display = 'none';
+}
+
+function openFerramentaSelectionModal() {
+    document.getElementById('ferramentaSelectionModal').style.display = 'block';
+    carregarFerramentasParaSelecao();
+}
+
+function closeFerramentaSelectionModal() {
+    document.getElementById('ferramentaSelectionModal').style.display = 'none';
+}
+
+async function carregarMaquinasParaSelecao() {
+    try {
+        const response = await fetch('/api/maquinas');
+        const data = await response.json();
+        
+        const container = document.getElementById('maquinasListContent');
+        container.innerHTML = '';
+        
+        if (data.status === 'success' && data.machines && data.machines.length > 0) {
+            data.machines.forEach(maquina => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(155, 100, 227, 0.2); align-items: center; transition: all 0.3s ease; cursor: pointer; border-radius: 4px; min-width: 0;';
+                row.className = 'maquina-row';
+                
+                row.innerHTML = `
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${maquina.nome}</div>
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${maquina.tipo || '-'}</div>
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${maquina.status || '-'}</div>
+                `;
+                
+                row.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = 'rgba(155, 100, 227, 0.2)';
+                });
+                
+                row.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = '';
+                });
+                
+                row.addEventListener('click', function() {
+                    selecionarMaquina(maquina.id, maquina.nome);
+                });
+                
+                container.appendChild(row);
+            });
+        } else {
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Nenhuma máquina encontrada</div>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar máquinas:', error);
+        document.getElementById('maquinasListContent').innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Erro ao carregar máquinas</div>';
+    }
+}
+
+async function carregarFerramentasParaSelecao() {
+    try {
+        const response = await fetch('/api/ferramentas');
+        const data = await response.json();
+        
+        const container = document.getElementById('ferramentasListContent');
+        container.innerHTML = '';
+        
+        if (data.status === 'success' && data.ferramentas && data.ferramentas.length > 0) {
+            data.ferramentas.forEach(ferramenta => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(155, 100, 227, 0.2); align-items: center; transition: all 0.3s ease; cursor: pointer; border-radius: 4px; min-width: 0;';
+                row.className = 'ferramenta-row';
+                
+                row.innerHTML = `
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ferramenta.nome}</div>
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ferramenta.tipo || '-'}</div>
+                    <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ferramenta.status || '-'}</div>
+                `;
+                
+                row.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = 'rgba(155, 100, 227, 0.2)';
+                });
+                
+                row.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = '';
+                });
+                
+                row.addEventListener('click', function() {
+                    selecionarFerramenta(ferramenta.id, ferramenta.nome);
+                });
+                
+                container.appendChild(row);
+            });
+        } else {
+            container.innerHTML = '<div style="text-align: center; padding: 20px; color: white;">Nenhuma ferramenta encontrada</div>';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar ferramentas:', error);
+        document.getElementById('ferramentasListContent').innerHTML = '<div style="text-align: center; padding: 20px; color: red;">Erro ao carregar ferramentas</div>';
+    }
+}
+
+function selecionarMaquina(id, nome) {
+    const maquinaButton = document.querySelector('#etapaMaquina button');
+    const clearMaquinaBtn = document.getElementById('clearMaquinaBtn');
+    
+    maquinaButton.textContent = nome;
+    maquinaButton.setAttribute('data-selected', id);
+    
+    // Mostrar botão X quando houver seleção
+    clearMaquinaBtn.style.display = 'flex';
+    
+    // Buscar dados completos da máquina para obter o valor hora/máquina
+    buscarDadosMaquina(id);
+    
+    closeMaquinaSelectionModal();
+    showNotification('success', `Máquina "${nome}" selecionada!`);
+}
+
+function selecionarFerramenta(id, nome) {
+    const ferramentaButton = document.querySelector('#etapaFerramenta button');
+    const clearFerramentaBtn = document.getElementById('clearFerramentaBtn');
+    
+    ferramentaButton.textContent = nome;
+    ferramentaButton.setAttribute('data-selected', id);
+    
+    // Mostrar botão X quando houver seleção
+    clearFerramentaBtn.style.display = 'flex';
+    
+    closeFerramentaSelectionModal();
+    showNotification('success', `Ferramenta "${nome}" selecionada!`);
+}
+
+// Função para limpar seleção de máquina
+function limparSelecaoMaquina() {
+    const maquinaButton = document.querySelector('#etapaMaquina button');
+    const clearMaquinaBtn = document.getElementById('clearMaquinaBtn');
+    
+    maquinaButton.textContent = 'Selecione uma máquina';
+    maquinaButton.removeAttribute('data-selected');
+    
+    // Esconder botão X
+    clearMaquinaBtn.style.display = 'none';
+    
+    // Limpar dados da máquina selecionada
+    maquinaSelecionada = null;
+    
+    // Limpar campo de custo
+    const custoInput = document.getElementById('etapaCustoPorHora');
+    custoInput.value = '';
+    
+    showNotification('success', 'Seleção de máquina removida!');
+}
+
+// Função para limpar seleção de ferramenta
+function limparSelecaoFerramenta() {
+    const ferramentaButton = document.querySelector('#etapaFerramenta button');
+    const clearFerramentaBtn = document.getElementById('clearFerramentaBtn');
+    
+    ferramentaButton.textContent = 'Selecione uma ferramenta';
+    ferramentaButton.removeAttribute('data-selected');
+    
+    // Esconder botão X
+    clearFerramentaBtn.style.display = 'none';
+    
+    showNotification('success', 'Seleção de ferramenta removida!');
+}
+
+function filtrarMaquinas() {
+    const searchText = document.getElementById('maquinaSearchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.maquina-row');
+    
+    rows.forEach(row => {
+        const nome = row.children[0].textContent.toLowerCase();
+        const tipo = row.children[1].textContent.toLowerCase();
+        
+        if (nome.includes(searchText) || tipo.includes(searchText)) {
+            row.style.display = 'grid';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+function filtrarFerramentas() {
+    const searchText = document.getElementById('ferramentaSearchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.ferramenta-row');
+    
+    rows.forEach(row => {
+        const nome = row.children[0].textContent.toLowerCase();
+        const tipo = row.children[1].textContent.toLowerCase();
+        
+        if (nome.includes(searchText) || tipo.includes(searchText)) {
+            row.style.display = 'grid';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Função para mostrar o modal de confirmação
+let confirmationTimer = null;
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const msg = document.getElementById('confirmationModalMessage');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa qualquer timer existente
+    if (confirmationTimer) {
+        clearInterval(confirmationTimer);
+    }
+    
+    msg.textContent = message;
+    modal.style.display = 'block';
+    
+    // Remove qualquer onclick existente e desabilita o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    let secondsLeft = 5;
+    confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+    
+    // Inicia o contador
+    confirmationTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(confirmationTimer);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirmar';
+            
+            // Só adiciona o onclick depois do tempo
+            confirmBtn.onclick = function() {
+                closeConfirmationModal();
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            };
+        } else {
+            confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+        }
+    }, 1000);
+}
+
+// Função para fechar o modal de confirmação
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa o timer e reseta o botão
+    if (confirmationTimer) {
+        clearInterval(confirmationTimer);
+        confirmationTimer = null;
+    }
+    
+    // Remove o onclick e reseta o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirmar';
+    
+    modal.style.display = 'none';
+}
+
+// Função para mostrar notificações
+function showNotification(type, message, errorCode = null) {
+    const iconContainer = document.getElementById('notificationIcon');
+    
+    if (type === 'success') {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    } else {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F44336">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                </path>
+                <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    }
+    
+    const modal = document.getElementById('notificationModal');
+    const title = document.getElementById('notificationModalTitle');
+    const msg = document.getElementById('notificationModalMessage');
+    const content = modal.querySelector('.notification-modal-content');
+    const debugContainer = document.getElementById('notificationDebugInfo');
+    
+    title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+    msg.textContent = message;
+    content.className = 'modal-content notification-modal-content ' + type;
+    
+    // Exibir informações de debug se houver um código de erro
+    if (errorCode && debugContainer) {
+        debugContainer.textContent = `Código de erro: ${errorCode}`;
+        debugContainer.style.display = 'block';
+    } else if (debugContainer) {
+        debugContainer.style.display = 'none';
+    }
+    
+    modal.style.display = 'block';
+}
+
+// Função para fechar o modal de notificação
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+
+// Variável global para armazenar dados da máquina selecionada
+let maquinaSelecionada = null;
+
+// Função para buscar dados completos da máquina
+async function buscarDadosMaquina(maquinaId) {
+    try {
+        const response = await fetch(`/api/maquinas/${maquinaId}`);
+        const data = await response.json();
+        
+        if (data.status === 'success' && data.machine) {
+            maquinaSelecionada = data.machine;
+            calcularCustoEtapa();
+        } else {
+            console.error('Erro ao buscar dados da máquina:', data.message);
+        }
+    } catch (error) {
+        console.error('Erro ao buscar dados da máquina:', error);
+    }
+}
+
+// Função para converter tempo HH:MM:SS para horas decimais
+function converterTempoParaHoras(tempoString) {
+    if (!tempoString) return 0;
+    
+    const partes = tempoString.split(':');
+    if (partes.length !== 3) return 0;
+    
+    const horas = parseInt(partes[0]) || 0;
+    const minutos = parseInt(partes[1]) || 0;
+    const segundos = parseInt(partes[2]) || 0;
+    
+    return horas + (minutos / 60) + (segundos / 3600);
+}
+
+// Função para calcular o custo da etapa baseado no tempo e valor hora/máquina
+function calcularCustoEtapa() {
+    if (!maquinaSelecionada || !maquinaSelecionada.hora_maquina) {
+        return;
+    }
+    
+    const tempoEstimado = document.getElementById('etapaTempoEstimado').value;
+    if (!tempoEstimado) {
+        return;
+    }
+    
+    // Converter tempo para horas decimais
+    const horasDecimais = converterTempoParaHoras(tempoEstimado);
+    
+    // Calcular custo total
+    const valorHoraMaquina = parseFloat(maquinaSelecionada.hora_maquina);
+    const custoTotal = horasDecimais * valorHoraMaquina;
+    
+    // Atualizar campo de custo
+    const custoInput = document.getElementById('etapaCustoPorHora');
+    const custoFormatado = custoTotal.toFixed(2).replace('.', ',');
+    custoInput.value = `R$ ${custoFormatado}`;
+    
+    console.log(`Cálculo: ${horasDecimais}h × R$ ${valorHoraMaquina}/h = R$ ${custoFormatado}`);
+}
+
+// Configurar dropdowns
+function configurarDropdowns() {
+    document.querySelectorAll('.dropdown').forEach(dropdown => {
+        const button = dropdown.querySelector('button');
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        
+        button.addEventListener('click', function() {
+            dropdownContent.style.display = dropdownContent.style.display === 'block' ? 'none' : 'block';
+        });
+        
+        dropdownContent.addEventListener('click', function(e) {
+            if (e.target.tagName === 'DIV') {
+                button.textContent = e.target.textContent;
+                button.setAttribute('data-selected', e.target.getAttribute('data-value'));
+                dropdownContent.style.display = 'none';
+            }
+        });
+    });
+    
+    // Fechar dropdowns ao clicar fora
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.style.display = 'none';
+            });
+        }
+    });
+}
+
+// Fechar modal ao clicar fora
+window.onclick = function(event) {
+    const etapaModal = document.getElementById('etapaModal');
+    const confirmationModal = document.getElementById('confirmationModal');
+    const notificationModal = document.getElementById('notificationModal');
+    const maquinaModal = document.getElementById('maquinaSelectionModal');
+    const ferramentaModal = document.getElementById('ferramentaSelectionModal');
+    
+    if (event.target == etapaModal) {
+        closeEtapaModal();
+    } else if (event.target == confirmationModal) {
+        closeConfirmationModal();
+    } else if (event.target == notificationModal) {
+        closeNotificationModal();
+    } else if (event.target == maquinaModal) {
+        closeMaquinaSelectionModal();
+    } else if (event.target == ferramentaModal) {
+        closeFerramentaSelectionModal();
+    }
+};
+
+// Funções para controle de tempo com scroll do mouse
+function updateTimeHover(event) {
+    const input = event.target;
+    const rect = input.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const indicator = document.getElementById('timeHoverIndicator');
+    
+    // Criar um elemento temporário para medir o texto
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Obter o estilo computado do input
+    const computedStyle = window.getComputedStyle(input);
+    ctx.font = `${computedStyle.fontSize} ${computedStyle.fontFamily}`;
+    
+    // Valor atual do input ou valor padrão
+    const currentValue = input.value || '00:00:00';
+    
+    // Calcular larguras dos caracteres individuais
+    const paddingLeft = parseFloat(computedStyle.paddingLeft) || 0;
+    
+    // Medir largura de cada parte do tempo
+    const hoursWidth = ctx.measureText('00').width;
+    const colonWidth = ctx.measureText(':').width;
+    const minutesWidth = ctx.measureText('00').width;
+    const secondsWidth = ctx.measureText('00').width;
+    
+    // Calcular posições absolutas de cada seção
+    const hoursStart = paddingLeft;
+    const hoursEnd = hoursStart + hoursWidth;
+    
+    const firstColonStart = hoursEnd;
+    const firstColonEnd = firstColonStart + colonWidth;
+    
+    const minutesStart = firstColonEnd;
+    const minutesEnd = minutesStart + minutesWidth;
+    
+    const secondColonStart = minutesEnd;
+    const secondColonEnd = secondColonStart + colonWidth;
+    
+    const secondsStart = secondColonEnd;
+    const secondsEnd = secondsStart + secondsWidth;
+    
+    // Determinar qual seção está sendo apontada
+    let section = '';
+    let indicatorPos = 0;
+    let indicatorWidth = 0;
+    
+    if (x >= hoursStart && x <= hoursEnd) {
+        // Cursor sobre as horas
+        section = 'hours';
+        indicatorPos = hoursStart;
+        indicatorWidth = hoursWidth;
+    } else if (x >= minutesStart && x <= minutesEnd) {
+        // Cursor sobre os minutos
+        section = 'minutes';
+        indicatorPos = minutesStart;
+        indicatorWidth = minutesWidth;
+    } else if (x >= secondsStart && x <= secondsEnd) {
+        // Cursor sobre os segundos
+        section = 'seconds';
+        indicatorPos = secondsStart;
+        indicatorWidth = secondsWidth;
+    } else {
+        // Cursor fora das áreas de números
+        section = '';
+        indicatorWidth = 0;
+    }
+    
+    // Atualizar indicador visual
+    indicator.style.left = indicatorPos + 'px';
+    indicator.style.width = indicatorWidth + 'px';
+    
+    // Armazenar seção atual para uso no scroll
+    input.dataset.currentSection = section;
+}
+
+function handleTimeWheel(event) {
+    event.preventDefault();
+    
+    const input = event.target;
+    const section = input.dataset.currentSection;
+    
+    if (!section) return;
+    
+    let currentValue = input.value || '00:00:00';
+    
+    // Garantir formato correto
+    if (!/^\d{2}:\d{2}:\d{2}$/.test(currentValue)) {
+        currentValue = '00:00:00';
+    }
+    
+    const parts = currentValue.split(':');
+    let hours = parseInt(parts[0]);
+    let minutes = parseInt(parts[1]);
+    let seconds = parseInt(parts[2]);
+    
+    // Determinar direção do scroll (positivo = para cima, negativo = para baixo)
+    const delta = Math.sign(event.deltaY) * -1;
+    
+    // Ajustar valores baseado na seção
+    switch (section) {
+        case 'hours':
+            hours = Math.max(0, Math.min(99, hours + delta));
+            break;
+        case 'minutes':
+            minutes += delta;
+            if (minutes >= 60) {
+                minutes = 0;
+                hours = Math.min(99, hours + 1);
+            } else if (minutes < 0) {
+                minutes = 59;
+                hours = Math.max(0, hours - 1);
+            }
+            break;
+        case 'seconds':
+            seconds += delta;
+            if (seconds >= 60) {
+                seconds = 0;
+                minutes++;
+                if (minutes >= 60) {
+                    minutes = 0;
+                    hours = Math.min(99, hours + 1);
+                }
+            } else if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours = Math.max(0, hours - 1);
+                }
+            }
+            break;
+    }
+    
+    // Formatar e atualizar valor
+    const newValue = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    input.value = newValue;
+    
+    // Disparar evento de input para recalcular custo
+    calcularCustoEtapa();
+    
+    // Feedback visual
+    input.style.boxShadow = '0 0 10px rgba(155, 100, 227, 0.8)';
+    setTimeout(() => {
+        input.style.boxShadow = '';
+    }, 150);
+}
+
+// Variável global para controlar se já foi inicializado
+let etapasPageInitialized = false;
+
+// Função de inicialização principal (compatível com carregamento dinâmico)
+function initializeEtapasPage() {
+    // Verificar se já foi inicializado para evitar duplicação
+    if (etapasPageInitialized) {
+        console.log('⚠️  Página de etapas já inicializada, pulando...');
+        return;
+    }
+    
+    console.log('🚀 Inicializando página de etapas...');
+    
+    // Aguardar um pequeno delay para garantir que o DOM esteja pronto
+    setTimeout(() => {
+        // Configurar event listener no formulário com tratamento robusto
+        const etapaForm = document.getElementById('etapaForm');
+        if (etapaForm) {
+            // Verificar se já tem listener (via propriedade customizada)
+            if (etapaForm._hasEtapaListener) {
+                console.log('⚠️  Event listener já existe no formulário, pulando...');
+            } else {
+                // Adicionar novo listener
+                const submitHandler = function(e) {
+                    console.log('📝 Formulário submetido - prevenindo submissão HTML');
+                    e.preventDefault(); // CRÍTICO: Prevenir submissão HTML
+                    e.stopPropagation(); // Impedir propagação
+                    salvarEtapa(e);
+                };
+                
+                etapaForm.addEventListener('submit', submitHandler);
+                etapaForm._hasEtapaListener = true; // Marcar como configurado
+                etapaForm._submitHandler = submitHandler; // Guardar referência para remoção futura
+                
+                console.log('✅ Event listener configurado para o formulário etapaForm');
+            }
+        } else {
+            console.error('❌ Formulário etapaForm não encontrado!');
+        }
+        
+        // Configurar dropdowns
+        configurarDropdowns();
+        
+        // Carregar lista de etapas
+        carregarListaEtapas();
+        
+        // Inicializar campo de tempo com valor padrão
+        const timeInput = document.getElementById('etapaTempoEstimado');
+        if (timeInput && !timeInput.value) {
+            timeInput.value = '00:30:00';
+        }
+        
+        // Marcar como inicializado
+        etapasPageInitialized = true;
+        
+        console.log('✅ Página de etapas inicializada com sucesso');
+        
+    }, 100);
+}
+
+// Função para limpar inicialização (útil quando a página é descarregada)
+function cleanupEtapasPage() {
+    const etapaForm = document.getElementById('etapaForm');
+    if (etapaForm && etapaForm._submitHandler) {
+        etapaForm.removeEventListener('submit', etapaForm._submitHandler);
+        etapaForm._hasEtapaListener = false;
+        etapaForm._submitHandler = null;
+        console.log('🧹 Event listeners removidos do formulário');
+    }
+    etapasPageInitialized = false;
+}
+
+// Inicializar quando o DOM estiver pronto (para carregamento direto)
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeEtapasPage);
+} else {
+    // DOM já está pronto, inicializar imediatamente
+    initializeEtapasPage();
+}
+
+// Função global para reinicialização (para carregamento dinâmico)
+window.initializeEtapasScripts = function() {
+    console.log('🔄 Solicitação de reinicialização de scripts de etapas...');
+    
+    // Se já foi inicializado, apenas verificar se tudo está ok
+    if (etapasPageInitialized) {
+        const etapaForm = document.getElementById('etapaForm');
+        if (etapaForm && etapaForm._hasEtapaListener) {
+            console.log('✅ Scripts de etapas já estão ativos e funcionando');
+            return;
+        } else {
+            console.log('⚠️  Detectado problema na inicialização, resetando...');
+            etapasPageInitialized = false;
+        }
+    }
+    
+    initializeEtapasPage();
+};
+
+// Tornar funções disponíveis globalmente
+window.initializeEtapasPage = initializeEtapasPage;
+window.cleanupEtapasPage = cleanupEtapasPage;
+</script>
+</div>

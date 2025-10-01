@@ -1,0 +1,1 @@
+web: gunicorn flask_gui:app --bind 0.0.0.0:$PORT --workers 1 --timeout 300

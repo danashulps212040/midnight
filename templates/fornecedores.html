@@ -1,0 +1,994 @@
+<div class="module-header" style="padding: 90px 20px 20px 20px; font-size: 14px;">
+<link rel="stylesheet" href="/static/css/custom-scrollbar.css">
+  <h1>Fornecedores</h1>
+  
+<!-- Filtros e busca de fornecedores -->
+<div class="search-filters" style="margin-bottom: 20px; padding: 15px; background-color: rgba(19, 4, 60, 0.69); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #9B64E3; border-radius: 10px;">
+    <div class="search-container" style="display: flex; margin-bottom: 15px;">
+        <input type="text" id="searchSupplier" placeholder="Pesquisar fornecedor..." style="flex: 1; padding: 10px; border: 0.2px solid #9B64E3; border-radius: 5px 0 0 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+        <button type="button" id="searchButton" style="padding: 10px 15px; background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9b63e3; border-left: none; border-radius: 0 5px 5px 0; color: white; cursor: pointer;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+            <i class="search-icon">&#128269;</i>
+        </button>
+    </div>
+</div>
+
+<!-- Botões de ação -->
+<div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+    <button class="btn-primary btn-incluir-fornecedor" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="openSupplierModal()">Incluir Fornecedor</button>
+    <button class="btn-primary btn-relatorio-fornecedores" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="gerarRelatorioFornecedores()">Relatório</button>
+</div>
+
+<!-- Container da lista de fornecedores -->
+<div class="fornecedores-list-container" style="background-color: var(--order-card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    <div class="fornecedores-list-header" style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1fr 1fr 1.5fr 1fr 0.8fr; gap: 15px; font-weight: bold; padding: 15px 20px; border-bottom: 2px solid var(--cor-destaque, #9B64E3); color: var(--column-title-text);">
+        <div>Nome</div>
+        <div>CNPJ/CPF</div>
+        <div>Telefone</div>
+        <div>Cidade</div>
+        <div>Estado</div>
+        <div>Email</div>
+        <div>Categoria Produtos</div>
+        <div>Status</div>
+        <div>Ações</div>
+    </div>
+    <div class="fornecedores-list" style="margin-top: 10px;">
+        <!-- Dados dos fornecedores serão carregados dinamicamente aqui -->
+    </div>
+</div>
+
+<!-- Modal para Adicionar Fornecedor -->
+<div id="supplierModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeSupplierModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Incluir Novo Fornecedor</h2>
+        <div class="modal-body">
+            <form id="supplierForm">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="supplierName">Nome/Razão Social:</label>
+                            <input type="text" id="supplierName" name="supplierName" required style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierCNPJ">CNPJ/CPF:</label>
+                            <input type="text" id="supplierCNPJ" name="supplierCNPJ" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierPhone">Telefone:</label>
+                            <input type="text" id="supplierPhone" name="supplierPhone" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierEmail">Email:</label>
+                            <input type="email" id="supplierEmail" name="supplierEmail" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierWebsite">Website:</label>
+                            <input type="url" id="supplierWebsite" name="supplierWebsite" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierCategory">Categoria de Produtos:</label>
+                            <input type="text" id="supplierCategory" name="supplierCategory" style="width: 90%;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="supplierCEP">CEP:</label>
+                            <input type="text" id="supplierCEP" name="supplierCEP" style="width: 50%;" oninput="buscarEnderecoPorCEP(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierAddress">Endereço:</label>
+                            <input type="text" id="supplierAddress" name="supplierAddress" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierCity">Cidade:</label>
+                            <input type="text" id="supplierCity" name="supplierCity" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierState">Estado:</label>
+                            <input type="text" id="supplierState" name="supplierState" style="width: 30%;" maxlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierContactName">Nome do Contato:</label>
+                            <input type="text" id="supplierContactName" name="supplierContactName" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierContactPhone">Telefone do Contato:</label>
+                            <input type="text" id="supplierContactPhone" name="supplierContactPhone" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierContactEmail">Email do Contato:</label>
+                            <input type="email" id="supplierContactEmail" name="supplierContactEmail" style="width: 90%;">
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 30px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="supplierDeliveryTime">Prazo de Entrega:</label>
+                            <input type="text" id="supplierDeliveryTime" name="supplierDeliveryTime" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="supplierPaymentTerms">Condições de Pagamento:</label>
+                            <input type="text" id="supplierPaymentTerms" name="supplierPaymentTerms" style="width: 90%;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="supplierObservations">Observações:</label>
+                            <textarea id="supplierObservations" name="supplierObservations" rows="3" style="width: calc(100% - 22px);"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Fornecedor</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Fornecedor -->
+<div id="editSupplierModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeEditSupplierModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Editar Fornecedor</h2>
+        <div class="modal-body">
+            <form id="editSupplierForm">
+                <input type="hidden" id="editSupplierId" name="editSupplierId">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="editSupplierName">Nome/Razão Social:</label>
+                            <input type="text" id="editSupplierName" name="supplierName" required style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierCNPJ">CNPJ/CPF:</label>
+                            <input type="text" id="editSupplierCNPJ" name="supplierCNPJ" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierPhone">Telefone:</label>
+                            <input type="text" id="editSupplierPhone" name="supplierPhone" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierEmail">Email:</label>
+                            <input type="email" id="editSupplierEmail" name="supplierEmail" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierWebsite">Website:</label>
+                            <input type="url" id="editSupplierWebsite" name="supplierWebsite" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierCategory">Categoria de Produtos:</label>
+                            <input type="text" id="editSupplierCategory" name="supplierCategory" style="width: 90%;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="editSupplierCEP">CEP:</label>
+                            <input type="text" id="editSupplierCEP" name="supplierCEP" style="width: 50%;" oninput="buscarEnderecoPorCEP(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierAddress">Endereço:</label>
+                            <input type="text" id="editSupplierAddress" name="supplierAddress" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierCity">Cidade:</label>
+                            <input type="text" id="editSupplierCity" name="supplierCity" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierState">Estado:</label>
+                            <input type="text" id="editSupplierState" name="supplierState" style="width: 30%;" maxlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierContactName">Nome do Contato:</label>
+                            <input type="text" id="editSupplierContactName" name="supplierContactName" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierContactPhone">Telefone do Contato:</label>
+                            <input type="text" id="editSupplierContactPhone" name="supplierContactPhone" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierContactEmail">Email do Contato:</label>
+                            <input type="email" id="editSupplierContactEmail" name="supplierContactEmail" style="width: 90%;">
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 30px; margin-top: 15px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="editSupplierDeliveryTime">Prazo de Entrega:</label>
+                            <input type="text" id="editSupplierDeliveryTime" name="supplierDeliveryTime" style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSupplierPaymentTerms">Condições de Pagamento:</label>
+                            <input type="text" id="editSupplierPaymentTerms" name="supplierPaymentTerms" style="width: 90%;">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="editSupplierObservations">Observações:</label>
+                            <textarea id="editSupplierObservations" name="supplierObservations" rows="3" style="width: calc(100% - 22px);"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Atualizar Fornecedor</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeConfirmationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="confirmationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#FFC107">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M12 8V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="6" stroke-dashoffset="6">
+                    <animate attributeName="stroke-dashoffset" values="6;0" dur="0.3s" begin="0.3s" fill="freeze"/>
+                </path>
+                <circle cx="12" cy="16" r="1" fill="white">
+                    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="0.6s" fill="freeze"/>
+                </circle>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        </div>
+        <h2>Confirmação</h2>
+        <p id="confirmationModalMessage"></p>
+        <div class="modal-buttons">
+            <button class="btn-secondary" onclick="closeConfirmationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Cancelar</button>
+            <button id="confirmBtn" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificação -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeNotificationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="notificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+        <h2 id="notificationModalTitle"></h2>
+        <p id="notificationModalMessage"></p>
+        <button class="btn-primary" onclick="closeNotificationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; margin-top: 15px;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">OK</button>
+    </div>
+</div>
+
+<style>
+    /* Estilos para modais */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: rgba(59, 12, 121, 0.29);
+        color: var(--sidebar-text-color, white);
+        margin: 0;
+        padding: 25px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 10px;
+        width: 80%;
+        max-width: 700px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .modal-body {
+        padding: 20px;
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .close-button {
+        color: var(--sidebar-text-color, white);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--cor-destaque, #D8CEFE);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-content h2 {
+        color: var(--sidebar-text-color, white);
+        margin-top: 0;
+        border-bottom: 1px solid var(--cor-destaque, #9B64E3);
+        padding-bottom: 10px;
+    }
+
+    .modal-content form .form-group {
+        margin-bottom: 15px;
+    }
+
+    .modal-content form label {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: var(--sidebar-text-color, white);
+    }
+
+    .modal-content form input[type="text"],
+    .modal-content form input[type="number"],
+    .modal-content form input[type="email"],
+    .modal-content form input[type="url"],
+    .modal-content form input[type="password"],
+    .modal-content form input[type="date"],
+    .modal-content form select,
+    .modal-content form textarea {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 5px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .modal-content form input[type="text"]:hover,
+    .modal-content form input[type="number"]:hover,
+    .modal-content form input[type="email"]:hover,
+    .modal-content form input[type="url"]:hover,
+    .modal-content form input[type="password"]:hover,
+    .modal-content form input[type="date"]:hover,
+    .modal-content form select:hover,
+    .modal-content form textarea:hover {
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    .notification-modal-content {
+        max-width: 400px;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .notification-modal-content .btn-primary {
+        margin: 0 auto;
+        display: block;
+    }
+
+    .notification-modal-content h2 {
+        border-bottom: none;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+
+    .notification-modal-content.success h2 {
+        color: #4CAF50;
+    }
+
+    .notification-modal-content.error h2 {
+        color: #F44336;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px auto 0;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .modal-buttons button {
+        min-width: 100px;
+        transition: all 0.3s ease;
+    }
+
+    .modal-buttons button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Estilos para a lista de fornecedores */
+    .user-item {
+        background-color: var(--order-card-bg);
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .user-item:hover {
+        background-color: var(--order-card-hover-bg);
+    }
+
+    .user-item:hover .user-actions {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .user-actions {
+        opacity: 0.7;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .action-btn {
+        position: relative;
+    }
+
+    .action-btn:hover {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #9B64E3);
+    }
+
+    .action-btn[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 5px;
+    }
+
+    :root {
+        --action-icon-color: #9B64E3;
+        --order-card-hover-bg: rgba(155, 100, 227, 0.1);
+    }
+
+    /* Custom scrollbar styles */
+    .modal-body::-webkit-scrollbar,
+    .fornecedores-list::-webkit-scrollbar,
+    .fornecedores-list-container::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .modal-body::-webkit-scrollbar-track,
+    .fornecedores-list::-webkit-scrollbar-track,
+    .fornecedores-list-container::-webkit-scrollbar-track {
+        background: rgba(155, 100, 227, 0.1);
+        border-radius: 4px;
+        margin-right: 2px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb,
+    .fornecedores-list::-webkit-scrollbar-thumb,
+    .fornecedores-list-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #9B64E3, #D8CEFE);
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(155, 100, 227, 0.3);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover,
+    .fornecedores-list::-webkit-scrollbar-thumb:hover,
+    .fornecedores-list-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8A4FD3, #C7B7FE);
+        box-shadow: 0 4px 8px rgba(155, 100, 227, 0.5);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    /* Firefox */
+    .modal-body,
+    .fornecedores-list,
+    .fornecedores-list-container {
+        scrollbar-width: thin;
+        scrollbar-color: #9B64E3 rgba(155, 100, 227, 0.1);
+    }
+</style>
+
+<script>
+// Envolver todo o código em um escopo isolado para evitar conflitos
+(function() {
+'use strict';
+
+// Namespace para este módulo
+window.FornecedoresModule = window.FornecedoresModule || {};
+
+// Funções para abrir e fechar modais
+function openSupplierModal() {
+    console.log('🔧 ABRINDO modal de fornecedor...');
+    document.getElementById('supplierModal').style.display = 'block';
+    document.getElementById('supplierForm').reset();
+}
+
+function closeSupplierModal() {
+    document.getElementById('supplierModal').style.display = 'none';
+    document.getElementById('supplierForm').reset();
+}
+
+function openEditSupplierModal() {
+    document.getElementById('editSupplierModal').style.display = 'block';
+}
+
+function closeEditSupplierModal() {
+    document.getElementById('editSupplierModal').style.display = 'none';
+    document.getElementById('editSupplierForm').reset();
+}
+
+// Função para carregar lista de fornecedores
+async function carregarListaFornecedores() {
+    try {
+        const response = await fetch('/api/fornecedores');
+        const data = await response.json();
+        
+        const container = document.querySelector('.fornecedores-list');
+        container.innerHTML = '';
+        
+        // Verificar se o resultado é um array (resposta direta da API) ou tem a estrutura antiga
+        const fornecedores = Array.isArray(data) ? data : 
+                           (data.status === 'success' && data.fornecedores ? data.fornecedores : []);
+        
+        if (fornecedores.length === 0) {
+            const emptyRow = document.createElement('div');
+            emptyRow.className = 'user-item';
+            emptyRow.style.cssText = 'justify-content: center; color: #666;';
+            emptyRow.textContent = 'Nenhum fornecedor cadastrado.';
+            container.appendChild(emptyRow);
+            return;
+        }
+        
+        fornecedores.forEach(fornecedor => {
+            const row = document.createElement('div');
+            row.className = 'user-item';
+            row.style.cssText = 'display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1fr 1fr 1fr 1.5fr 1fr 0.8fr; gap: 15px; padding: 12px 20px; margin: 8px 0; border-radius: 6px; transition: background-color 0.2s ease; align-items: center;';
+            
+            const status = 'Ativo'; // Por padrão, todos os fornecedores são ativos
+            const statusColor = 'color: #51cf66;';
+            
+            row.innerHTML = `
+                <div>${fornecedor.nome || '-'}</div>
+                <div>${fornecedor.cnpj || fornecedor.cpf || '-'}</div>
+                <div>${fornecedor.telefone || '-'}</div>
+                <div>${fornecedor.cidade || '-'}</div>
+                <div>${fornecedor.estado || '-'}</div>
+                <div>${fornecedor.email || '-'}</div>
+                <div>${fornecedor.categoria_produtos || '-'}</div>
+                <div style="${statusColor} font-weight: bold;">${status}</div>
+                <div class="user-actions" style="display: flex; gap: 5px; margin: 0; padding: 0; list-style: none; align-items: center;">
+                    <button class="action-btn" data-tooltip="Editar" onclick="editarFornecedor(${fornecedor.id})" style="background: none; border: none; cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s ease; color: var(--action-icon-color);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="action-btn" data-tooltip="Excluir" onclick="excluirFornecedor(${fornecedor.id})" style="background: none; border: none; cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s ease; color: var(--action-icon-color);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            row.addEventListener('mouseover', function() {
+                this.style.backgroundColor = 'var(--order-card-hover-bg)';
+            });
+            
+            row.addEventListener('mouseout', function() {
+                this.style.backgroundColor = '';
+            });
+            
+            container.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar fornecedores:', error);
+        showNotification('error', 'Erro ao carregar lista de fornecedores');
+    }
+}
+
+// Função para editar fornecedor
+async function editarFornecedor(id) {
+    try {
+        console.log('🔄 Carregando dados do fornecedor ID:', id);
+        
+        const response = await fetch(`/api/fornecedores/${id}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('📊 Resposta da API:', data);
+        
+        // Verificar se temos dados válidos do fornecedor
+        let fornecedor = null;
+        
+        if (Array.isArray(data) && data.length > 0) {
+            // Se a resposta é um array, pegar o primeiro item
+            fornecedor = data[0];
+        } else if (data && typeof data === 'object') {
+            // Se é um objeto, verificar se é o fornecedor diretamente ou está em uma propriedade
+            if (data.id) {
+                fornecedor = data;
+            } else if (data.fornecedor && data.fornecedor.id) {
+                fornecedor = data.fornecedor;
+            } else if (data.status === 'success' && data.fornecedores && data.fornecedores.length > 0) {
+                fornecedor = data.fornecedores[0];
+            }
+        }
+        
+        if (!fornecedor || !fornecedor.id) {
+            console.error('❌ Fornecedor não encontrado na resposta:', data);
+            showNotification('error', 'Fornecedor não encontrado ou dados inválidos');
+            return;
+        }
+        
+        console.log('✅ Dados do fornecedor carregados:', fornecedor);
+        
+        // Preencher formulário com dados reais
+        document.getElementById('editSupplierId').value = fornecedor.id;
+        document.getElementById('editSupplierName').value = fornecedor.nome || '';
+        document.getElementById('editSupplierCNPJ').value = fornecedor.cnpj || fornecedor.cpf || '';
+        document.getElementById('editSupplierPhone').value = fornecedor.telefone || '';
+        document.getElementById('editSupplierEmail').value = fornecedor.email || '';
+        document.getElementById('editSupplierWebsite').value = fornecedor.website || '';
+        document.getElementById('editSupplierCategory').value = fornecedor.categoria_produtos || '';
+        document.getElementById('editSupplierCEP').value = fornecedor.cep || '';
+        document.getElementById('editSupplierAddress').value = fornecedor.endereco || '';
+        document.getElementById('editSupplierCity').value = fornecedor.cidade || '';
+        document.getElementById('editSupplierState').value = fornecedor.estado || '';
+        document.getElementById('editSupplierContactName').value = fornecedor.contato_nome || '';
+        document.getElementById('editSupplierContactPhone').value = fornecedor.contato_telefone || '';
+        document.getElementById('editSupplierContactEmail').value = fornecedor.contato_email || '';
+        document.getElementById('editSupplierDeliveryTime').value = fornecedor.prazo_entrega || '';
+        document.getElementById('editSupplierPaymentTerms').value = fornecedor.condicoes_pagamento || '';
+        document.getElementById('editSupplierObservations').value = fornecedor.observacoes || '';
+        
+        // Abrir modal
+        openEditSupplierModal();
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar fornecedor:', error);
+        showNotification('error', 'Erro ao carregar dados do fornecedor: ' + error.message);
+    }
+}
+
+// Função para excluir fornecedor
+function excluirFornecedor(id) {
+    showConfirmationModal('Tem certeza que deseja excluir este fornecedor?', async () => {
+        try {
+            const response = await fetch(`/api/fornecedores/${id}`, {
+                method: 'DELETE'
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showNotification('success', 'Fornecedor excluído com sucesso!');
+                carregarListaFornecedores();
+            } else {
+                showNotification('error', result.message || 'Erro ao excluir fornecedor');
+            }
+        } catch (error) {
+            console.error('Erro ao excluir fornecedor:', error);
+            showNotification('error', 'Erro ao excluir fornecedor: ' + error.message);
+        }
+    });
+}
+
+// Função para gerar relatório
+function gerarRelatorioFornecedores() {
+    showNotification('success', 'Relatório de fornecedores gerado com sucesso!');
+}
+
+// Função para buscar endereço por CEP
+async function buscarEnderecoPorCEP(cep) {
+    if (cep.length === 8 || cep.length === 9) {
+        try {
+            const response = await fetch(`https://viacep.com.br/ws/${cep.replace('-', '')}/json/`);
+            const data = await response.json();
+            if (!data.erro) {
+                // Determinar se estamos no modal de edição ou criação
+                const isEdit = document.getElementById('editSupplierModal').style.display === 'block';
+                const prefix = isEdit ? 'editSupplier' : 'supplier';
+                
+                document.getElementById(`${prefix}Address`).value = data.logradouro;
+                document.getElementById(`${prefix}City`).value = data.localidade;
+                document.getElementById(`${prefix}State`).value = data.uf;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar CEP:', error);
+        }
+    }
+}
+
+// Funções de notificação e confirmação
+function showNotification(type, message) {
+    const iconContainer = document.getElementById('notificationIcon');
+    
+    if (type === 'success') {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    } else {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F44336">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                </path>
+                <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    }
+    
+    const modal = document.getElementById('notificationModal');
+    const title = document.getElementById('notificationModalTitle');
+    const msg = document.getElementById('notificationModalMessage');
+    const content = modal.querySelector('.notification-modal-content');
+    
+    title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+    msg.textContent = message;
+    content.className = 'modal-content notification-modal-content ' + type;
+    
+    modal.style.display = 'block';
+}
+
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+
+// Criar namespace para evitar conflitos de variáveis globais
+window.FornecedoresModule = window.FornecedoresModule || {};
+window.FornecedoresModule.confirmationTimer = null;
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const msg = document.getElementById('confirmationModalMessage');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    if (window.FornecedoresModule.confirmationTimer) {
+        clearInterval(window.FornecedoresModule.confirmationTimer);
+    }
+    
+    msg.textContent = message;
+    modal.style.display = 'block';
+    
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    let secondsLeft = 5;
+    confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+    
+    window.FornecedoresModule.confirmationTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(window.FornecedoresModule.confirmationTimer);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirmar';
+            
+            confirmBtn.onclick = function() {
+                closeConfirmationModal();
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            };
+        } else {
+            confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+        }
+    }, 1000);
+}
+
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    if (window.FornecedoresModule.confirmationTimer) {
+        clearInterval(window.FornecedoresModule.confirmationTimer);
+        window.FornecedoresModule.confirmationTimer = null;
+    }
+    
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirmar';
+    
+    modal.style.display = 'none';
+}
+
+// Função para configurar formulários
+function configurarFormularios() {
+    // Formulário de novo fornecedor
+    const supplierForm = document.getElementById('supplierForm');
+    if (supplierForm) {
+        const newForm = supplierForm.cloneNode(true);
+        supplierForm.parentNode.replaceChild(newForm, supplierForm);
+        
+        newForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Formulário de fornecedor enviado via AJAX');
+            
+            const formData = new FormData(newForm);
+            
+            try {
+                const response = await fetch('/api/fornecedores', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification('success', result.message || 'Fornecedor cadastrado com sucesso!');
+                    closeSupplierModal();
+                    carregarListaFornecedores();
+                } else {
+                    showNotification('error', result.message || result.erro || 'Erro ao salvar fornecedor');
+                }
+            } catch (error) {
+                console.error('Erro ao salvar fornecedor:', error);
+                showNotification('error', 'Erro ao salvar fornecedor: ' + error.message);
+            }
+        });
+    }
+    
+    // Formulário de edição de fornecedor
+    const editSupplierForm = document.getElementById('editSupplierForm');
+    if (editSupplierForm) {
+        const newEditForm = editSupplierForm.cloneNode(true);
+        editSupplierForm.parentNode.replaceChild(newEditForm, editSupplierForm);
+        
+        newEditForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(newEditForm);
+            const supplierId = document.getElementById('editSupplierId').value;
+            
+            try {
+                const response = await fetch(`/api/fornecedores/${supplierId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showNotification('success', result.message || 'Fornecedor atualizado com sucesso!');
+                    closeEditSupplierModal();
+                    carregarListaFornecedores();
+                } else {
+                    showNotification('error', result.message || result.erro || 'Erro ao atualizar fornecedor');
+                }
+            } catch (error) {
+                showNotification('error', 'Erro ao atualizar fornecedor: ' + error.message);
+            }
+        });
+    }
+    
+    // Fechar modais ao clicar fora
+    window.onclick = function(event) {
+        const modals = ['supplierModal', 'editSupplierModal', 'confirmationModal', 'notificationModal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    };
+}
+
+// Função para filtrar fornecedores
+function filtrarFornecedores() {
+    const searchText = document.getElementById('searchSupplier').value.toLowerCase();
+    const rows = document.querySelectorAll('.fornecedores-list .user-item');
+    
+    rows.forEach(row => {
+        if (row.textContent.toLowerCase().includes('nenhum fornecedor cadastrado')) {
+            return; // Não filtrar a mensagem de "nenhum fornecedor"
+        }
+        
+        const columns = row.children;
+        let match = false;
+        
+        for (let i = 0; i < columns.length - 1; i++) { // -1 para não incluir a coluna de ações
+            if (columns[i].textContent.toLowerCase().includes(searchText)) {
+                match = true;
+                break;
+            }
+        }
+        
+        row.style.display = match ? 'grid' : 'none';
+    });
+}
+
+// Configurar eventos de busca
+function configurarEventosBusca() {
+    const searchInput = document.getElementById('searchSupplier');
+    const searchButton = document.getElementById('searchButton');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filtrarFornecedores);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                filtrarFornecedores();
+            }
+        });
+    }
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', filtrarFornecedores);
+    }
+}
+
+// Inicialização
+console.log('Iniciando configuração do módulo de fornecedores...');
+carregarListaFornecedores();
+configurarFormularios();
+configurarEventosBusca();
+
+// Disponibilizar função global para reconfigurar quando necessário
+window.initializeFornecedoresScripts = function() {
+    console.log('Reinicializando scripts de fornecedores...');
+    carregarListaFornecedores();
+    configurarFormularios();
+    configurarEventosBusca();
+};
+
+// Disponibilizar funções necessárias globalmente ANTES do fechamento do escopo
+window.openSupplierModal = openSupplierModal;
+window.closeSupplierModal = closeSupplierModal;
+window.openEditSupplierModal = openEditSupplierModal;
+window.closeEditSupplierModal = closeEditSupplierModal;
+window.editarFornecedor = editarFornecedor;
+window.excluirFornecedor = excluirFornecedor;
+window.gerarRelatorioFornecedores = gerarRelatorioFornecedores;
+window.buscarEnderecoPorCEP = buscarEnderecoPorCEP;
+window.showConfirmationModal = showConfirmationModal;
+window.closeConfirmationModal = closeConfirmationModal;
+window.showNotification = showNotification;
+window.closeNotificationModal = closeNotificationModal;
+
+console.log('Funções globais exportadas:', {
+    openSupplierModal: typeof window.openSupplierModal,
+    closeSupplierModal: typeof window.closeSupplierModal,
+    editarFornecedor: typeof window.editarFornecedor,
+    excluirFornecedor: typeof window.excluirFornecedor
+});
+
+})(); // Fim do escopo isolado
+</script>
+
+</div>

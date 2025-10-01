@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Midnight PDV</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #9B64E3 0%, #2C0B5A 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .offline-container {
+            text-align: center;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo svg {
+            width: 60px;
+            height: 60px;
+            opacity: 0.9;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        p {
+            font-size: 16px;
+            opacity: 0.9;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .retry-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+        }
+
+        .retry-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .offline-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .online .status-indicator {
+            background: #51cf66;
+            animation: none;
+        }
+
+        @media (max-width: 768px) {
+            .offline-container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .logo svg {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="logo">
+            <!-- Logo Midnight SVG simplificado -->
+            <svg viewBox="0 0 6.1344 6.8851" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="grad1" cx="0.6" cy="0.4" r="0.5">
+                        <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+                    </radialGradient>
+                </defs>
+                <path fill="url(#grad1)" d="M4.7505 2.8756l0 1.6591 -0.5808 0 0 -0.5315 -0 -0.9108c-0.2144,0.3548 -0.4185,0.8135 -0.5863,1.4063l-0.5828 -1.0575 0 1.0935 -0.5808 0 0 -2.1483 0.5808 0 0.4854 0.8813c0,0 0.1785,-0.4961 0.6463,-0.911 0.3436,-0.305 0.7812,-0.4839 1.3164,-0.4839l0.1008 0.0023 0.1228 0.0078 0.0022 0c0,0 -0.4242,0.0278 -0.9239,0.4848l0 0.508z"/>
+                <path fill="url(#grad1)" d="M3.4425 0c1.0897,0 2.061,0.5065 2.6918,1.2967 -0.5634,-0.586 -1.3553,-0.9508 -2.2325,-0.9508 -1.7102,0 -3.0966,1.3864 -3.0966,3.0966 0,1.6914 1.356,3.066 3.0402,3.0961 0.341,-0.0262 0.683,-0.074 0.9879,-0.1421 0.5005,-0.1577 0.9461,-0.4391 1.301,-0.8083 -0.6308,0.7902 -1.6021,1.2967 -2.6918,1.2967 -1.9013,0 -3.4425,-1.5413 -3.4425,-3.4425 0,-1.9013 1.5413,-3.4425 3.4425,-3.4425z"/>
+            </svg>
+        </div>
+
+        <div class="offline-icon">📱</div>
+        
+        <h1>
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">Você está offline</span>
+        </h1>
+        
+        <p id="statusMessage">
+            Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.
+        </p>
+        
+        <button class="retry-btn" onclick="checkConnection()">
+            Tentar Novamente
+        </button>
+    </div>
+
+    <script>
+        // Verificar status da conexão
+        function updateConnectionStatus() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const statusMessage = document.getElementById('statusMessage');
+            const container = document.querySelector('.offline-container');
+            
+            if (navigator.onLine) {
+                statusIndicator.style.background = '#51cf66';
+                statusText.textContent = 'Conexão restabelecida';
+                statusMessage.textContent = 'Você está online novamente. Você pode continuar usando o PDV.';
+                container.classList.add('online');
+                
+                // Tentar voltar para o PDV após 2 segundos
+                setTimeout(() => {
+                    window.location.href = '/pdv';
+                }, 2000);
+            } else {
+                statusIndicator.style.background = '#ff6b6b';
+                statusText.textContent = 'Você está offline';
+                statusMessage.textContent = 'Não foi possível conectar ao servidor. Verifique sua conexão com a internet e tente novamente.';
+                container.classList.remove('online');
+            }
+        }
+        
+        // Função para verificar conexão manualmente
+        function checkConnection() {
+            // Mostrar feedback de carregamento
+            const button = document.querySelector('.retry-btn');
+            const originalText = button.textContent;
+            button.textContent = 'Verificando...';
+            button.disabled = true;
+            
+            // Tentar fazer uma requisição para verificar conectividade
+            fetch('/api/health', { 
+                method: 'HEAD',
+                cache: 'no-cache'
+            })
+            .then(response => {
+                if (response.ok) {
+                    updateConnectionStatus();
+                } else {
+                    throw new Error('Servidor não respondeu');
+                }
+            })
+            .catch(() => {
+                // Se falhar, verificar apenas o status do navegador
+                updateConnectionStatus();
+            })
+            .finally(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            });
+        }
+        
+        // Listeners para mudanças na conectividade
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Verificar status inicial
+        document.addEventListener('DOMContentLoaded', updateConnectionStatus);
+        
+        // Verificar periodicamente (a cada 30 segundos)
+        setInterval(checkConnection, 30000);
+    </script>
+</body>
+</html>

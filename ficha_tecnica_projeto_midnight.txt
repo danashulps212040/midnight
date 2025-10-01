@@ -1,0 +1,769 @@
+=============================================================================
+                    FICHA TÉCNICA - PROJETO MIDNIGHT
+                Sistema de Gerenciamento de Gráfica/Papelaria
+=============================================================================
+
+1. VISÃO GERAL DO PROJETO
+=============================================================================
+Nome do Projeto: Sistema de Gerenciamento Midnight
+Tipo: Aplicação Web Flask com Interface GUI
+Propósito: Gerenciar empresa de gráfica/papelaria personalizada/comunicação visual
+Tecnologias: Python Flask, MySQL, PyQt5, HTML5, CSS3, JavaScript
+Arquitetura: Híbrida (Servidor Flask + GUI Desktop)
+
+2. ESTRUTURA DE ARQUIVOS
+=============================================================================
+
+2.1 ARQUIVO: flask_gui.py
+-----------------------------------------------------------------------------
+Funcionalidade: Script híbrido que combina servidor Flask com interface GUI
+
+Características Principais:
+- Interface PyQt5 com botões de controle do servidor (Start/Stop/Restart)
+- Monitoramento em tempo real de recursos do sistema:
+  * CPU: Gráfico de linha com histórico de 60 pontos
+  * Memória RAM: Gráfico de linha com histórico de 60 pontos  
+  * Disco: Gráfico de linha com histórico de 60 pontos
+- Log integrado com timestamp automático
+- Servidor Flask embarcado com rotas para gerenciamento de usuários
+- Redirecionamento de saída do console para interface gráfica
+
+Rotas Flask Implementadas:
+- GET /: Dashboard principal
+- GET /usuarios: Página de gerenciamento de usuários
+- POST /api/usuarios: Criar novo usuário
+- GET /api/usuarios/<id>: Obter dados de usuário específico
+- PUT /api/usuarios/<id>: Atualizar usuário existente
+- DELETE /api/usuarios/<id>: Excluir usuário
+
+Componentes GUI:
+- QMainWindow principal
+- QTextEdit para logs
+- QPushButton para controles do servidor
+- QTimer para atualização de gráficos (intervalo: 1000ms)
+- Gráficos matplotlib integrados
+
+2.2 ARQUIVO: database.py
+-----------------------------------------------------------------------------
+Funcionalidade: Gerenciador de conexão e operações MySQL
+
+Classe Principal: DatabaseManager
+
+Métodos Implementados:
+- connect(): Estabelece conexão com MySQL
+- disconnect(): Fecha conexão com banco
+- create_user(): Cria novo usuário com validação
+- get_user(): Recupera dados de usuário por ID
+- get_all_users(): Lista todos os usuários
+- update_user(): Atualiza dados de usuário existente
+- delete_user(): Remove usuário do banco
+- authenticate_user(): Valida credenciais de login
+
+Recursos de Segurança:
+- Hash de senhas usando werkzeug.security
+- Validação de entrada de dados
+- Tratamento de exceções SQL
+- Transações com commit/rollback automático
+
+Tratamento de Imagens:
+- Armazenamento de fotos de perfil como BLOB
+- Conversão automática para base64
+- Validação de tipos de arquivo de imagem
+
+2.3 ARQUIVO: migrations.py
+-----------------------------------------------------------------------------
+Funcionalidade: Script para criação e migração de esquemas de banco
+
+Operações Principais:
+- Criação do banco de dados 'midnight'
+- Criação da tabela 'usuarios' com estrutura completa
+- Criação das tabelas de estoque e fornecedores
+- Criação das tabelas de produtos e categorias
+- Criação das tabelas de máquinas e manutenções
+- Verificação de existência antes da criação
+- Tratamento de erros de conexão
+
+Estrutura da Tabela 'usuarios':
+- id: INT AUTO_INCREMENT PRIMARY KEY
+- nome: VARCHAR(100) NOT NULL
+- email: VARCHAR(100) UNIQUE NOT NULL
+- senha: VARCHAR(255) NOT NULL (hash)
+- cargo: ENUM('viewer', 'editor', 'admin') DEFAULT 'viewer'
+- nivel_de_acesso: INT DEFAULT 1
+- foto_de_perfil: LONGBLOB (para imagens)
+- data_criacao: TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+- data_atualizacao: TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+Estrutura da Tabela 'maquinas':
+- id: INT AUTO_INCREMENT PRIMARY KEY
+- codigo: VARCHAR(100) NOT NULL UNIQUE
+- nome: VARCHAR(255) NOT NULL
+- marca: VARCHAR(100)
+- tipo: VARCHAR(100)
+- numero_serie: VARCHAR(100)
+- data_aquisicao: DATE
+- valor_aquisicao: DECIMAL(10,2) DEFAULT 0.00
+- hora_maquina: DECIMAL(10,2) DEFAULT 0.00
+- estado: ENUM('Novo', 'Seminovo', 'Usado - Bom', 'Usado - Regular', 'Usado - Ruim', 'Necessita Reparo') DEFAULT 'Novo'
+- localizacao: VARCHAR(255)
+- responsavel: VARCHAR(255)
+- status: ENUM('Ativa', 'Inativa', 'Em Manutenção', 'Aguardando Peças', 'Descartada') DEFAULT 'Ativa'
+- especificacoes_tecnicas: TEXT
+- observacoes: TEXT
+- data_criacao: DATETIME DEFAULT CURRENT_TIMESTAMP
+- data_atualizacao: DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+Estrutura da Tabela 'manutencoes':
+- id: INT AUTO_INCREMENT PRIMARY KEY
+- maquina_id: INT NOT NULL (FK para maquinas)
+- tipo_manutencao: ENUM('Preventiva', 'Corretiva', 'Preditiva', 'Calibração', 'Inspeção') NOT NULL
+- data_manutencao: DATE NOT NULL
+- responsavel: VARCHAR(255)
+- fornecedor_empresa: VARCHAR(255)
+- descricao_servicos: TEXT
+- custo: DECIMAL(10,2) DEFAULT 0.00
+- proxima_manutencao: DATE
+- observacoes: TEXT
+- data_criacao: DATETIME DEFAULT CURRENT_TIMESTAMP
+
+Estrutura da Tabela 'tipos_maquinas':
+- id: INT AUTO_INCREMENT PRIMARY KEY
+- nome: VARCHAR(100) NOT NULL UNIQUE
+- descricao: TEXT
+- data_criacao: DATETIME DEFAULT CURRENT_TIMESTAMP
+- data_atualizacao: DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+
+2.4 ARQUIVO: templates/dashboard.html
+-----------------------------------------------------------------------------
+Funcionalidade: Template base para carregamento dinâmico de conteúdo
+
+Características Principais:
+- Sistema de temas claro/escuro com CSS Variables
+- Layout responsivo com sidebar retrátil
+- Área de conteúdo dinâmico para carregamento de templates
+- Sistema de navegação integrado
+- Monitoramento de sessão com timer
+
+Componentes de Interface:
+- Header fixo com controles de tema
+- Sidebar com menu de navegação
+- Área principal de conteúdo (#content-area)
+- Modais para interações específicas
+- Sistema de notificações
+
+Funcionalidades JavaScript:
+- Toggle de sidebar responsivo
+- Alternância de temas (localStorage)
+- Timer de sessão em tempo real
+- Gerenciamento de modais
+- Sistema de tooltips
+
+2.5 ARQUIVO: templates/usuarios.html
+-----------------------------------------------------------------------------
+Funcionalidade: Interface de gerenciamento de usuários
+
+Características Principais:
+- Lista de usuários em formato grid responsivo
+- Formulário modal para adicionar/editar usuários
+- Sistema de busca e filtros
+- Upload de foto de perfil com preview
+- Validação de formulários em tempo real
+
+Componentes de Interface:
+- Grid de usuários com 6 colunas:
+  * Foto de perfil (80px)
+  * Nome (1.5fr)
+  * Email (1.5fr)
+  * Permissões (1fr)
+  * Status (1fr)
+  * Ações (80px)
+
+Modal de Usuário:
+- Layout dividido em duas seções:
+  * Formulário principal (flex: 1)
+  * Área de foto de perfil (300px)
+- Dropdowns customizados para cargo e nível de acesso
+- Preview de imagem em tempo real
+- Validação de campos obrigatórios
+
+2.6 ARQUIVO: templates/maquinas.html
+-----------------------------------------------------------------------------
+Funcionalidade: Interface de gerenciamento de máquinas e manutenções
+
+Características Principais:
+- Lista de máquinas em formato grid com 13 colunas responsivas
+- Sistema de busca e filtros para máquinas
+- Formulários modais para CRUD completo de máquinas
+- Sistema de registro de manutenções
+- Modal de seleção de máquinas com busca avançada
+- Cadastro de novos tipos de máquinas
+- Notificações com animações SVG customizadas
+- Modal de confirmação com timer de segurança
+
+Componentes de Interface:
+- Grid de máquinas com 13 colunas:
+  * Código (0.8fr)
+  * Nome/Modelo (1.5fr)
+  * Marca (1fr)
+  * Tipo (1fr)
+  * Nº Série (1fr)
+  * Data Aquisição (1fr)
+  * Valor Aquisição (1fr)
+  * Hora/Máquina (1fr)
+  * Estado (1fr)
+  * Localização (1fr)
+  * Responsável (1fr)
+  * Status (1fr)
+  * Ações (0.8fr)
+
+Modais Implementados:
+1. Modal de Incluir Máquina:
+   - Layout em duas colunas (flex: 1 cada)
+   - Campos de dados básicos (código, nome, marca, tipo)
+   - Campos técnicos (número série, data aquisição, valor)
+   - Campo de hora/máquina para cálculo de custos
+   - Dropdowns para estado, status e localização
+   - Campos de texto para especificações e observações
+
+2. Modal de Editar Máquina:
+   - Estrutura idêntica ao modal de inclusão
+   - Preenchimento automático com dados existentes
+   - Validação para evitar duplicidade de códigos
+
+3. Modal de Registrar Manutenção:
+   - Seleção de máquina com busca avançada
+   - Tipos de manutenção (Preventiva, Corretiva, Preditiva, Calibração, Inspeção)
+   - Campos de data, responsável e fornecedor
+   - Registro de custos e próxima manutenção
+   - Descrição detalhada dos serviços
+
+4. Modal de Seleção de Máquina:
+   - Lista filtrada de máquinas disponíveis
+   - Busca em tempo real por código, nome ou marca
+   - Seleção através de clique na linha
+
+5. Modal de Novo Tipo de Máquina:
+   - Cadastro simples de novos tipos
+   - Integração automática com dropdowns
+
+Funcionalidades JavaScript:
+- Formatação automática de valores monetários
+- Sistema de dropdowns customizados com busca
+- Validação de formulários em tempo real
+- Atualização dinâmica de listas sem reload
+- Sistema de notificações com ícones animados
+- Timer de confirmação para ações críticas
+- Gerenciamento de estado dos modais
+- Filtros e busca em tempo real
+
+3. PADRÕES VISUAIS E ESTILIZAÇÃO
+=============================================================================
+
+3.1 SISTEMA DE CORES (CSS Variables)
+-----------------------------------------------------------------------------
+Tema Claro:
+--primary-color: #9B64E3 (Roxo principal)
+--secondary-color: #D8CEFE (Roxo claro)
+--accent-color: #F58838 (Laranja destaque)
+--background-color: #FFFFFF (Fundo branco)
+--text-color: #333333 (Texto escuro)
+--sidebar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%)
+--sidebar-text-color: #FFFFFF
+--page-bg: #F5F7FA
+--order-card-bg: #FFFFFF
+--order-card-hover-bg: rgba(155, 100, 227, 0.05)
+
+Tema Escuro:
+--primary-color: #9B64E3
+--secondary-color: #D8CEFE
+--accent-color: #F58838
+--background-color: #1a1a1a
+--text-color: #E0E0E0
+--sidebar-bg: linear-gradient(135deg, #2C3E50 0%, #34495E 100%)
+--sidebar-text-color: #ECF0F1
+--page-bg: #121212
+--order-card-bg: #2a2a2a
+--order-card-hover-bg: rgba(155, 100, 227, 0.1)
+
+3.2 TIPOGRAFIA
+-----------------------------------------------------------------------------
+Fonte Principal: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+Tamanhos Responsivos:
+- Títulos: clamp(1.2rem, 2.5vw, 1.8rem)
+- Texto normal: clamp(0.8rem, 1.5vw, 1rem)
+- Texto pequeno: clamp(0.7rem, 1.2vw, 0.8rem)
+
+Pesos de Fonte:
+- Normal: 400
+- Semibold: 600
+- Bold: 700
+
+3.3 LAYOUT E ESPAÇAMENTO
+-----------------------------------------------------------------------------
+Sistema de Grid:
+- Container principal: CSS Grid
+- Sidebar: 250px (desktop) / 100% (mobile)
+- Conteúdo principal: 1fr
+- Gap padrão: 15px-20px
+
+Espaçamentos Padrão:
+- Padding interno: 15px-25px
+- Margin entre elementos: 10px-20px
+- Border radius: 5px-10px
+
+Breakpoints Responsivos:
+- Mobile: max-width 768px
+- Tablet: 769px - 1024px
+- Desktop: min-width 1025px
+
+3.4 COMPONENTES REUTILIZÁVEIS
+-----------------------------------------------------------------------------
+
+Botões:
+.btn-primary {
+  background-color: rgba(155, 100, 227, 0.1);
+  border: 1px solid #9B64E3;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  /* Efeito 'Glow' adicionado no hover: box-shadow: 0 0 15px rgba(155, 100, 227, 0.8); */
+}
+
+.btn-secondary {
+  background-color: rgba(155, 100, 227, 0.1);
+  border: 1px solid #9B64E3;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  /* Efeito 'Glow' adicionado no hover: box-shadow: 0 0 15px rgba(155, 100, 227, 0.8); */
+}
+
+Cards:
+.card {
+  background-color: var(--order-card-bg);
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: background-color 0.2s ease;
+}
+
+Modais:
+.modal {
+  position: fixed;
+  z-index: 100;
+  background-color: rgba(0,0,0,0.4);
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background-color: rgba(59, 12, 121, 0.29);
+  border: 1px solid #9B64E3;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+Dropdowns Customizados:
+.custom-select {
+  position: relative;
+  border: 1px solid #9B64E3;
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Efeito 'Glow' adicionado no hover: box-shadow: 0 0 10px rgba(155, 100, 227, 0.7); border-color: #9B64E3; */
+}
+
+3.5 ANIMAÇÕES E TRANSIÇÕES
+-----------------------------------------------------------------------------
+Transições Padrão:
+- Hover effects: 0.2s-0.3s ease
+- Modal animations: 0.3s ease-in-out
+- Theme switching: 0.3s ease
+- Sidebar toggle: 0.3s ease
+
+Efeitos Visuais:
+- Backdrop blur: 8px (modais)
+- Box shadows: 0 2px 4px rgba(0,0,0,0.1)
+- Border radius: 5px-10px
+- Opacity transitions para estados disabled
+- Efeito "Glow" em botões: `box-shadow: 0 0 15px rgba(155, 100, 227, 0.8);` no estado `:hover` para `.btn-primary` e `.btn-secondary`.
+- Efeito "Glow" em campos de entrada e dropdowns: `box-shadow: 0 0 10px rgba(155, 100, 227, 0.7); border-color: #9B64E3;` no estado `:hover` para `input[type="text"], input[type="email"], input[type="password"], select` e `.custom-select`.
+
+3.6 ESTILOS DE SCROLLBAR CUSTOMIZADA
+-----------------------------------------------------------------------------
+Arquivo: static/css/custom-scrollbar.css
+Propósito: Padronizar a aparência das scrollbars em toda a aplicação, garantindo compatibilidade e um design coeso com o tema.
+
+Características Principais:
+- Largura da scrollbar: 9px
+- Track (trilha): Transparente com border-radius de 100px
+- Thumb (indicador de rolagem): 
+  - Border-radius: 100px
+  - Background-image: Gradiente linear de 180deg, de #9b63e3 a #b470d4
+  - Box-shadow: inset 0px 0px 100px 0 rgba(255, 255, 255, 0.5)
+  - Efeito Hover: box-shadow de 0 0 15px rgb(111, 0, 255) e border-color #ffffff
+- Compatibilidade: Estilos otimizados para Webkit (Chrome, Safari) e Firefox (scrollbar-color, scrollbar-width).
+- Aplicação: A classe `.custom-scrollbar` deve ser adicionada a elementos que necessitam de uma scrollbar customizada.
+
+3.7 ÍCONES E GRÁFICOS
+-----------------------------------------------------------------------------
+Biblioteca de Ícones: Feather Icons (SVG)
+Tamanhos Padrão:
+- Ícones pequenos: 16px-18px
+- Ícones médios: 20px-24px
+- Ícones grandes: 32px-48px
+
+Cores dos Ícones:
+- Tema claro: #9B64E3
+- Tema escuro: #E0E0E0
+- Estados hover: Cor de destaque
+
+4. FUNCIONALIDADES IMPLEMENTADAS
+=============================================================================
+
+4.1 GERENCIAMENTO DE USUÁRIOS
+-----------------------------------------------------------------------------
+- Criação de usuários com validação completa
+- Edição de dados existentes
+- Exclusão com confirmação
+- Upload de foto de perfil
+- Sistema de permissões (viewer/editor/admin)
+- Níveis de acesso (1-Básico, 3-Intermediário, 5-Avançado)
+- Autenticação segura com hash de senhas
+
+4.2 INTERFACE DE MONITORAMENTO
+-----------------------------------------------------------------------------
+- Gráficos em tempo real de CPU, RAM e Disco
+- Controle de servidor (Start/Stop/Restart)
+- Log de atividades com timestamp
+- Timer de sessão de usuário
+- Sistema de notificações
+
+4.3 SISTEMA DE TEMAS
+-----------------------------------------------------------------------------
+- Alternância entre tema claro e escuro
+- Persistência da preferência (localStorage)
+- Transições suaves entre temas
+- Adaptação automática de todos os componentes
+
+4.4 RESPONSIVIDADE
+-----------------------------------------------------------------------------
+- Layout adaptativo para mobile/tablet/desktop
+- Sidebar retrátil em dispositivos móveis
+- Grid responsivo para listas
+- Tipografia escalável (clamp)
+
+4.5 GERENCIAMENTO DE MÁQUINAS
+-----------------------------------------------------------------------------
+- Cadastro completo de máquinas com dados técnicos
+- Controle de valor de aquisição e hora/máquina
+- Sistema de status (Ativa, Inativa, Em Manutenção, Aguardando Peças, Descartada)
+- Controle de estado/condição (Novo, Seminovo, Usado - Bom/Regular/Ruim, Necessita Reparo)
+- Registro de manutenções preventivas e corretivas
+- Histórico de manutenções com custos e responsáveis
+- Sistema de tipos de máquinas customizáveis
+- Localização e responsável por máquina
+- Especificações técnicas detalhadas
+
+5. CONFIGURAÇÕES TÉCNICAS
+=============================================================================
+
+5.1 BANCO DE DADOS
+-----------------------------------------------------------------------------
+SGBD: MySQL
+Nome do Banco: midnight
+Charset: utf8mb4
+Collation: utf8mb4_unicode_ci
+
+Configurações de Conexão:
+- Host: localhost
+- Porta: 3306
+- Pool de conexões: Gerenciado pelo DatabaseManager
+- Timeout: 30 segundos
+
+5.2 SERVIDOR FLASK
+-----------------------------------------------------------------------------
+Porta Padrão: 5000
+Modo Debug: Configurável
+Templates: Jinja2
+Static Files: /static/
+Upload Folder: Configurável
+Max File Size: 16MB (padrão Flask)
+
+5.3 DEPENDÊNCIAS PYTHON
+-----------------------------------------------------------------------------
+Principais:
+- Flask: Framework web
+- PyQt5: Interface gráfica
+- mysql-connector-python: Conexão MySQL
+- werkzeug: Utilitários web e segurança
+- matplotlib: Gráficos de monitoramento
+- psutil: Monitoramento do sistema
+
+6. PADRÕES DE DESENVOLVIMENTO
+=============================================================================
+
+6.1 ESTRUTURA DE CÓDIGO
+-----------------------------------------------------------------------------
+- Separação clara entre backend (Python) e frontend (HTML/CSS/JS)
+- Uso de classes para organização (DatabaseManager)
+- Tratamento de exceções em todas as operações críticas
+- Validação de entrada em múltiplas camadas
+- Comentários em português para documentação
+
+6.2 SEGURANÇA
+-----------------------------------------------------------------------------
+- Hash de senhas com werkzeug.security
+- Validação de tipos de arquivo para upload
+- Sanitização de entrada de dados
+- Uso de prepared statements para SQL
+- Tratamento seguro de sessões
+
+6.3 PERFORMANCE
+-----------------------------------------------------------------------------
+- Lazy loading de componentes
+- Otimização de consultas SQL
+- Cache de recursos estáticos
+- Compressão de imagens (base64)
+- Debounce em eventos de busca
+
+6.4 ATUALIZAÇÕES DINÂMICAS DE CONTEÚDO
+-----------------------------------------------------------------------------
+- Uso de AJAX para atualização parcial de conteúdo
+- Evitar recarregamento completo da página após operações CRUD
+- Implementação da função atualizarListaUsuarios() para atualização dinâmica
+- Substituição de window.location.reload() por chamadas a funções de atualização específicas
+- Padrão para operações de sucesso em formulários:
+  * Fechar modal após operação bem-sucedida
+  * Atualizar apenas o componente afetado via AJAX
+  * Exibir feedback visual para o usuário (alerts, toasts)
+- Verificação da existência de funções antes de chamá-las (typeof funcao === 'function')
+- Tratamento de erros específicos para falhas de atualização dinâmica
+
+7. EXTENSIBILIDADE
+=============================================================================
+
+7.1 ADIÇÃO DE NOVOS TEMPLATES
+-----------------------------------------------------------------------------
+Para adicionar novos templates ao sistema:
+
+1. Criar arquivo HTML em /templates/
+2. Seguir a estrutura de CSS Variables definida
+3. Usar classes CSS padronizadas:
+   - .btn-primary, .btn-secondary para botões
+   - .modal, .modal-content para modais
+   - .card para containers de conteúdo
+   - .custom-select para dropdowns
+
+4. Adicionar rota correspondente em flask_gui.py
+5. Atualizar menu de navegação em dashboard.html
+
+7.2 PADRÕES PARA NOVOS COMPONENTES
+-----------------------------------------------------------------------------
+Estrutura HTML:
+<div class="page-container">
+    <div class="page-header">
+        <h1>Título da Página</h1>
+        <div class="page-actions">
+            <!-- Botões de ação -->
+        </div>
+    </div>
+    <div class="page-content">
+        <!-- Conteúdo principal -->
+    </div>
+</div>
+
+CSS Obrigatório:
+- Usar CSS Variables para cores
+- Implementar responsividade
+- Seguir padrões de espaçamento
+- Incluir estados hover e focus
+- Suporte a ambos os temas
+
+JavaScript:
+- Usar async/await para requisições
+- Implementar tratamento de erros
+- Validação de formulários
+- Feedback visual para ações
+
+8. MANUTENÇÃO E ATUALIZAÇÕES
+=============================================================================
+
+8.1 BACKUP E VERSIONAMENTO
+-----------------------------------------------------------------------------
+- Backup regular do banco de dados MySQL
+- Versionamento de código com Git
+- Documentação de mudanças em changelog
+- Testes antes de deploy em produção
+
+8.2 MONITORAMENTO
+-----------------------------------------------------------------------------
+- Logs de aplicação em arquivo
+- Monitoramento de recursos via GUI
+- Alertas para falhas de conexão
+- Métricas de performance do banco
+
+8.3 ATUALIZAÇÕES FUTURAS
+-----------------------------------------------------------------------------
+Recursos Planejados:
+- Sistema de ordens de serviço
+- Relatórios e dashboards
+- Integração com APIs externas
+- Sistema de notificações push
+- Backup automático
+
+9. PROBLEMAS CONHECIDOS E SOLUÇÕES
+=============================================================================
+
+9.1 ERROS EM MODAIS DE MANIPULAÇÃO DE DADOS
+-----------------------------------------------------------------------------
+
+9.1.1 ERRO: "Erro ao atualizar item" no Modal de Edição de Itens
+
+Problema Identificado:
+Ao tentar editar um item de estoque através do modal de edição, o sistema exibia a mensagem "Erro ao atualizar item". A análise revelou três problemas principais:
+
+1. Ausência de Rota PUT: Não existia uma rota PUT em flask_gui.py para processar a atualização de itens de estoque.
+2. Ausência de Função no Banco de Dados: Não havia uma função correspondente em database.py para atualizar os dados do item no banco.
+3. Incompatibilidade de Nomes de Campos: Os nomes dos campos no formulário HTML não correspondiam aos nomes esperados pela API.
+
+Solução Implementada:
+
+1. Adição de Rota PUT em flask_gui.py:
+   - Criada a rota PUT '/api/itens_estoque/<int:item_id>' para processar atualizações de itens
+   - Implementada a lógica para extrair dados do formulário e chamar a função do banco de dados
+   - Adicionado tratamento de erros e retorno de mensagens apropriadas
+
+2. Implementação de Função no Banco de Dados:
+   - Adicionado o método 'atualizar_item_estoque' na classe Database em database.py
+   - Implementada validação para verificar a existência do item antes da atualização
+   - Adicionada verificação de duplicidade de código de item
+   - Implementado tratamento de exceções SQL
+
+3. Correção dos Nomes de Campos no HTML:
+   - Corrigidos os nomes dos campos no formulário de edição em estoque.html
+   - Desabilitado o campo "Quantidade Inicial" na edição, pois este valor não deve ser alterado diretamente
+
+Lições Aprendidas:
+
+1. Verificação Completa do Ciclo CRUD: Ao implementar novos recursos, garantir que todas as operações CRUD (Create, Read, Update, Delete) estejam implementadas e testadas.
+
+2. Consistência de Nomenclatura: Manter consistência entre os nomes dos campos nos formulários HTML e os nomes esperados pelas APIs.
+
+3. Validação em Múltiplas Camadas: Implementar validações tanto no frontend (JavaScript) quanto no backend (Python) para garantir integridade dos dados.
+
+4. Desativação de Campos Críticos: Campos que não devem ser editados diretamente (como quantidade inicial de estoque) devem ser desabilitados na interface de edição.
+
+Para Implementações Futuras:
+
+1. Ao criar novos modais de manipulação de dados, seguir este checklist:
+   - Criar rota correspondente no servidor Flask (GET, POST, PUT ou DELETE)
+   - Implementar função correspondente no gerenciador de banco de dados
+   - Garantir consistência entre nomes de campos no HTML e na API
+   - Implementar validação de dados no frontend e backend
+   - Testar todas as operações CRUD relacionadas ao recurso
+
+2. Documentar todas as rotas API e seus parâmetros esperados para referência futura
+
+3. Implementar testes automatizados para validar o funcionamento correto das operações CRUD
+
+9.1.2 ERRO: "URL gigante" ao submeter o formulário de fornecedor
+
+Problema Identificado:
+Ao clicar no botão "Salvar fornecedor" no modal de cadastro de fornecedor, a página era recarregada e a URL ficava extremamente longa, contendo todos os dados do formulário como parâmetros de query string. Isso ocorria porque o formulário estava sendo submetido pelo comportamento padrão do HTML, em vez de ser processado via AJAX.
+
+Causa Raiz:
+1. Ausência de Event Listener: Embora existisse uma função JavaScript `salvarNovoFornecedor()` que prevenia o comportamento padrão do formulário e fazia a submissão via AJAX, não havia um event listener para chamar essa função quando o formulário era submetido.
+2. Comportamento Padrão do HTML: Quando um formulário com um botão do tipo "submit" é submetido e não há um event listener para prevenir o comportamento padrão, o navegador envia os dados do formulário como parâmetros na URL (método GET) ou no corpo da requisição (método POST), causando o recarregamento da página.
+3. Inconsistência na Inicialização: Diferente de outros formulários na aplicação, o formulário de fornecedor não tinha seu event listener configurado na função `initializeEstoqueScripts()`.
+
+Solução Implementada:
+1. Adição de Event Listener na Inicialização:
+   - Modificada a função `initializeEstoqueScripts()` para adicionar um event listener ao formulário de fornecedor:
+   ```javascript
+   // Adicionar event listener para o formulário de novo fornecedor
+   const novoFornecedorForm = document.getElementById('novoFornecedorForm');
+   if (novoFornecedorForm) {
+       novoFornecedorForm.addEventListener('submit', salvarNovoFornecedor);
+   }
+   ```
+
+2. Verificação da Função de Submissão:
+   - Confirmado que a função `salvarNovoFornecedor()` já estava corretamente implementada com:
+     * `event.preventDefault()` para prevenir o comportamento padrão
+     * Validação dos campos obrigatórios
+     * Submissão via AJAX usando fetch API
+     * Tratamento adequado da resposta
+     * Fechamento do modal e atualização dos dropdowns após sucesso
+
+Lições Aprendidas:
+
+1. Padrão Consistente para Formulários: Todos os formulários da aplicação devem seguir o mesmo padrão de inicialização, preferencialmente configurando seus event listeners na função de inicialização principal.
+
+2. Prevenção de Comportamento Padrão: É essencial usar `event.preventDefault()` em todos os handlers de eventos de submissão de formulário para evitar o recarregamento da página.
+
+3. Verificação Completa do Ciclo de Vida: Ao implementar novos formulários, verificar todo o ciclo de vida, desde a inicialização dos event listeners até o processamento da resposta.
+
+4. Testes de Submissão: Testar explicitamente o comportamento de submissão de cada formulário para garantir que não ocorra recarregamento da página.
+
+Para Implementações Futuras:
+
+1. Checklist para Novos Formulários:
+   - Adicionar `id` único ao formulário
+   - Criar função de handler com `event.preventDefault()`
+   - Registrar event listener na função de inicialização
+   - Implementar validação de campos
+   - Usar AJAX para submissão
+   - Tratar resposta e fornecer feedback visual
+
+2. Padronização de Código:
+   - Manter um padrão consistente para todos os formulários
+   - Documentar o padrão para referência futura
+   - Revisar formulários existentes para garantir conformidade
+
+3. Implementar Validação de Formulário Centralizada:
+   - Criar uma função de validação genérica que possa ser reutilizada
+   - Padronizar mensagens de erro e feedback visual
+
+=============================================================================
+                        DOCUMENTAÇÃO DE ERROS E SOLUÇÕES
+=============================================================================
+
+Erro #1: Modal de Edição de Item - Dropdown de Categoria
+-----------------------------------------------------------------------------
+Descrição do Erro:
+- Ao abrir o modal de edição de item, ocorria o erro: "null is not an object (evaluating 'button.textContent = 'Selecione uma categoria'')"
+- O erro ocorria porque o código JavaScript tentava acessar elementos baseados na estrutura antiga do dropdown customizado, mas a estrutura HTML havia sido modificada.
+
+Causa Raiz:
+- Incompatibilidade entre a estrutura HTML do dropdown de categoria (que usava <select>) e o código JavaScript que esperava uma estrutura customizada com <div> e <button>.
+- Falta de verificação de nulidade (null check) antes de acessar propriedades de elementos DOM.
+- O modal era exibido antes de carregar as categorias, o que poderia causar um estado visual incorreto.
+- O código de submissão do formulário tentava acessar o valor selecionado usando seletores incorretos.
+
+Solução Aplicada:
+1. Modificação da função editarItem:
+   - Adicionado verificação de nulidade (null check) para o elemento button antes de tentar definir seu textContent e atributo data-selected.
+   - Movido a exibição do modal para antes do carregamento de categorias, garantindo que o modal seja visível enquanto as categorias são carregadas.
+
+2. Atualização da função closeEditItemModal:
+   - Adicionado reset do formulário ao fechar o modal para garantir que dados antigos não persistam.
+
+3. Correção do código de submissão do formulário:
+   - Atualizado o seletor para obter o botão correto dentro do dropdown customizado.
+   - Adicionado verificação de nulidade antes de acessar o atributo data-selected.
+
+Lições Aprendidas:
+1. Sempre verificar a existência de elementos DOM antes de acessar suas propriedades (null checks).
+2. Manter consistência entre a estrutura HTML e o código JavaScript que a manipula.
+3. Testar todas as operações CRUD após modificações na estrutura da interface.
+4. Implementar tratamento de erros adequado para evitar falhas silenciosas.
+
+=============================================================================
+                            FIM DA FICHA TÉCNICA
+=============================================================================
+
+Data de Criação: Janeiro 2025
+Versão do Documento: 1.0
+Projeto: Sistema de Gerenciamento Midnight
+Desenvolvedor: Cliente
+Tecnologias: Flask, MySQL, PyQt5, HTML5, CSS3, JavaScript

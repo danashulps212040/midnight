@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localizações de Estoque - Midnight</title>
+    <style>
+        /* Estilos específicos para a página de localizações */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(19, 4, 60, 0);
+            backdrop-filter: blur(10px);
+            border: 2px solid #9b64e300;
+            border-radius: 10px;
+            margin-top: 80px;
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            color: var(--text-color);
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+        }
+
+        .page-actions .btn-primary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .locations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .location-card {
+            background-color: rgba(19, 4, 60, 0.69);
+            backdrop-filter: blur(10px);
+            border: 1px solid #9B64E3;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .location-card:hover {
+            background-color: rgba(59, 12, 121, 0.29);
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.8);
+            border-color: #D8CEFE;
+            transform: translateY(-2px);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #9B64E3;
+        }
+
+        .location-title {
+            font-size: clamp(1rem, 1.5vw, 1.2rem);
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .location-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .location-actions .btn-secondary {
+            padding: 5px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .location-actions .btn-secondary svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .location-details {
+            color: var(--text-color);
+            font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+        }
+
+        .location-stats {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #9B64E3;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .location-stat {
+            text-align: center;
+            background-color: rgba(155, 100, 227, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #9B64E3;
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .stat-value {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            font-weight: 600;
+            color: #D8CEFE;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+            color: var(--text-color);
+        }
+
+        /* Botões */
+        .btn-primary {
+            background-color: rgba(155, 100, 227, 0.1);
+            border: 1px solid #9B64E3;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #D8CEFE;
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.8);
+        }
+
+        .btn-secondary {
+            background-color: rgba(155, 100, 227, 0.1);
+            border: 1px solid #9B64E3;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #D8CEFE;
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.8);
+        }
+
+        /* Modal e Formulário */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background-color: rgba(59, 12, 121, 0.29);
+            color: var(--sidebar-text-color);
+            margin: 0;
+            padding: 25px;
+            border: 1px solid var(--cor-destaque, #9B64E3);
+            border-radius: 10px;
+            width: 80%;
+            max-width: 450px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .modal-header {
+            border-bottom: 1px solid #9B64E3;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: var(--sidebar-text-color);
+            margin: 0;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        .close-button {
+            color: var(--sidebar-text-color);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            height: 28px;
+            width: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            top: -2px;
+        }
+
+        .close-button:hover {
+            color: var(--cor-destaque, #D8CEFE);
+        }
+
+        /* Custom Select */
+        .custom-select {
+            position: relative;
+            width: calc(100% - 2px); /* Considera a borda */
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--cor-destaque, #9B64E3);
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select:hover {
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+            border-color: #D8CEFE;
+            background-color: rgba(155, 100, 227, 0.1);
+        }
+
+        .custom-select > button {
+            width: calc(100% - 20px);
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            position: relative;
+            min-height: 38px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+        }
+
+        .custom-select > button:after {
+            content: "";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid white;
+        }
+
+        .custom-select > div {
+            display: none;
+            position: absolute;
+            width: calc(100% - 2px);
+            left: 0;
+            top: 100%;
+            background-color: rgba(19, 4, 60, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 5px;
+            margin-top: 5px;
+            z-index: 1000;
+            border: 1px solid var(--cor-destaque, #9B64E3);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .custom-select:focus-within > div {
+            display: block;
+        }
+
+        .custom-select > div > button {
+            width: calc(100% - 20px); /* Considera o padding */
+            padding: 10px 12px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .custom-select > div > button.selected {
+            background-color: rgba(155, 100, 227, 0.3);
+            color: var(--cor-destaque, #D8CEFE);
+        }
+
+        .custom-select > div > button:hover {
+            background-color: rgba(155, 100, 227, 0.2);
+            color: var(--cor-destaque, #D8CEFE);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Form Fields */
+        .location-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-field label {
+            color: var(--text-color);
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: calc(100% - 24px);
+            padding: 10px;
+            border: 1px solid var(--cor-destaque, #9B64E3);
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .form-field input:hover,
+        .form-field textarea:hover,
+        .form-field input:focus,
+        .form-field textarea:focus {
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+            border-color: #D8CEFE;
+            outline: none;
+        }
+
+        .form-field textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--cor-destaque, #9B64E3);
+        }
+
+        .form-actions button {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1>Localizações de Estoque</h1>
+            <div class="page-actions">
+                <button class="btn-primary" onclick="openNewLocationModal()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    Nova Localização
+                </button>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="locations-grid custom-scrollbar">
+                <!-- Cards de localização serão inseridos aqui dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Nova/Editar Localização -->
+    <div class="modal" id="locationModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Nova Localização</h2>
+                <button type="button" class="close-button" onclick="closeLocationModal()">&times;</button>
+            </div>
+            <div class="modal-body custom-scrollbar">
+                <form id="locationForm" class="location-form" onsubmit="handleLocationSubmit(event)">
+                    <div class="form-field">
+                        <label for="locationName">Nome da Localização*</label>
+                        <input type="text" id="locationName" name="name" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="locationType">Tipo*</label>
+                        <div class="custom-select" tabindex="0" role="button" id="locationType">
+                            <button tabindex="0" type="button">Selecione o Tipo</button>
+                            <div>
+                                <button role="button" tabindex="0" type="button" data-value="prateleira"><span>Prateleira</span></button>
+                                <button role="button" tabindex="0" type="button" data-value="estante"><span>Estante</span></button>
+                                <button role="button" tabindex="0" type="button" data-value="gaveta"><span>Gaveta</span></button>
+                                <button role="button" tabindex="0" type="button" data-value="armario"><span>Armário</span></button>
+                                <button role="button" tabindex="0" type="button" data-value="outro"><span>Outro</span></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label for="locationCode">Código</label>
+                        <input type="text" id="locationCode" name="code">
+                    </div>
+                    <div class="form-field">
+                        <label for="capacity">Capacidade</label>
+                        <input type="number" id="capacity" name="capacity" min="0">
+                    </div>
+                    <div class="form-field">
+                        <label for="locationDescription">Descrição</label>
+                        <textarea id="locationDescription" name="description"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeLocationModal()">Cancelar</button>
+                        <button type="submit" class="btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicialização do custom select
+        document.addEventListener('DOMContentLoaded', () => {
+            function initCustomSelect(selectId) {
+                const typeSelect = document.querySelector(selectId);
+                const mainButton = typeSelect.querySelector('button');
+                const options = typeSelect.querySelectorAll('div > button');
+                let selectedOption = null;
+
+                options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        const value = option.getAttribute('data-value');
+                        const text = option.querySelector('span').textContent;
+                        
+                        // Atualiza o botão principal
+                        mainButton.textContent = text;
+                        mainButton.setAttribute('data-value', value);
+                        
+                        // Remove seleção anterior
+                        if (selectedOption) {
+                            selectedOption.classList.remove('selected');
+                        }
+                        
+                        // Marca nova seleção
+                        option.classList.add('selected');
+                        selectedOption = option;
+                        
+                        typeSelect.querySelector('div').style.display = 'none';
+                    });
+                });
+
+                mainButton.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const dropdown = typeSelect.querySelector('div');
+                    const isVisible = dropdown.style.display === 'block';
+                    
+                    // Fecha todos os outros dropdowns
+                    document.querySelectorAll('.custom-select > div').forEach(d => {
+                        d.style.display = 'none';
+                    });
+                    
+                    // Abre/fecha o dropdown atual
+                    dropdown.style.display = isVisible ? 'none' : 'block';
+                });
+            }
+
+            // Inicializa o select de tipo
+            initCustomSelect('#locationType');
+
+            // Fecha dropdowns ao clicar fora
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.custom-select')) {
+                    document.querySelectorAll('.custom-select > div').forEach(dropdown => {
+                        dropdown.style.display = 'none';
+                    });
+                }
+            });
+        });
+
+        // Funções JavaScript para manipulação das localizações
+        function openNewLocationModal() {
+            document.getElementById('modalTitle').textContent = 'Nova Localização';
+            document.getElementById('locationForm').reset();
+            // Resetar o texto do select
+            const typeButton = document.querySelector('#locationType > button');
+            typeButton.textContent = 'Selecione o Tipo';
+            typeButton.removeAttribute('data-value');
+            // Remover seleção visual
+            document.querySelectorAll('#locationType .selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById('locationModal').style.display = 'block';
+        }
+
+        function closeLocationModal() {
+            document.getElementById('locationModal').style.display = 'none';
+            document.getElementById('locationForm').reset();
+            // Resetar o texto do select
+            const typeButton = document.querySelector('#locationType > button');
+            typeButton.textContent = 'Selecione o Tipo';
+            typeButton.removeAttribute('data-value');
+            // Remover seleção visual
+            document.querySelectorAll('#locationType .selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+        }
+function handleLocationSubmit(event) {
+    event.preventDefault();
+    
+    const typeButton = document.querySelector('#locationType > button');
+    const selectedType = typeButton.getAttribute('data-value');
+    
+    if (!selectedType) {
+        showNotification('error', 'Por favor, selecione um tipo de localização');
+        return;
+    }
+    
+    const formData = new FormData(event.target);
+    formData.set('type', selectedType);
+    const data = Object.fromEntries(formData.entries());
+    
+            
+            // Fazer requisição para API
+            fetch('/api/localizacoes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    closeLocationModal();
+                    // Atualizar lista de localizações
+                    loadLocations();
+                    // Mostrar notificação de sucesso
+                    showNotification('Localização salva com sucesso!', 'success');
+                } else {
+                    showNotification('Erro ao salvar localização', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                showNotification('Erro ao salvar localização', 'error');
+            });
+        }
+
+        function loadLocations() {
+            fetch('/api/localizacoes')
+                .then(response => response.json())
+                .then(locations => {
+                    const grid = document.querySelector('.locations-grid');
+                    grid.innerHTML = locations.map(location => `
+                        <div class="location-card">
+                            <div class="location-header">
+                                <h3 class="location-title">${location.name}</h3>
+                                <div class="location-actions">
+                                    <button class="btn-secondary" onclick="editLocation(${location.id})" data-tooltip="Editar">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                                        </svg>
+                                    </button>
+                                    <button class="btn-secondary" onclick="deleteLocation(${location.id})" data-tooltip="Excluir">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M3 6h18"></path>
+                                            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="location-details">
+                                <p><strong>Tipo:</strong> ${location.type}</p>
+                                <p><strong>Código:</strong> ${location.code || '-'}</p>
+                            </div>
+                            <div class="location-stats">
+                                <div class="location-stat">
+                                    <div class="stat-value">${location.itemCount || 0}</div>
+                                    <div class="stat-label">Itens</div>
+                                </div>
+                                <div class="location-stat">
+                                    <div class="stat-value">${location.capacity || '-'}</div>
+                                    <div class="stat-label">Capacidade</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar localizações:', error);
+                    showNotification('Erro ao carregar localizações', 'error');
+                });
+        }
+
+        // Carregar localizações ao iniciar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLocations();
+        });
+    </script>
+</body>
+</html>

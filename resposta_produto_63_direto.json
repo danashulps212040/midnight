@@ -1,0 +1,45 @@
+{
+  "custo_etapas": 1.09,
+  "materiais": [
+    {
+      "area_total": 6.1,
+      "area_utilizada": 1.0,
+      "comprimento": 500.0,
+      "custo_unitario": 2000.0,
+      "custo_unitario_novo": 12.5,
+      "id": 99,
+      "is_measurement": true,
+      "largura": 122.0,
+      "nome": "Chapa de ACM 122x500",
+      "quantidade_necessaria": 1.0,
+      "unidade_nome": "cm",
+      "unidades_por_pacote": null
+    },
+    {
+      "area_total": 0,
+      "area_utilizada": 0.0,
+      "comprimento": null,
+      "custo_unitario": 25.0,
+      "custo_unitario_novo": 0.18,
+      "id": 98,
+      "is_measurement": false,
+      "largura": null,
+      "nome": "Parafuso Phillips 6x40mm",
+      "quantidade_necessaria": 2.0,
+      "unidade_nome": null,
+      "unidades_por_pacote": 100
+    }
+  ],
+  "produto": {
+    "categoria": "Categoria Teste",
+    "codigo": "4362346",
+    "custo_etapas": 1.09,
+    "custo_materiais": 2.4091803278688526,
+    "custo_total": 3.499180327868853,
+    "id": 63,
+    "margem_lucro": 0.0,
+    "nome": "Fachada ACM 100x100",
+    "preco": 3.499180327868853,
+    "preco_atual": 211.91
+  }
+}

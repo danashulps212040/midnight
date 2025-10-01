@@ -1,0 +1,558 @@
+2025-07-08 14:26:58.492 Python[62577:1327560] +[IMKClient subclass]: chose IMKClient_Modern
+2025-07-08 14:26:58.492 Python[62577:1327560] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+ * Serving Flask app 'flask_gui'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [08/Jul/2025 14:27:35] "GET /api/produtos?id=fcdf514a-8b2b-4e4e-ba1c-949de4aa3ebc&vscodeBrowserReqId=1751995655185 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:27:35] "GET /orcamentos?id=fcdf514a-8b2b-4e4e-ba1c-949de4aa3ebc&vscodeBrowserReqId=1751995655580 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:27:35] "GET /api/clientes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:27:35] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:35:25] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 14:40:47] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:41:01] "GET /orcamentos.html HTTP/1.1" 200 -
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+2025-07-08 14:48:51.005 Python[84123:1385207] +[IMKClient subclass]: chose IMKClient_Modern
+2025-07-08 14:48:51.005 Python[84123:1385207] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+ * Serving Flask app 'flask_gui'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:8000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [08/Jul/2025 14:50:05] "GET /dashboard?id=fcdf514a-8b2b-4e4e-ba1c-949de4aa3ebc&vscodeBrowserReqId=1751997005485 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:05] "GET /static/logo.svg HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:05] "GET /static/warning_icon.svg HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:05] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:05] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:05] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 14:50:29] "GET /orcamentos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:30] "GET /api/clientes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:50:30] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "GET /dashboard?id=fcdf514a-8b2b-4e4e-ba1c-949de4aa3ebc&vscodeBrowserReqId=1751997080780 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 14:51:20] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:07] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:20] "GET /orcamentos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:21] "GET /api/clientes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:04:21] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:13:52] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:16] "GET /produtos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:16] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:16] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:26] "GET /orcamentos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:26] "GET /api/clientes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 15:14:26] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 16:13:52] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 17:13:52] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 18:13:52] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:44] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:46] "GET /produtos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:46] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:46] "GET /api/produtos HTTP/1.1" 200 -
+Error rendering template vendas.html: vendas.html
+127.0.0.1 - - [08/Jul/2025 19:04:47] "[33mGET /vendas.html HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 19:04:48] "GET /orcamentos.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:48] "GET /api/clientes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:04:48] "GET /api/produtos HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /static/css/custom-scrollbar.css HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 99, 'nome': 'Chapa de ACM 122x500', 'codigo': 'ALUMBRASIL_CH_AC_122_172', 'categoria': 'ACM', 'tipo_item': 'Chapa/Placa', 'cor': 'Azul', 'quantidade_atual': 33, 'estoque_minimo': 1, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'ALUM BRASIL', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('122.00'), 'comprimento': Decimal('500.00'), 'peso': None, 'volume': None, 'custo_medio': Decimal('1073.94'), 'custo_atual': Decimal('2000.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:50] "GET /api/tipo_itens HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:05:57] "DELETE /api/itens_estoque/99 HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 97, 'nome': 'Papel fotográfico glossy A4', 'codigo': 'JOJO_PA_FO_GLO_731', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 6, 'estoque_minimo': 2, 'unidade_medida': 'folhas', 'fornecedor': 'Shopee', 'fabricante': 'JOJO', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('27.00'), 'peso': None, 'volume': None, 'custo_medio': Decimal('4.83'), 'custo_atual': Decimal('29.00'), 'is_measurement': 0}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:05:57] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "[36mGET /static/logo.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "[36mGET /static/warning_icon.svg HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:28] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/tipo_itens HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:33:31] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...127.0.0.1 - - [08/Jul/2025 19:35:27] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Resultado da busca: []
+Tipo do resultado: <class 'list'>
+Lista encontrada com 0 itens
+127.0.0.1 - - [08/Jul/2025 19:35:27] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:35:29] "GET /api/categorias HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: []
+Tipo do resultado: <class 'list'>
+Lista encontrada com 0 itens
+127.0.0.1 - - [08/Jul/2025 19:35:31] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+127.0.0.1 - - [08/Jul/2025 19:35:33] "GET /api/fornecedores HTTP/1.1" 200 -
+Resultado da busca: []
+Tipo do resultado: <class 'list'>
+Lista encontrada com 0 itens
+127.0.0.1 - - [08/Jul/2025 19:35:33] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:35:37] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:35:49] "GET /api/categorias HTTP/1.1" 200 -
+[ERROR] Erro ao verificar código existente: 'Database' object has no attribute 'mysql'
+127.0.0.1 - - [08/Jul/2025 19:38:17] "POST /api/itens_estoque/verificar_codigo HTTP/1.1" 200 -
+=== DEBUG: Dados recebidos no formulário ===
+itemName: Papel fotográfico A4 Glossy
+itemFabricante: Jojo
+itemCode: JOJO_PA_FO_A4_346
+itemColor: Branco
+itemInitialQuantity: 5
+itemMinStock: 2
+itemUnidades: 100
+itemLargura: 21.00
+itemComprimento: 29.70
+itemEspessura: 
+itemVolume: 
+itemPeso: 
+itemLocation: 
+itemTechSpecs: 
+itemDescription: 
+itemCategory: 1
+itemTipoItem: 1
+itemSupplier: 1
+itemUnit: 1
+=== FIM DEBUG ===
+=== DEBUG: Valores processados ===
+nome: Papel fotográfico A4 Glossy
+codigo: JOJO_PA_FO_A4_346
+categoria_id: 1
+tipo_item_id: 1
+unidades_por_pacote: 100
+espessura: None
+volume: None (tipo: <class 'NoneType'>)
+volume original recebido: 
+unidade_medida_id: 1
+fornecedor_id: 1
+fabricante: Jojo
+especificacoes_tecnicas: 
+=== FIM DEBUG ===
+[DEBUG DATABASE] Executando INSERT com volume: None (tipo: <class 'NoneType'>)
+[DEBUG DATABASE] Volume salvo no banco: None
+127.0.0.1 - - [08/Jul/2025 19:41:17] "POST /api/itens_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:41:17] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:41:50] "GET /api/categorias HTTP/1.1" 200 -
+[ERROR] Erro ao verificar código existente: 'Database' object has no attribute 'mysql'
+127.0.0.1 - - [08/Jul/2025 19:43:14] "POST /api/itens_estoque/verificar_codigo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:47:49] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 19:47:49] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 19:47:53] "[33mGET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1[0m" 404 -
+=== DEBUG: Dados recebidos no formulário ===
+itemName: Papel fotográfico A4 Glossy adesivo 90g
+itemFabricante: Jojo
+itemCode: JOJO_PA_FO_A4_472
+itemColor: Branco
+itemInitialQuantity: 15
+itemMinStock: 5
+itemUnidades: 20
+itemLargura: 21.00
+itemComprimento: 29.70
+itemEspessura: 0
+itemVolume: 
+itemPeso: 
+itemLocation: 
+itemTechSpecs: 
+itemDescription: 
+itemCategory: 1
+itemTipoItem: 1
+itemSupplier: 1
+itemUnit: 1
+=== FIM DEBUG ===
+=== DEBUG: Valores processados ===
+nome: Papel fotográfico A4 Glossy adesivo 90g
+codigo: JOJO_PA_FO_A4_472
+categoria_id: 1
+tipo_item_id: 1
+unidades_por_pacote: 20
+espessura: 0.0
+volume: None (tipo: <class 'NoneType'>)
+volume original recebido: 
+unidade_medida_id: 1
+fornecedor_id: 1
+fabricante: Jojo
+especificacoes_tecnicas: 
+=== FIM DEBUG ===
+[DEBUG DATABASE] Executando INSERT com volume: None (tipo: <class 'NoneType'>)
+[DEBUG DATABASE] Volume salvo no banco: None
+127.0.0.1 - - [08/Jul/2025 19:48:54] "POST /api/itens_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:48:54] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]127.0.0.1 - - [08/Jul/2025 19:49:03] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:49:03] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+127.0.0.1 - - [08/Jul/2025 19:49:16] "GET /api/fornecedores HTTP/1.1" 200 -
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:49:16] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:49:50] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:55:09] "POST /api/entradas_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:55:09] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]127.0.0.1 - - [08/Jul/2025 19:55:26] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:55:26] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]127.0.0.1 - - [08/Jul/2025 19:55:36] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:55:36] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:56:48] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/categorias HTTP/1.1" 200 -
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/fornecedores HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:56:48] "GET /api/tipo_itens HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]127.0.0.1 - - [08/Jul/2025 19:56:59] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:56:59] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]127.0.0.1 - - [08/Jul/2025 19:57:20] "GET /api/fornecedores HTTP/1.1" 200 -
+
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:57:20] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 19:58:48] "POST /api/entradas_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 10, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('13.24'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 19:58:48] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346'}, {'id': 102, 'nome': 'Papel fotográfico A4 Glossy adesivo 90g', 'codigo': 'JOJO_PA_FO_A4_472'}]
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 19:59:30] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+Buscando item de estoque com ID: 101
+Item encontrado: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_inicial': 5, 'quantidade_atual': 10, 'estoque_minimo': 2, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('13.24'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 19:59:51] "GET /api/itens_estoque/101 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:00:28] "POST /api/itens_estoque/101/fracionar HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 101, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'JOJO_PA_FO_A4_346', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco', 'quantidade_atual': 9, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('13.24'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:00:28] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "GET /dashboard HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "GET /api/estoque/check_low_stock HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "GET /api/notificacoes HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "GET /static/warning_icon.svg HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "GET /static/logo.svg HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:03] "[33mGET /static/sw.js HTTP/1.1[0m" 404 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/fornecedores HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/tipo_itens HTTP/1.1" 200 -
+
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:03:07] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:03:21] "GET /api/categorias HTTP/1.1" 200 -
+[ERROR] Erro ao verificar código existente: 'Database' object has no attribute 'mysql'
+127.0.0.1 - - [08/Jul/2025 20:04:21] "POST /api/itens_estoque/verificar_codigo HTTP/1.1" 200 -
+=== DEBUG: Dados recebidos no formulário ===
+itemName: Papel fotográfico A4 Glossy
+itemFabricante: Jojo
+itemCode: BC-2266
+itemColor: Branco 
+itemInitialQuantity: 0
+itemMinStock: 5
+itemUnidades: 100
+itemLargura: 21.00
+itemComprimento: 29.70
+itemEspessura: 
+itemVolume: 
+itemPeso: 
+itemLocation: 
+itemTechSpecs: 
+itemDescription: 
+itemCategory: 1
+itemTipoItem: 1
+itemSupplier: 1
+itemUnit: 1
+=== FIM DEBUG ===
+=== DEBUG: Valores processados ===
+nome: Papel fotográfico A4 Glossy
+codigo: BC-2266
+categoria_id: 1
+tipo_item_id: 1
+unidades_por_pacote: 100
+espessura: None
+volume: None (tipo: <class 'NoneType'>)
+volume original recebido: 
+unidade_medida_id: 1
+fornecedor_id: 1
+fabricante: Jojo
+especificacoes_tecnicas: 
+=== FIM DEBUG ===
+[DEBUG DATABASE] Executando INSERT com volume: None (tipo: <class 'NoneType'>)
+[DEBUG DATABASE] Volume salvo no banco: None
+127.0.0.1 - - [08/Jul/2025 20:07:04] "POST /api/itens_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 0, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:07:04] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:07:19] "GET /api/categorias HTTP/1.1" 200 -
+=== DEBUG: Dados recebidos no formulário ===
+itemName: Papel fotográfico A4 Glossy adesivo 
+itemFabricante: Jojo 
+itemCode: BC-2261
+itemColor: branco 
+itemInitialQuantity: 0
+itemMinStock: 5
+itemUnidades: 15
+itemLargura: 21.00
+itemComprimento: 29.70
+itemEspessura: 
+itemVolume: 
+itemPeso: 
+itemLocation: 
+itemTechSpecs: 
+itemDescription: 
+itemCategory: 1
+itemTipoItem: 1
+itemSupplier: 1
+itemUnit: 1
+=== FIM DEBUG ===
+=== DEBUG: Valores processados ===
+nome: Papel fotográfico A4 Glossy adesivo 
+codigo: BC-2261
+categoria_id: 1
+tipo_item_id: 1
+unidades_por_pacote: 15
+espessura: None
+volume: None (tipo: <class 'NoneType'>)
+volume original recebido: 
+unidade_medida_id: 1
+fornecedor_id: 1
+fabricante: Jojo 
+especificacoes_tecnicas: 
+=== FIM DEBUG ===
+[DEBUG DATABASE] Executando INSERT com volume: None (tipo: <class 'NoneType'>)
+[DEBUG DATABASE] Volume salvo no banco: None
+127.0.0.1 - - [08/Jul/2025 20:10:11] "POST /api/itens_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 0, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:10:11] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Buscando item de estoque com ID: 104
+Item encontrado: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_inicial': 0, 'quantidade_atual': 0, 'estoque_minimo': 5, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('0.00'), 'custo_atual': Decimal('0.00'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 20:10:31] "GET /api/itens_estoque/104 HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+Resultado da busca: [{'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266'}, {'id': 105, 'nome': 'Papel fotográfico A4 Glossy adesivo ', 'codigo': 'BC-2261'}]
+Tipo do resultado: <class 'list'>
+127.0.0.1 - - [08/Jul/2025 20:10:39] "GET /api/fornecedores HTTP/1.1" 200 -
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 20:10:39] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:11:51] "POST /api/entradas_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:11:51] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Iniciando busca de itens de estoque...
+127.0.0.1 - - [08/Jul/2025 20:11:59] "GET /api/fornecedores HTTP/1.1" 200 -
+Resultado da busca: [{'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266'}, {'id': 105, 'nome': 'Papel fotográfico A4 Glossy adesivo ', 'codigo': 'BC-2261'}]
+Tipo do resultado: <class 'list'>
+Lista encontrada com 2 itens
+127.0.0.1 - - [08/Jul/2025 20:11:59] "GET /api/itens_estoque/lista HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:14:09] "POST /api/entradas_estoque HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:14:09] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Buscando item de estoque com ID: 104
+Item encontrado: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_inicial': 0, 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 20:14:12] "GET /api/itens_estoque/104 HTTP/1.1" 200 -
+Buscando item de estoque com ID: 104
+Item encontrado: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_inicial': 0, 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 20:14:40] "GET /api/itens_estoque/104 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:14:40] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:14:40] "GET /api/tipo_itens HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:14:40] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:14:40] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:14:52] "PUT /api/itens_estoque/104 HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:14:52] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+Buscando item de estoque com ID: 104
+Item encontrado: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_inicial': 0, 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 20:14:58] "GET /api/itens_estoque/104 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:03] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}][DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /api/fornecedores HTTP/1.1" 200 -
+
+
+127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /api/categorias HTTP/1.1" 200 -
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']127.0.0.1 - - [08/Jul/2025 20:15:03] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+
+127.0.0.1 - - [08/Jul/2025 20:15:04] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:04] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:04] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:05] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/categorias HTTP/1.1" 200 -
+
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:05] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:06] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/categorias HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:06] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+Buscando item de estoque com ID: 104
+Item encontrado: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria_id': 1, 'categoria_nome': 'Papel A4', 'tipo_item_id': 1, 'tipo_item_nome': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_inicial': 0, 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidades_por_pacote': 100, 'unidade_medida_id': 1, 'unidade_medida_nome': 'cm', 'fornecedor_id': 1, 'fornecedor_nome': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'especificacoes_tecnicas': '', 'descricao': '', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'espessura': None, 'volume': None, 'area': Decimal('0.0624'), 'peso': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Campo is_measurement no item: 1
+127.0.0.1 - - [08/Jul/2025 20:15:08] "GET /api/itens_estoque/104 HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:08] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:08] "GET /api/tipo_itens HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:08] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:08] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:14] "PUT /api/itens_estoque/104 HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:14] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/fornecedores HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/categorias HTTP/1.1" 200 -
+
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 5, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/categorias HTTP/1.1" 200 -
+
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}][DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/tipo_itens HTTP/1.1" 200 -
+
+
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:21] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /estoque.html HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "[36mGET /static/css/custom-scrollbar.css HTTP/1.1[0m" 304 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/categorias HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/fornecedores HTTP/1.1" 200 -
+[DEBUG] Primeiro item da lista completa: {'id': 104, 'nome': 'Papel fotográfico A4 Glossy', 'codigo': 'BC-2266', 'categoria': 'Papel A4', 'tipo_item': 'Pacote Fechado', 'cor': 'Branco ', 'quantidade_atual': 5, 'estoque_minimo': 2, 'unidade_medida': 'cm', 'fornecedor': 'Shopee', 'fabricante': 'Jojo', 'localizacao_estoque': '', 'status': 'ativo', 'largura': Decimal('21.00'), 'comprimento': Decimal('29.70'), 'peso': None, 'volume': None, 'custo_medio': Decimal('26.48'), 'custo_atual': Decimal('26.48'), 'is_measurement': 1}
+[DEBUG] Keys do primeiro item: ['id', 'nome', 'codigo', 'categoria', 'tipo_item', 'cor', 'quantidade_atual', 'estoque_minimo', 'unidade_medida', 'fornecedor', 'fabricante', 'localizacao_estoque', 'status', 'largura', 'comprimento', 'peso', 'volume', 'custo_medio', 'custo_atual', 'is_measurement']127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/itens_estoque/completo HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/unidades_de_medida HTTP/1.1" 200 -
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/tipo_itens HTTP/1.1" 200 -
+[DEBUG] Unidades retornadas pela database: [{'id': 1, 'nome': 'cm', 'is_measurement': 1}, {'id': 7, 'nome': 'folhas', 'is_measurement': 0}, {'id': 5, 'nome': 'lt', 'is_measurement': 0}, {'id': 6, 'nome': 'teste', 'is_measurement': 0}, {'id': 8, 'nome': 'unidades', 'is_measurement': 0}]
+127.0.0.1 - - [08/Jul/2025 20:15:38] "GET /api/unidades_de_medida HTTP/1.1" 200 -

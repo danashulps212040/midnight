@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Midnight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('../static/login.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .login-container {
+            background-color: rgba(68, 7, 148, 0.69);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid #9B64E3;
+            border-radius: 10px;
+            padding: 30px;
+            width: 300px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            width: 88%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .form-group input {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #9B64E3;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            display: block;
+            margin: 0 auto;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #9B64E3;
+            background-color: rgba(155, 100, 227, 0.1);
+        }
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #9B64E3;
+            border-radius: 3px;
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            vertical-align: middle;
+        }
+        
+        .form-group input[type="checkbox"]:checked {
+            background-color: #9B64E3;
+        }
+        
+        .form-group input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 5px;
+            top: 2px;
+            width: 4px;
+            height: 8px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        
+        .form-group input[type="checkbox"]:hover {
+            background-color: rgba(155, 100, 227, 0.1);
+        }
+        button {
+            width: 87%;
+            padding: 10px;
+            background-color: rgba(155, 100, 227, 0.1);
+            color: white;
+            border: 2px solid #9B64E3;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        button:hover {
+            background-color: #D8CEFE;
+        }
+        .flash-messages {
+            margin-bottom: 15px;
+        }
+        .flash-messages .alert {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .flash-messages .alert-success {
+            background-color: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+        .flash-messages .alert-danger {
+            background-color: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo-container" style="display: flex; justify-content: center; margin-bottom: 50px;">
+            <svg width="200" height="200" viewBox="0 0 6.1344 6.8851" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <radialGradient id="id0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(6.54315 -0 -0 6.54315 -20 -15)" cx="3.6891" cy="2.7778" r="1.6274" fx="3.6891" fy="2.7778">
+                        <stop offset="0" style="stop-opacity:1; stop-color:#9B64E3"/>
+                        <stop offset="0.54902" style="stop-opacity:1; stop-color:#0083E5"/>
+                        <stop offset="1" style="stop-opacity:1; stop-color:#0083E5"/>
+                    </radialGradient>
+                    <radialGradient id="id1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(6.54314 -0 -0 6.54315 -13 -13)" cx="2.3924" cy="2.3409" r="3.4425" fx="2.3924" fy="2.3409">
+                        <stop offset="0" style="stop-opacity:1; stop-color:#9B64E3"/>
+                        <stop offset="0.54902" style="stop-opacity:1; stop-color:#0083E5"/>
+                        <stop offset="1" style="stop-opacity:1; stop-color:#0083E5"/>
+                    </radialGradient>
+                </defs>
+                <g>
+                    <path fill="url(#id0)" d="M4.7505 2.8756l0 1.6591 -0.5808 0 0 -0.5315 -0 -0.9108c-0.2144,0.3548 -0.4185,0.8135 -0.5863,1.4063l-0.5828 -1.0575 0 1.0935 -0.5808 0 0 -2.1483 0.5808 0 0.4854 0.8813c0,0 0.1785,-0.4961 0.6463,-0.911 0.3436,-0.305 0.7812,-0.4839 1.3164,-0.4839l0.1008 0.0023 0.1228 0.0078 0.0022 0c0,0 -0.4242,0.0278 -0.9239,0.4848l0 0.508z"/>
+                    <path fill="url(#id1)" d="M3.4425 0c1.0897,0 2.061,0.5065 2.6918,1.2967 -0.5634,-0.586 -1.3553,-0.9508 -2.2325,-0.9508 -1.7102,0 -3.0966,1.3864 -3.0966,3.0966 0,1.6914 1.356,3.066 3.0402,3.0961 0.341,-0.0262 0.683,-0.074 0.9879,-0.1421 0.5005,-0.1577 0.9461,-0.4391 1.301,-0.8083 -0.6308,0.7902 -1.6021,1.2967 -2.6918,1.2967 -1.9013,0 -3.4425,-1.5413 -3.4425,-3.4425 0,-1.9013 1.5413,-3.4425 3.4425,-3.4425zm-2.7976,5.4478c0,0.0001 0.0001,0.0001 0.0001,0.0002 -0,-0.0001 -0.0001,-0.0001 -0.0001,-0.0002zm-0.0219 -0.0309c0.0073,0.0103 0.0146,0.0206 0.0219,0.0308 -0.0074,-0.0102 -0.0147,-0.0205 -0.0219,-0.0308z"/>
+                </g>
+            </svg>
+        </div>
+        
+        <div class="flash-messages">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        
+        <form method="POST" action="{{ url_for('login') }}">
+            {% if next %}
+            <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+            <div class="form-group">
+                <label for="username">Usuário</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; margin-bottom: 20px; width: 67%; margin-left: 20px; margin-right: 20px;">
+                <input type="checkbox" id="keep_connected" name="keep_connected">
+                <label for="keep_connected" style="width: auto; margin: 0 0 0 8px;">Manter conectado</label>
+            </div>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+</body>
+</html>

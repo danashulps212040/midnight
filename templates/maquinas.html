@@ -1,0 +1,2089 @@
+<div class="module-header" style="padding: 90px 20px 20px 20px; font-size: 14px;">
+<link rel="stylesheet" href="/static/css/custom-scrollbar.css">
+  <h1>Máquinas</h1>
+  
+<!-- Filtros e busca de máquinas -->
+<div class="search-filters" style="margin-bottom: 20px; padding: 15px; background-color: rgba(19, 4, 60, 0.69); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #9B64E3; border-radius: 10px;">
+    <div class="search-container" style="display: flex; margin-bottom: 15px;">
+        <input type="text" id="searchMachine" placeholder="Pesquisar máquina..." style="flex: 1; padding: 10px; border: 0.2px solid #9B64E3; border-radius: 5px 0 0 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+        <button type="button" id="searchButton" style="padding: 10px 15px; background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9b63e3; border-left: none; border-radius: 0 5px 5px 0; color: white; cursor: pointer;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+            <i class="search-icon">&#128269;</i>
+        </button>
+    </div>
+
+<style>
+    /* Estilos para o combobox customizado */
+    .custom-select {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        position: relative;
+        z-index: 1000;
+    }
+
+    .custom-select > button {
+        padding: 10px 35px 10px 10px;
+        background: transparent;
+        border: none;
+        color: white;
+        text-align: left;
+        font-size: 0.9em;
+        width: 100%;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        box-sizing: border-box;
+    }
+
+    .custom-select > button:after {
+        content: "▼";
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9B64E3;
+        font-size: 0.8em;
+        pointer-events: none;
+    }
+
+    .custom-select > div {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease-in-out;
+        position: absolute;
+        width: calc(100% - 12px);
+        left: 6px;
+        background-color: rgba(19, 4, 60, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        margin-top: 5px;
+        z-index: 11;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .custom-select > div {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        height: 0;
+        transition: height 0.3s ease-in-out;
+        position: absolute;
+        width: calc(100% - 12px);
+        left: 6px;
+        background-color: rgba(19, 4, 60, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        margin-top: 5px;
+        z-index: 11;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .custom-select > div > a {
+        display: block;
+        padding: 10px;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+    }
+
+    .custom-select > div > a:first-child {
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+    }
+
+    .custom-select > div > a:last-child {
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .custom-select:hover > div,
+    .custom-select:focus-within > div {
+        height: auto;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .custom-select > div > div {
+        display: block;
+        padding: 10px;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        position: relative;
+        transition: background-color 0.2s ease;
+    }
+
+    .custom-select > div > div:hover,
+    .custom-select > div > div:focus {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #D8CEFE);
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute !important;
+        width: calc(100% - 12px) !important;
+        left: 6px !important;
+        background-color: rgba(19, 4, 60, 0.7) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px !important;
+        margin-top: 5px !important;
+        z-index: 10000 !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        min-height: 40px !important;
+    }
+
+    /* Z-index específico para evitar sobreposição - Hierarquia correta dos dropdowns */
+    #machineType .dropdown-content,
+    #editMachineType .dropdown-content {
+        z-index: 10010 !important;
+    }
+
+    #machineCondition .dropdown-content,
+    #editMachineCondition .dropdown-content {
+        z-index: 10009 !important;
+    }
+
+    #machineStatus .dropdown-content,
+    #editMachineStatus .dropdown-content {
+        z-index: 10008 !important;
+    }
+
+    /* Dropdowns que abrem para cima (quando próximos ao final do modal) */
+    .dropdown-open-up {
+        top: auto !important;
+        bottom: 100% !important;
+        margin-top: 0 !important;
+        margin-bottom: 5px !important;
+    }
+
+    /* Contêiner específico para evitar overflow nos modais */
+    .modal-body {
+        position: relative;
+        overflow: visible !important;
+    }
+
+    /* Ajustes específicos para os dropdowns nos forms de máquina */
+    #machineModal .form-group,
+    #editMachineModal .form-group {
+        position: relative;
+        z-index: auto;
+    }
+
+    /* Garantir que dropdowns não sejam cortados */
+    .custom-select {
+        position: relative;
+        z-index: 1000;
+    }
+    
+    /* Força visibilidade quando display é block */
+    .dropdown-content[style*="display: block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: rgba(59, 12, 121, 0.29);
+        color: var(--sidebar-text-color, white);
+        margin: 0;
+        padding: 20px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 10px;
+        width: 85%;
+        max-width: 900px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .modal-body {
+        padding: 15px;
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
+    .close-button {
+        color: var(--sidebar-text-color, white);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--cor-destaque, #D8CEFE);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-content h2 {
+        color: var(--sidebar-text-color, white);
+        margin-top: 0;
+        border-bottom: 1px solid var(--cor-destaque, #9B64E3);
+        padding-bottom: 10px;
+    }
+
+    .modal-content form .form-group {
+        margin-bottom: 10px;
+    }
+
+    .modal-content form label {
+        display: block;
+        margin-top: 5px;
+        margin-bottom: 3px;
+        font-weight: bold;
+        color: var(--sidebar-text-color, white);
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"],
+    .modal-content form input[type="number"],
+    .modal-content form input[type="email"],
+    .modal-content form input[type="password"],
+    .modal-content form input[type="date"],
+    .modal-content form select,
+    .modal-content form textarea {
+        width: calc(100% - 18px);
+        padding: 8px;
+        margin-bottom: 3px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+        font-size: 0.9em;
+    }
+
+    .modal-content form input[type="text"]:hover,
+    .modal-content form input[type="number"]:hover,
+    .modal-content form input[type="email"]:hover,
+    .modal-content form input[type="password"]:hover,
+    .modal-content form input[type="date"]:hover,
+    .modal-content form select:hover,
+    .modal-content form textarea:hover {
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    .notification-modal-content {
+        max-width: 400px;
+        text-align: center;
+        padding: 30px;
+    }
+
+    .notification-modal-content .btn-primary {
+        margin: 0 auto;
+        display: block;
+    }
+
+    .notification-modal-content h2 {
+        border-bottom: none;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+
+    .notification-modal-content.success h2 {
+        color: #4CAF50;
+    }
+
+    .notification-modal-content.error h2 {
+        color: #F44336;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px auto 0;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .modal-buttons button {
+        min-width: 100px;
+        transition: all 0.3s ease;
+    }
+
+    .modal-buttons button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid #ccc;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Estilos para a lista de máquinas */
+    .user-item {
+        background-color: var(--order-card-bg);
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+    }
+
+    .user-item:hover {
+        background-color: var(--order-card-hover-bg);
+    }
+
+    .user-item:hover .user-actions {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .user-actions {
+        opacity: 0.7;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    .action-btn {
+        position: relative;
+    }
+
+    .action-btn:hover {
+        background-color: rgba(155, 100, 227, 0.2);
+        color: var(--cor-destaque, #9B64E3);
+    }
+
+    .action-btn[data-tooltip]:hover::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        z-index: 10;
+        margin-bottom: 5px;
+    }
+
+    :root {
+        --action-icon-color: #9B64E3;
+        --order-card-hover-bg: rgba(155, 100, 227, 0.1);
+    }
+
+    /* Custom scrollbar styles para todos os elementos */
+    /* Webkit browsers (Chrome, Safari, Edge) */
+    .modal-body::-webkit-scrollbar,
+    .dropdown-content::-webkit-scrollbar,
+    .custom-select > div::-webkit-scrollbar,
+    #machinesListContent::-webkit-scrollbar,
+    #machineSelectionModal .modal-body::-webkit-scrollbar,
+    textarea::-webkit-scrollbar,
+    .maquinas-list::-webkit-scrollbar,
+    .maquinas-list-container::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    .modal-body::-webkit-scrollbar-track,
+    .dropdown-content::-webkit-scrollbar-track,
+    .custom-select > div::-webkit-scrollbar-track,
+    #machinesListContent::-webkit-scrollbar-track,
+    #machineSelectionModal .modal-body::-webkit-scrollbar-track,
+    textarea::-webkit-scrollbar-track,
+    .maquinas-list::-webkit-scrollbar-track,
+    .maquinas-list-container::-webkit-scrollbar-track {
+        background: rgba(155, 100, 227, 0.1);
+        border-radius: 4px;
+        margin-right: 2px;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb,
+    .dropdown-content::-webkit-scrollbar-thumb,
+    .custom-select > div::-webkit-scrollbar-thumb,
+    #machinesListContent::-webkit-scrollbar-thumb,
+    #machineSelectionModal .modal-body::-webkit-scrollbar-thumb,
+    textarea::-webkit-scrollbar-thumb,
+    .maquinas-list::-webkit-scrollbar-thumb,
+    .maquinas-list-container::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #9B64E3, #D8CEFE);
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(155, 100, 227, 0.3);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover,
+    .dropdown-content::-webkit-scrollbar-thumb:hover,
+    .custom-select > div::-webkit-scrollbar-thumb:hover,
+    #machinesListContent::-webkit-scrollbar-thumb:hover,
+    #machineSelectionModal .modal-body::-webkit-scrollbar-thumb:hover,
+    textarea::-webkit-scrollbar-thumb:hover,
+    .maquinas-list::-webkit-scrollbar-thumb:hover,
+    .maquinas-list-container::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8A4FD3, #C7B7FE);
+        box-shadow: 0 4px 8px rgba(155, 100, 227, 0.5);
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+
+    /* Firefox */
+    .modal-body,
+    .dropdown-content,
+    .custom-select > div,
+    #machinesListContent,
+    #machineSelectionModal .modal-body,
+    textarea,
+    .maquinas-list,
+    .maquinas-list-container {
+        scrollbar-width: thin;
+        scrollbar-color: #9B64E3 rgba(155, 100, 227, 0.1);
+    }
+
+    /* Scrollbar para elementos específicos dos modais */
+    #machineModal .modal-body::-webkit-scrollbar,
+    #editMachineModal .modal-body::-webkit-scrollbar,
+    #manutencaoModal .modal-body::-webkit-scrollbar,
+    #novoTipoModal .modal-body::-webkit-scrollbar,
+    #confirmationModal .modal-body::-webkit-scrollbar,
+    #notificationModal .modal-body::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    #machineModal .modal-body::-webkit-scrollbar-track,
+    #editMachineModal .modal-body::-webkit-scrollbar-track,
+    #manutencaoModal .modal-body::-webkit-scrollbar-track,
+    #novoTipoModal .modal-body::-webkit-scrollbar-track,
+    #confirmationModal .modal-body::-webkit-scrollbar-track,
+    #notificationModal .modal-body::-webkit-scrollbar-track {
+        background: rgba(155, 100, 227, 0.1);
+        border-radius: 4px;
+    }
+
+    #machineModal .modal-body::-webkit-scrollbar-thumb,
+    #editMachineModal .modal-body::-webkit-scrollbar-thumb,
+    #manutencaoModal .modal-body::-webkit-scrollbar-thumb,
+    #novoTipoModal .modal-body::-webkit-scrollbar-thumb,
+    #confirmationModal .modal-body::-webkit-scrollbar-thumb,
+    #notificationModal .modal-body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #9B64E3, #D8CEFE);
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(155, 100, 227, 0.3);
+    }
+
+    #machineModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #editMachineModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #manutencaoModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #novoTipoModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #confirmationModal .modal-body::-webkit-scrollbar-thumb:hover,
+    #notificationModal .modal-body::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #8A4FD3, #C7B7FE);
+        box-shadow: 0 4px 8px rgba(155, 100, 227, 0.5);
+    }
+
+    /* Firefox para elementos específicos dos modais */
+    #machineModal .modal-body,
+    #editMachineModal .modal-body,
+    #manutencaoModal .modal-body,
+    #novoTipoModal .modal-body,
+    #confirmationModal .modal-body,
+    #notificationModal .modal-body {
+        scrollbar-width: thin;
+        scrollbar-color: #9B64E3 rgba(155, 100, 227, 0.1);
+    }
+</style>
+
+<script>
+// Envolver todo o código em um escopo isolado para evitar conflitos
+(function() {
+'use strict';
+
+// Namespace para este módulo
+window.MaquinasModule = window.MaquinasModule || {};
+
+function formatarMoeda(input) {
+    let valor = input.value.replace(/\D/g, '');
+    valor = (valor/100).toFixed(2);
+    valor = valor.replace('.', ',');
+    valor = valor.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    input.value = valor.length > 0 ? `R$ ${valor}` : '';
+}
+
+function openMachineModal() {
+    console.log('🔧 ABRINDO modal de máquina...');
+    document.getElementById('machineModal').style.display = 'block';
+    document.getElementById('machineForm').reset();
+    resetDropdowns();
+    
+    // RECONFIGURAR dropdowns após abrir o modal
+    console.log('🔧 RECONFIGURANDO dropdowns após abrir modal...');
+    setTimeout(() => {
+        configurarDropdowns();
+        console.log('✅ Dropdowns reconfigurados após abrir modal');
+    }, 100);
+}
+
+function closeMachineModal() {
+    document.getElementById('machineModal').style.display = 'none';
+    document.getElementById('machineForm').reset();
+}
+
+function openEditMachineModal() {
+    document.getElementById('editMachineModal').style.display = 'block';
+}
+
+function closeEditMachineModal() {
+    document.getElementById('editMachineModal').style.display = 'none';
+    document.getElementById('editMachineForm').reset();
+}
+
+function openManutencaoModal() {
+    document.getElementById('manutencaoModal').style.display = 'block';
+    carregarMaquinasParaDropdown('maquinaManutencao');
+    document.getElementById('dataManutencao').value = new Date().toISOString().split('T')[0];
+    
+    // Configurar todos os dropdowns do modal de manutenção
+    setTimeout(() => {
+        console.log('🔧 Configurando dropdowns do modal de manutenção...');
+        const tipoManutencaoDropdown = document.getElementById('tipoManutencao');
+        if (tipoManutencaoDropdown) {
+            configurarDropdownEspecifico(tipoManutencaoDropdown);
+            console.log('✅ Dropdown tipoManutencao configurado');
+        }
+    }, 150);
+}
+
+function closeManutencaoModal() {
+    document.getElementById('manutencaoModal').style.display = 'none';
+    document.getElementById('manutencaoForm').reset();
+}
+
+function openMachineSelectionModal() {
+    document.getElementById('machineSelectionModal').style.display = 'block';
+    carregarMaquinasParaSelecao();
+}
+
+function closeMachineSelectionModal() {
+    document.getElementById('machineSelectionModal').style.display = 'none';
+    document.getElementById('machineSearchInput').value = '';
+}
+
+function openNovoTipoModal() {
+    document.getElementById('novoTipoModal').style.display = 'block';
+}
+
+function closeNovoTipoModal() {
+    document.getElementById('novoTipoModal').style.display = 'none';
+    document.getElementById('novoTipoForm').reset();
+}
+
+function resetDropdowns() {
+    const dropdowns = ['machineType', 'machineCondition', 'machineStatus'];
+    dropdowns.forEach(id => {
+        const dropdown = document.getElementById(id);
+        if (dropdown) {
+            const button = dropdown.querySelector('button');
+            if (button) {
+                button.textContent = button.textContent.includes('tipo') ? 'Selecione um tipo' : 
+                                   button.textContent.includes('estado') ? 'Selecione o estado' : 
+                                   'Selecione o status';
+                button.setAttribute('data-selected', '');
+            }
+        }
+    });
+}
+
+async function carregarListaMaquinas() {
+    try {
+        const response = await fetch('/api/maquinas');
+        const data = await response.json();
+        
+        const container = document.querySelector('.maquinas-list');
+        container.innerHTML = '';
+        
+        if (data.status !== 'success' || !data.machines || data.machines.length === 0) {
+            const emptyRow = document.createElement('div');
+            emptyRow.className = 'user-item';
+            emptyRow.style.cssText = 'justify-content: center; color: #666;';
+            emptyRow.textContent = 'Nenhuma máquina cadastrada.';
+            container.appendChild(emptyRow);
+            return;
+        }
+        
+        data.machines.forEach(machine => {
+            const statusColor = machine.status === 'Ativa' ? 'color: #51cf66;' : 
+                               machine.status === 'Em Manutenção' ? 'color: #ff6b6b;' : 'color: #ffd43b;';
+            
+            const row = document.createElement('div');
+            row.className = 'user-item';
+            row.style.cssText = 'display: grid; grid-template-columns: 0.8fr 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 0.8fr 1fr 1fr 1fr 1fr 0.8fr; gap: 15px; padding: 12px 20px; margin: 8px 0; border-radius: 6px; transition: background-color 0.2s ease; align-items: center;';
+            
+            const formatCurrency = (value) => {
+                if (value && value !== 0) {
+                    const number = parseFloat(value);
+                    const formatted = number.toFixed(2);
+                    const [integerPart, decimalPart] = formatted.split('.');
+                    const integerWithThousands = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+                    return `R$ ${integerWithThousands},${decimalPart}`;
+                }
+                return 'R$ 0,00';
+            };
+            
+            const formatDate = (dateString) => {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR');
+            };
+            
+            const formatM2PerHour = (value) => {
+                if (value && value !== 0) {
+                    return `${parseFloat(value).toFixed(2)}`;
+                }
+                return '-';
+            };
+            
+            row.innerHTML = `
+                <div>${machine.codigo}</div>
+                <div>${machine.nome}</div>
+                <div>${machine.marca || '-'}</div>
+                <div>${machine.tipo || '-'}</div>
+                <div>${machine.numero_serie || '-'}</div>
+                <div>${formatDate(machine.data_aquisicao)}</div>
+                <div>${formatCurrency(machine.valor_aquisicao)}</div>
+                <div>${formatCurrency(machine.hora_maquina || 0)}</div>
+                <div>${formatM2PerHour(machine.metros_quadrados_por_hora)}</div>
+                <div>${machine.estado || '-'}</div>
+                <div>${machine.localizacao || '-'}</div>
+                <div>${machine.responsavel || '-'}</div>
+                <div style="${statusColor} font-weight: bold;">${machine.status}</div>
+                <div class="user-actions" style="display: flex; gap: 5px; margin: 0; padding: 0; list-style: none; align-items: center;">
+                    <button class="action-btn" data-tooltip="Editar" onclick="editarMaquina(${machine.id})" style="background: none; border: none; cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s ease; color: var(--action-icon-color);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path>
+                            <polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon>
+                        </svg>
+                    </button>
+                    <button class="action-btn" data-tooltip="Excluir" onclick="excluirMaquina(${machine.id})" style="background: none; border: none; cursor: pointer; padding: 5px; border-radius: 4px; transition: background-color 0.2s ease; color: var(--action-icon-color);">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 6h18"></path>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            row.addEventListener('mouseover', function() {
+                this.style.backgroundColor = 'var(--order-card-hover-bg)';
+            });
+            
+            row.addEventListener('mouseout', function() {
+                this.style.backgroundColor = '';
+            });
+            
+            container.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar máquinas:', error);
+        showNotification('error', 'Erro ao carregar lista de máquinas');
+    }
+}
+
+async function carregarMaquinasParaDropdown(selectId) {
+    try {
+        console.log('🔄 Carregando máquinas para dropdown:', selectId);
+        const response = await fetch('/api/maquinas');
+        const data = await response.json();
+        
+        const dropdown = document.querySelector(`#${selectId} .dropdown-content`);
+        dropdown.innerHTML = '';
+        
+        if (data.status === 'success' && data.machines && data.machines.length > 0) {
+            console.log('✅ Máquinas encontradas para dropdown:', data.machines.length);
+            
+            data.machines.forEach(machine => {
+                const option = document.createElement('div');
+                option.textContent = `${machine.codigo} - ${machine.nome}`;
+                option.setAttribute('data-value', machine.id);
+                option.onclick = function() {
+                    document.querySelector(`#${selectId} button`).textContent = this.textContent;
+                    document.querySelector(`#${selectId} button`).setAttribute('data-selected', machine.id);
+                    
+                    // Fechar dropdown após seleção
+                    dropdown.style.display = 'none';
+                };
+                dropdown.appendChild(option);
+            });
+            
+            // RECONFIGURAR o dropdown específico após carregar as opções
+            console.log('🔧 Reconfigurando dropdown', selectId, 'após carregar opções...');
+            setTimeout(() => {
+                const dropdownElement = document.getElementById(selectId);
+                if (dropdownElement) {
+                    configurarDropdownEspecifico(dropdownElement);
+                    console.log('✅ Dropdown', selectId, 'reconfigurado com', data.machines.length, 'opções');
+                }
+            }, 100);
+            
+        } else {
+            console.log('⚠️ Nenhuma máquina encontrada para dropdown');
+            const option = document.createElement('div');
+            option.textContent = 'Nenhuma máquina cadastrada';
+            option.style.color = '#666';
+            option.style.fontStyle = 'italic';
+            dropdown.appendChild(option);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao carregar máquinas para dropdown:', error);
+        const dropdown = document.querySelector(`#${selectId} .dropdown-content`);
+        dropdown.innerHTML = '';
+        const option = document.createElement('div');
+        option.textContent = 'Erro ao carregar máquinas';
+        option.style.color = '#ff6b6b';
+        dropdown.appendChild(option);
+    }
+}
+
+async function carregarMaquinasParaSelecao() {
+    try {
+        console.log('🔄 Carregando máquinas para seleção...');
+        const response = await fetch('/api/maquinas');
+        const data = await response.json();
+        
+        const container = document.getElementById('machinesListContent');
+        container.innerHTML = '';
+        
+        if (data.status === 'success' && data.machines && data.machines.length > 0) {
+            console.log('✅ Máquinas encontradas para seleção:', data.machines.length);
+            
+            data.machines.forEach(machine => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: grid; grid-template-columns: 0.8fr 2fr 1fr 1fr; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(155, 100, 227, 0.2); align-items: center; transition: all 0.3s ease; cursor: pointer; border-radius: 4px;';
+                row.className = 'machine-row';
+                
+                const statusColor = machine.status === 'Ativa' ? 'color: #51cf66;' : 
+                                   machine.status === 'Em Manutenção' ? 'color: #ff6b6b;' : 'color: #ffd43b;';
+                
+                row.innerHTML = `
+                    <div>${machine.codigo}</div>
+                    <div>${machine.nome}</div>
+                    <div>${machine.marca || '-'}</div>
+                    <div style="${statusColor} font-weight: bold;">${machine.status}</div>
+                `;
+                
+                row.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = 'rgba(155, 100, 227, 0.2)';
+                });
+                
+                row.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = '';
+                });
+                
+                row.addEventListener('click', function() {
+                    selecionarMaquina(machine.id, machine.codigo, machine.nome);
+                });
+                
+                container.appendChild(row);
+            });
+        } else {
+            console.log('⚠️ Nenhuma máquina encontrada para seleção');
+            const emptyRow = document.createElement('div');
+            emptyRow.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 20px; color: #666; font-style: italic;';
+            emptyRow.textContent = 'Nenhuma máquina cadastrada';
+            container.appendChild(emptyRow);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao carregar máquinas para seleção:', error);
+        const container = document.getElementById('machinesListContent');
+        container.innerHTML = '';
+        const errorRow = document.createElement('div');
+        errorRow.style.cssText = 'grid-column: 1 / -1; text-align: center; padding: 20px; color: #ff6b6b; font-style: italic;';
+        errorRow.textContent = 'Erro ao carregar máquinas';
+        container.appendChild(errorRow);
+    }
+}
+
+function selecionarMaquina(id, codigo, nome) {
+    const machineButton = document.querySelector('#maquinaManutencao button');
+    const machineText = `${codigo} - ${nome}`;
+    
+    machineButton.textContent = machineText;
+    machineButton.setAttribute('data-selected', id);
+    
+    closeMachineSelectionModal();
+    showNotification('success', `Máquina "${machineText}" selecionada!`);
+}
+
+function filtrarMaquinas() {
+    const searchText = document.getElementById('machineSearchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.machine-row');
+    
+    rows.forEach(row => {
+        const codigo = row.children[0].textContent.toLowerCase();
+        const nome = row.children[1].textContent.toLowerCase();
+        const marca = row.children[2].textContent.toLowerCase();
+        
+        if (codigo.includes(searchText) || nome.includes(searchText) || marca.includes(searchText)) {
+            row.style.display = 'grid';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+async function editarMaquina(id) {
+    try {
+        console.log('🔄 Carregando dados da máquina ID:', id);
+        
+        // Buscar dados da máquina na API
+        const response = await fetch(`/api/maquinas/${id}`);
+        const data = await response.json();
+        
+        if (data.status !== 'success' || !data.machine) {
+            console.error('❌ Erro ao carregar máquina:', data.message);
+            showNotification('error', data.message || 'Erro ao carregar dados da máquina');
+            return;
+        }
+        
+        const machine = data.machine;
+        console.log('✅ Dados da máquina carregados:', machine);
+        
+        // Preencher formulário com dados reais
+        document.getElementById('editMachineId').value = machine.id;
+        document.getElementById('editMachineName').value = machine.nome || '';
+        document.getElementById('editMachineCode').value = machine.codigo || '';
+        document.getElementById('editMachineBrand').value = machine.marca || '';
+        document.getElementById('editMachineSerial').value = machine.numero_serie || '';
+        // Formatar data para input type="date" (formato YYYY-MM-DD)
+        const dataAquisicao = machine.data_aquisicao ? 
+            new Date(machine.data_aquisicao).toISOString().split('T')[0] : '';
+        document.getElementById('editMachineAcquisitionDate').value = dataAquisicao;
+        
+        // Formatar valores monetários
+        const valorAquisicao = machine.valor_aquisicao ? 
+            `R$ ${parseFloat(machine.valor_aquisicao).toFixed(2).replace('.', ',')}` : '';
+        document.getElementById('editMachineValue').value = valorAquisicao;
+        
+        const horaAquisicao = machine.hora_maquina ? 
+            `R$ ${parseFloat(machine.hora_maquina).toFixed(2).replace('.', ',')}` : '';
+        document.getElementById('editMachineHourlyRate').value = horaAquisicao;
+        
+        document.getElementById('editMachineM2PerHour').value = machine.metros_quadrados_por_hora || '';
+        document.getElementById('editMachineLocation').value = machine.localizacao || '';
+        document.getElementById('editMachineResponsible').value = machine.responsavel || '';
+        document.getElementById('editMachineTechSpecs').value = machine.especificacoes_tecnicas || '';
+        document.getElementById('editMachineObservations').value = machine.observacoes || '';
+        
+        // Aguardar os dropdowns serem carregados antes de definir valores
+        setTimeout(() => {
+            console.log('🔄 Definindo valores dos dropdowns...');
+            setDropdownValue('editMachineType', machine.tipo);
+            setDropdownValue('editMachineCondition', machine.estado);
+            setDropdownValue('editMachineStatus', machine.status);
+            
+            // Reconfigurar dropdowns após definir valores
+            configurarDropdowns();
+            console.log('✅ Dropdowns configurados com valores da máquina');
+        }, 200);
+        
+        // Abrir modal
+        openEditMachineModal();
+        
+    } catch (error) {
+        console.error('❌ Erro ao carregar máquina:', error);
+        showNotification('error', 'Erro ao carregar dados da máquina: ' + error.message);
+    }
+}
+
+function setDropdownValue(dropdownId, value) {
+    const dropdown = document.getElementById(dropdownId);
+    const button = dropdown.querySelector('button');
+    const option = dropdown.querySelector(`[data-value="${value}"]`);
+    
+    if (option) {
+        button.textContent = value;
+        button.setAttribute('data-selected', value);
+    }
+}
+
+function excluirMaquina(id) {
+    showConfirmationModal('Tem certeza que deseja excluir esta máquina?', () => {
+        // Implementar exclusão via API
+        showNotification('success', 'Máquina excluída com sucesso!');
+        carregarListaMaquinas();
+    });
+}
+
+function gerarRelatorioMaquinas() {
+    showNotification('success', 'Relatório de máquinas gerado com sucesso!');
+}
+
+// Funções de notificação e confirmação
+function showNotification(type, message, errorCode = null) {
+    const iconContainer = document.getElementById('notificationIcon');
+    
+    if (type === 'success') {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    } else {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F44336">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                </path>
+                <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    }
+    
+    const modal = document.getElementById('notificationModal');
+    const title = document.getElementById('notificationModalTitle');
+    const msg = document.getElementById('notificationModalMessage');
+    const content = modal.querySelector('.notification-modal-content');
+    
+    title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+    msg.textContent = message;
+    content.className = 'modal-content notification-modal-content ' + type;
+    
+    modal.style.display = 'block';
+}
+
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+
+// Criar namespace para evitar conflitos de variáveis globais
+window.MaquinasModule = window.MaquinasModule || {};
+window.MaquinasModule.confirmationTimer = null;
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const msg = document.getElementById('confirmationModalMessage');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    if (window.MaquinasModule.confirmationTimer) {
+        clearInterval(window.MaquinasModule.confirmationTimer);
+    }
+    
+    msg.textContent = message;
+    modal.style.display = 'block';
+    
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    let secondsLeft = 5;
+    confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+    
+    window.MaquinasModule.confirmationTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(window.MaquinasModule.confirmationTimer);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirmar';
+            
+            confirmBtn.onclick = function() {
+                closeConfirmationModal();
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            };
+        } else {
+            confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+        }
+    }, 1000);
+}
+
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    if (window.MaquinasModule.confirmationTimer) {
+        clearInterval(window.MaquinasModule.confirmationTimer);
+        window.MaquinasModule.confirmationTimer = null;
+    }
+    
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirmar';
+    
+    modal.style.display = 'none';
+}
+
+// Função para carregar tipos de máquinas da API
+async function carregarTiposMaquinas() {
+    try {
+        console.log('🔄 Carregando tipos de máquinas da API...');
+        const response = await fetch('/api/tipos_maquinas');
+        const data = await response.json();
+        
+        console.log('📡 Resposta da API tipos_maquinas:', data);
+        
+        if (data.status === 'success' && data.tipos && data.tipos.length > 0) {
+            console.log('✅ Tipos encontrados:', data.tipos);
+            
+            // Atualizar dropdown do formulário de adicionar
+            const addDropdown = document.querySelector('#machineType .dropdown-content');
+            if (addDropdown) {
+                console.log('🔄 Atualizando dropdown machineType...');
+                addDropdown.innerHTML = '';
+                data.tipos.forEach(tipo => {
+                    const option = document.createElement('div');
+                    option.setAttribute('data-value', tipo.nome);
+                    option.textContent = tipo.nome;
+                    addDropdown.appendChild(option);
+                });
+                console.log('✅ Dropdown machineType atualizado com', data.tipos.length, 'opções');
+            }
+            
+            // Atualizar dropdown do formulário de editar
+            const editDropdown = document.querySelector('#editMachineType .dropdown-content');
+            if (editDropdown) {
+                console.log('🔄 Atualizando dropdown editMachineType...');
+                editDropdown.innerHTML = '';
+                data.tipos.forEach(tipo => {
+                    const option = document.createElement('div');
+                    option.setAttribute('data-value', tipo.nome);
+                    option.textContent = tipo.nome;
+                    editDropdown.appendChild(option);
+                });
+                console.log('✅ Dropdown editMachineType atualizado com', data.tipos.length, 'opções');
+            }
+        } else {
+            console.log('⚠️ Nenhum tipo encontrado ou resposta inválida');
+            console.log('📊 Status:', data.status);
+            console.log('📊 Tipos:', data.tipos);
+            
+            // Se não há tipos no banco, usar opções padrão
+            const tiposPadrao = [
+                'Impressão Digital',
+                'Impressão Offset', 
+                'Corte e Vinco',
+                'Acabamento',
+                'Costura',
+                'Laminação',
+                'Computador',
+                'Outro'
+            ];
+            
+            console.log('🔄 Usando tipos padrão:', tiposPadrao);
+            
+            // Atualizar ambos os dropdowns com tipos padrão
+            const dropdowns = ['#machineType .dropdown-content', '#editMachineType .dropdown-content'];
+            dropdowns.forEach(selector => {
+                const dropdown = document.querySelector(selector);
+                if (dropdown) {
+                    dropdown.innerHTML = '';
+                    tiposPadrao.forEach(tipo => {
+                        const option = document.createElement('div');
+                        option.setAttribute('data-value', tipo);
+                        option.textContent = tipo;
+                        dropdown.appendChild(option);
+                    });
+                }
+            });
+        }
+    } catch (error) {
+        console.error('❌ Erro ao carregar tipos de máquinas:', error);
+        
+        // Em caso de erro, usar tipos padrão
+        const tiposPadrao = [
+            'Impressão Digital',
+            'Impressão Offset', 
+            'Corte e Vinco',
+            'Acabamento',
+            'Costura',
+            'Laminação',
+            'Computador',
+            'Outro'
+        ];
+        
+        const dropdowns = ['#machineType .dropdown-content', '#editMachineType .dropdown-content'];
+        dropdowns.forEach(selector => {
+            const dropdown = document.querySelector(selector);
+            if (dropdown) {
+                dropdown.innerHTML = '';
+                tiposPadrao.forEach(tipo => {
+                    const option = document.createElement('div');
+                    option.setAttribute('data-value', tipo);
+                    option.textContent = tipo;
+                    dropdown.appendChild(option);
+                });
+            }
+        });
+    }
+}
+
+// Função para garantir que os dropdowns tenham opções padrão carregadas
+function inicializarDropdownsComOpcoesPadrao() {
+    console.log('Inicializando dropdowns com opções padrão...');
+    
+    // Verificar se dropdowns existem e têm conteúdo
+    const dropdowns = [
+        { id: 'machineType', hasContent: false },
+        { id: 'machineCondition', hasContent: false },
+        { id: 'machineStatus', hasContent: false },
+        { id: 'editMachineType', hasContent: false },
+        { id: 'editMachineCondition', hasContent: false },
+        { id: 'editMachineStatus', hasContent: false },
+        { id: 'tipoManutencao', hasContent: false }
+    ];
+    
+    dropdowns.forEach(dropdownInfo => {
+        const dropdown = document.getElementById(dropdownInfo.id);
+        if (dropdown) {
+            const content = dropdown.querySelector('.dropdown-content');
+            if (content) {
+                const hasOptions = content.children.length > 0;
+                dropdownInfo.hasContent = hasOptions;
+                console.log(`Dropdown ${dropdownInfo.id}: ${hasOptions ? 'tem opções' : 'vazio'} (${content.children.length} opções)`);
+            }
+        }
+    });
+    
+    // Log do estado atual
+    console.log('Estado dos dropdowns:', dropdowns);
+}
+
+// Configurar dropdowns
+// Não usar DOMContentLoaded pois este template é carregado dinamicamente
+// A configuração é feita imediatamente quando o script executa
+console.log('Iniciando configuração do módulo de máquinas...');
+inicializarDropdownsComOpcoesPadrao();
+carregarListaMaquinas();
+carregarTiposMaquinas();
+configurarDropdowns();
+configurarFormularios();
+
+// Também disponibilizar função global para reconfigurar quando necessário
+window.initializeMaquinasScripts = function() {
+    console.log('Reinicializando scripts de máquinas...');
+    inicializarDropdownsComOpcoesPadrao();
+    carregarListaMaquinas();
+    carregarTiposMaquinas();
+    configurarDropdowns();
+    configurarFormularios();
+};
+
+function configurarDropdownEspecifico(dropdown) {
+    console.log('🔄 Configurando dropdown específico:', dropdown.id);
+    
+    const button = dropdown.querySelector('button');
+    const dropdownContent = dropdown.querySelector('.dropdown-content');
+    
+    if (button && dropdownContent) {
+        console.log('✅ Configurando dropdown:', dropdown.id, 'com', dropdownContent.children.length, 'opções');
+        
+        // REMOVER listeners antigos clonando o elemento
+        const newButton = button.cloneNode(true);
+        button.parentNode.replaceChild(newButton, button);
+        
+        const newDropdownContent = dropdownContent.cloneNode(true);
+        dropdownContent.parentNode.replaceChild(newDropdownContent, dropdownContent);
+        
+        // Função para determinar direção de abertura
+        function determinarDirecaoAbertura() {
+            const rect = dropdown.getBoundingClientRect();
+            const modalBody = dropdown.closest('.modal-body');
+            const modalRect = modalBody ? modalBody.getBoundingClientRect() : { bottom: window.innerHeight };
+            
+            // Se estiver muito próximo do final do modal/tela, abrir para cima
+            const espacoAbaixo = modalRect.bottom - rect.bottom;
+            const espacoNecessario = 200; // Altura estimada do dropdown
+            
+            return espacoAbaixo < espacoNecessario;
+        }
+        
+        // CONFIGURAR clique no botão (com direção inteligente)
+        newButton.onclick = function(e) {
+            console.log('🖱️ CLIQUE no botão do dropdown específico:', dropdown.id);
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Fechar todos os outros dropdowns PRIMEIRO
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                if (content !== newDropdownContent) {
+                    content.style.display = 'none';
+                    content.classList.remove('dropdown-open-up');
+                }
+            });
+            
+            // Toggle do dropdown atual
+            if (newDropdownContent.style.display === 'block') {
+                newDropdownContent.style.display = 'none';
+                newDropdownContent.classList.remove('dropdown-open-up');
+                console.log('🔒 Dropdown específico fechado');
+            } else {
+                // Determinar direção de abertura
+                const abrirParaCima = determinarDirecaoAbertura();
+                
+                if (abrirParaCima) {
+                    newDropdownContent.classList.add('dropdown-open-up');
+                    console.log('⬆️ Abrindo dropdown para cima');
+                } else {
+                    newDropdownContent.classList.remove('dropdown-open-up');
+                    console.log('⬇️ Abrindo dropdown para baixo');
+                }
+                
+                newDropdownContent.style.display = 'block';
+                console.log('🔓 Dropdown específico aberto');
+            }
+        };
+        
+        // CONFIGURAR clique nas opções (simples e direto)
+        Array.from(newDropdownContent.children).forEach(option => {
+            option.onclick = function(e) {
+                console.log('🎯 CLIQUE na opção do dropdown específico:', this.textContent);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Definir valor selecionado
+                newButton.textContent = this.textContent;
+                newButton.setAttribute('data-selected', this.getAttribute('data-value'));
+                
+                // Fechar dropdown
+                newDropdownContent.style.display = 'none';
+                newDropdownContent.classList.remove('dropdown-open-up');
+                
+                console.log('✅ Opção selecionada no dropdown específico:', this.textContent);
+            };
+        });
+        
+        console.log('✅ Dropdown específico configurado:', dropdown.id);
+    }
+}
+
+function configurarDropdowns() {
+    console.log('🔄 Configurando dropdowns com JavaScript simples...');
+    
+    // SOLUÇÃO SIMPLES - Remover listeners antigos e adicionar novos
+    document.querySelectorAll('.custom-select').forEach(dropdown => {
+        configurarDropdownEspecifico(dropdown);
+    });
+    
+    // Fechar dropdowns ao clicar fora (com limpeza de classes)
+    document.onclick = function(e) {
+        if (!e.target.closest('.custom-select')) {
+            document.querySelectorAll('.dropdown-content').forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('dropdown-open-up');
+            });
+        }
+    };
+    
+    console.log('✅ Dropdowns configurados com sucesso!');
+}
+
+function configurarFormularios() {
+    // Remover event listeners anteriores para evitar duplicação
+    const forms = ['machineForm', 'editMachineForm', 'manutencaoForm', 'novoTipoForm'];
+    forms.forEach(formId => {
+        const form = document.getElementById(formId);
+        if (form) {
+            const newForm = form.cloneNode(true);
+            form.parentNode.replaceChild(newForm, form);
+        }
+    });
+
+    // Event listeners para formulários
+    const machineForm = document.getElementById('machineForm');
+    if (machineForm) {
+        machineForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Formulário de máquina enviado via AJAX');
+            
+            const formData = new FormData(machineForm);
+            
+            // Adicionar valores dos dropdowns customizados
+            const typeButton = document.querySelector('#machineType button');
+            const conditionButton = document.querySelector('#machineCondition button');
+            const statusButton = document.querySelector('#machineStatus button');
+            
+            if (typeButton && typeButton.getAttribute('data-selected')) {
+                formData.append('machineType', typeButton.getAttribute('data-selected'));
+            }
+            if (conditionButton && conditionButton.getAttribute('data-selected')) {
+                formData.append('machineCondition', conditionButton.getAttribute('data-selected'));
+            }
+            if (statusButton && statusButton.getAttribute('data-selected')) {
+                formData.append('machineStatus', statusButton.getAttribute('data-selected'));
+            }
+            
+            try {
+                const response = await fetch('/api/maquinas', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showNotification('success', result.message);
+                    closeMachineModal();
+                    carregarListaMaquinas();
+                } else {
+                    showNotification('error', result.message);
+                }
+            } catch (error) {
+                console.error('Erro ao salvar máquina:', error);
+                showNotification('error', 'Erro ao salvar máquina: ' + error.message);
+            }
+        });
+    }
+    
+    const editMachineForm = document.getElementById('editMachineForm');
+    if (editMachineForm) {
+        editMachineForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(editMachineForm);
+            const machineId = document.getElementById('editMachineId').value;
+            
+            try {
+                const response = await fetch(`/api/maquinas/${machineId}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showNotification('success', result.message);
+                    closeEditMachineModal();
+                    carregarListaMaquinas();
+                } else {
+                    showNotification('error', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Erro ao atualizar máquina: ' + error.message);
+            }
+        });
+    }
+    
+    const manutencaoForm = document.getElementById('manutencaoForm');
+    if (manutencaoForm) {
+        manutencaoForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(manutencaoForm);
+            const maquinaId = document.querySelector('#maquinaManutencao button').getAttribute('data-selected');
+            const tipoManutencao = document.querySelector('#tipoManutencao button').getAttribute('data-selected');
+            
+            if (!maquinaId) {
+                showNotification('error', 'Selecione uma máquina');
+                return;
+            }
+            
+            if (!tipoManutencao) {
+                showNotification('error', 'Selecione o tipo de manutenção');
+                return;
+            }
+            
+            formData.append('maquinaId', maquinaId);
+            formData.append('tipoManutencao', tipoManutencao);
+            
+            try {
+                const response = await fetch('/api/manutencoes', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showNotification('success', result.message);
+                    closeManutencaoModal();
+                } else {
+                    showNotification('error', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Erro ao registrar manutenção: ' + error.message);
+            }
+        });
+    }
+    
+    const novoTipoForm = document.getElementById('novoTipoForm');
+    if (novoTipoForm) {
+        novoTipoForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(novoTipoForm);
+            
+            try {
+                const response = await fetch('/api/tipos_maquinas', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    showNotification('success', result.message);
+                    closeNovoTipoModal();
+                    // Atualizar dropdowns de tipo de máquina
+                    carregarTiposMaquinas();
+                    // Recarregar a lista de tipos no modal de seleção se estiver aberto
+                    if (document.getElementById('tipoMaquinaSelectionModal').style.display === 'block') {
+                        carregarTiposMaquinasParaSelecao();
+                    }
+                } else {
+                    showNotification('error', result.message);
+                }
+            } catch (error) {
+                showNotification('error', 'Erro ao criar tipo de máquina: ' + error.message);
+            }
+        });
+    }
+    
+    // Fechar modais ao clicar fora
+    window.onclick = function(event) {
+        const modals = ['machineModal', 'editMachineModal', 'manutencaoModal', 'machineSelectionModal', 'tipoMaquinaSelectionModal', 'novoTipoModal', 'confirmationModal', 'notificationModal'];
+        modals.forEach(modalId => {
+            const modal = document.getElementById(modalId);
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+    };
+}
+
+// Funções para o modal de seleção de tipos de máquina
+function openTipoMaquinaSelectionModal() {
+    document.getElementById('tipoMaquinaSelectionModal').style.display = 'block';
+    carregarTiposMaquinasParaSelecao();
+}
+
+function closeTipoMaquinaSelectionModal() {
+    document.getElementById('tipoMaquinaSelectionModal').style.display = 'none';
+    document.getElementById('tipoMaquinaSearchInput').value = '';
+}
+
+async function carregarTiposMaquinasParaSelecao() {
+    try {
+        console.log('🔄 Carregando tipos de máquinas para seleção...');
+        const response = await fetch('/api/tipos_maquinas');
+        const data = await response.json();
+        
+        const container = document.getElementById('tipoMaquinasListContent');
+        container.innerHTML = '';
+        
+        // Exibir APENAS tipos do banco de dados
+        if (data.status === 'success' && data.tipos && data.tipos.length > 0) {
+            console.log('✅ Tipos encontrados no banco:', data.tipos);
+            
+            data.tipos.forEach(tipo => {
+                const row = document.createElement('div');
+                row.style.cssText = 'display: grid; grid-template-columns: 1fr; gap: 15px; padding: 12px; border-bottom: 1px solid rgba(155, 100, 227, 0.2); align-items: center; transition: all 0.3s ease; cursor: pointer; border-radius: 4px;';
+                row.className = 'tipo-maquina-row';
+                
+                row.innerHTML = `<div>${tipo.nome}</div>`;
+                
+                row.addEventListener('mouseover', function() {
+                    this.style.backgroundColor = 'rgba(155, 100, 227, 0.2)';
+                });
+                
+                row.addEventListener('mouseout', function() {
+                    this.style.backgroundColor = '';
+                });
+                
+                row.addEventListener('click', function() {
+                    selecionarTipoMaquina(tipo.nome);
+                });
+                
+                container.appendChild(row);
+            });
+        } else {
+            console.log('⚠️ Nenhum tipo encontrado no banco de dados');
+            const emptyRow = document.createElement('div');
+            emptyRow.style.cssText = 'text-align: center; padding: 20px; color: #666; font-style: italic;';
+            emptyRow.textContent = 'Nenhum tipo de máquina cadastrado';
+            container.appendChild(emptyRow);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao carregar tipos de máquinas para seleção:', error);
+        const container = document.getElementById('tipoMaquinasListContent');
+        container.innerHTML = '';
+        const errorRow = document.createElement('div');
+        errorRow.style.cssText = 'text-align: center; padding: 20px; color: #ff6b6b; font-style: italic;';
+        errorRow.textContent = 'Erro ao carregar tipos de máquinas';
+        container.appendChild(errorRow);
+    }
+}
+
+function selecionarTipoMaquina(tipo) {
+    // Determinar qual dropdown está sendo usado (adicionar ou editar)
+    const isEditMode = document.getElementById('editMachineModal').style.display === 'block';
+    const dropdownId = isEditMode ? 'editMachineType' : 'machineType';
+    
+    const typeButton = document.querySelector(`#${dropdownId} button`);
+    
+    if (typeButton) {
+        typeButton.textContent = tipo;
+        typeButton.setAttribute('data-selected', tipo);
+    }
+    
+    closeTipoMaquinaSelectionModal();
+    showNotification('success', `Tipo de máquina "${tipo}" selecionado!`);
+}
+
+function filtrarTiposMaquinas() {
+    const searchText = document.getElementById('tipoMaquinaSearchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('.tipo-maquina-row');
+    
+    rows.forEach(row => {
+        const tipoNome = row.children[0].textContent.toLowerCase();
+        
+        if (tipoNome.includes(searchText)) {
+            row.style.display = 'grid';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+}
+
+// Disponibilizar funções necessárias globalmente ANTES do fechamento do escopo
+window.openMachineModal = openMachineModal;
+window.closeMachineModal = closeMachineModal;
+window.openEditMachineModal = openEditMachineModal;
+window.closeEditMachineModal = closeEditMachineModal;
+window.openManutencaoModal = openManutencaoModal;
+window.closeManutencaoModal = closeManutencaoModal;
+window.openMachineSelectionModal = openMachineSelectionModal;
+window.closeMachineSelectionModal = closeMachineSelectionModal;
+window.openTipoMaquinaSelectionModal = openTipoMaquinaSelectionModal;
+window.closeTipoMaquinaSelectionModal = closeTipoMaquinaSelectionModal;
+window.openNovoTipoModal = openNovoTipoModal;
+window.closeNovoTipoModal = closeNovoTipoModal;
+window.editarMaquina = editarMaquina;
+window.excluirMaquina = excluirMaquina;
+window.gerarRelatorioMaquinas = gerarRelatorioMaquinas;
+window.filtrarMaquinas = filtrarMaquinas;
+window.filtrarTiposMaquinas = filtrarTiposMaquinas;
+window.selecionarMaquina = selecionarMaquina;
+window.selecionarTipoMaquina = selecionarTipoMaquina;
+window.formatarMoeda = formatarMoeda;
+window.showConfirmationModal = showConfirmationModal;
+window.closeConfirmationModal = closeConfirmationModal;
+window.showNotification = showNotification;
+window.closeNotificationModal = closeNotificationModal;
+
+console.log('Funções globais exportadas:', {
+    openMachineModal: typeof window.openMachineModal,
+    closeMachineModal: typeof window.closeMachineModal,
+    editarMaquina: typeof window.editarMaquina,
+    excluirMaquina: typeof window.excluirMaquina
+});
+
+})(); // Fim do escopo isolado
+</script>
+</div>
+
+<!-- Botões de ação -->
+<div style="display: flex; gap: 10px; margin-bottom: 20px; margin-top: 20px;">
+    <button class="btn-primary btn-incluir-maquina" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="openMachineModal()">Incluir Máquina</button>
+    <button class="btn-primary btn-manutencao" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="openManutencaoModal()">Registrar Manutenção</button>
+    <button class="btn-primary btn-relatorio-maquinas" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'; this.style.boxShadow='none'" onclick="gerarRelatorioMaquinas()">Relatório</button>
+</div>
+
+<!-- Container da lista de máquinas -->
+<div class="maquinas-list-container" style="background-color: var(--order-card-bg); border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <div class="maquinas-list-header" style="display: grid; grid-template-columns: 0.8fr 1.5fr 1fr 1fr 1fr 1fr 1fr 1fr 0.8fr 1fr 1fr 1fr 1fr 0.8fr; gap: 15px; font-weight: bold; padding: 15px 20px; border-bottom: 2px solid var(--cor-destaque, #9B64E3); color: var(--column-title-text);">
+        <div>Código</div>
+        <div>Nome/Modelo</div>
+        <div>Marca</div>
+        <div>Tipo</div>
+        <div>Nº Série</div>
+        <div>Data Aquisição</div>
+        <div>Valor Aquisição</div>
+        <div>Hora/Máquina</div>
+        <div>m²/h</div>
+        <div>Estado</div>
+        <div>Localização</div>
+        <div>Responsável</div>
+        <div>Status</div>
+        <div>Ações</div>
+    </div>
+    <div class="maquinas-list" style="margin-top: 10px;">
+        <!-- Dados das máquinas serão carregados dinamicamente aqui -->
+    </div>
+</div>
+
+<!-- Modal para Registrar Manutenção -->
+<div id="manutencaoModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeManutencaoModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Registrar Manutenção</h2>
+        <div class="modal-body">
+            <form id="manutencaoForm">
+                <div style="display: flex; gap: 30px;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="maquinaManutencao">Máquina:</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="dropdown custom-select" tabindex="0" role="button" id="maquinaManutencao" style="width: calc(75% - 35px);">
+                                    <button type="button" tabindex="0" style="padding: 10px 45px 10px 10px !important; font-size: 0.85em;">Selecione a Máquina</button>
+                                    <div class="dropdown-content">
+                                        <!-- Opções serão carregadas dinamicamente -->
+                                    </div>
+                                </div>
+                                <button type="button" onclick="openMachineSelectionModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 8px; border-radius: 5px; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoManutencao">Tipo de Manutenção:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="tipoManutencao" style="width: 60%;">
+                                <button type="button" tabindex="0">Selecione o Tipo</button>
+                                <div class="dropdown-content">
+                                    <div data-value="Preventiva">Preventiva</div>
+                                    <div data-value="Corretiva">Corretiva</div>
+                                    <div data-value="Preditiva">Preditiva</div>
+                                    <div data-value="Calibração">Calibração</div>
+                                    <div data-value="Inspeção">Inspeção</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dataManutencao">Data da Manutenção:</label>
+                            <input type="date" id="dataManutencao" name="dataManutencao" value="" style="width: 50%; padding: 10px; border: 1px solid var(--cor-destaque, #9B64E3); border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+                        </div>
+                        <div class="form-group">
+                            <label for="responsavelManutencao">Responsável:</label>
+                            <input type="text" id="responsavelManutencao" name="responsavelManutencao" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="custoManutencao">Custo:</label>
+                            <input type="text" id="custoManutencao" name="custoManutencao" style="width: 50%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label for="proximaManutencao">Próxima Manutenção:</label>
+                            <input type="date" id="proximaManutencao" name="proximaManutencao" style="width: 50%; padding: 10px; border: 1px solid var(--cor-destaque, #9B64E3); border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white;">
+                        </div>
+                        <div class="form-group">
+                            <label for="fornecedorManutencao">Fornecedor/Empresa:</label>
+                            <input type="text" id="fornecedorManutencao" name="fornecedorManutencao" style="width: 90%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="descricaoManutencao">Descrição dos Serviços:</label>
+                            <textarea id="descricaoManutencao" name="descricaoManutencao" rows="3" style="width: 90%;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="observacoesManutencao">Observações:</label>
+                            <textarea id="observacoesManutencao" name="observacoesManutencao" rows="3" style="width: 90%;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Manutenção</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Confirmação -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeConfirmationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="confirmationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#FFC107">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M12 8V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="6" stroke-dashoffset="6">
+                    <animate attributeName="stroke-dashoffset" values="6;0" dur="0.3s" begin="0.3s" fill="freeze"/>
+                </path>
+                <circle cx="12" cy="16" r="1" fill="white">
+                    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="0.6s" fill="freeze"/>
+                </circle>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        </div>
+        <h2>Confirmação</h2>
+        <p id="confirmationModalMessage"></p>
+        <div class="modal-buttons">
+            <button class="btn-secondary" onclick="closeConfirmationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Cancelar</button>
+            <button id="confirmBtn" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificação -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeNotificationModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <div id="notificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+        <h2 id="notificationModalTitle"></h2>
+        <p id="notificationModalMessage"></p>
+        <div id="notificationDebugInfo" style="display: none; margin-top: 10px; padding: 8px; background-color: rgba(0, 0, 0, 0.3); border-radius: 4px; font-family: monospace; font-size: 0.9em; color: #FF9800;"></div>
+        <button class="btn-primary" onclick="closeNotificationModal()" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; margin-top: 15px;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">OK</button>
+    </div>
+</div>
+
+<!-- Modal para Seleção de Máquina -->
+<div id="machineSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 800px; max-height: 80vh;">
+        <span class="close-button" onclick="closeMachineSelectionModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Selecionar Máquina</h2>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto;">
+            <!-- Filtro de busca -->
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="machineSearchInput" placeholder="Pesquisar máquina..." style="width: 100%; padding: 10px; border: 1px solid #9B64E3; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white;" oninput="filtrarMaquinas()">
+            </div>
+            
+            <!-- Lista de máquinas -->
+            <div id="machinesList" style="display: grid; grid-template-columns: 0.8fr 2fr 1fr 1fr; gap: 15px; font-weight: bold; padding: 10px 0; border-bottom: 2px solid #9B64E3; color: white; margin-bottom: 10px;">
+                <div>Código</div>
+                <div>Nome/Modelo</div>
+                <div>Marca</div>
+                <div>Status</div>
+            </div>
+            <div id="machinesListContent">
+                <!-- Máquinas serão carregadas aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Adicionar Máquina -->
+<div id="machineModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeMachineModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2 style="margin-bottom: 15px; font-size: 1.4em;">Incluir Nova Máquina</h2>
+        <div class="modal-body">
+            <form id="machineForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <!-- Coluna 1 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="machineName">Nome/Modelo:</label>
+                            <input type="text" id="machineName" name="machineName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="machineCode">Código:</label>
+                            <input type="text" id="machineCode" name="machineCode" required style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineBrand">Marca/Fabricante:</label>
+                            <input type="text" id="machineBrand" name="machineBrand">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineType">Tipo/Categoria:</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="dropdown custom-select" tabindex="0" role="button" id="machineType" style="flex: 1;">
+                                    <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione um tipo</button>
+                                    <div class="dropdown-content">
+                                        <div data-value="Impressão Digital">Impressão Digital</div>
+                                        <div data-value="Impressão Offset">Impressão Offset</div>
+                                        <div data-value="Corte e Vinco">Corte e Vinco</div>
+                                        <div data-value="Acabamento">Acabamento</div>
+                                        <div data-value="Costura">Costura</div>
+                                        <div data-value="Laminação">Laminação</div>
+                                        <div data-value="Computador">Computador</div>
+                                        <div data-value="Outro">Outro</div>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="openTipoMaquinaSelectionModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 6px; border-radius: 3px; cursor: pointer; font-size: 14px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="machineSerial">Número de Série:</label>
+                            <input type="text" id="machineSerial" name="machineSerial">
+                        </div>
+                    </div>
+                    
+                    <!-- Coluna 2 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="machineAcquisitionDate">Data de Aquisição:</label>
+                            <input type="date" id="machineAcquisitionDate" name="machineAcquisitionDate" style="width: 75%; padding: 8px; border: 1px solid var(--cor-destaque, #9B64E3); border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; font-size: 0.9em;">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineValue">Valor de Aquisição:</label>
+                            <input type="text" id="machineValue" name="machineValue" style="width: 75%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineHourlyRate">Hora/Máquina:</label>
+                            <input type="text" id="machineHourlyRate" name="machineHourlyRate" style="width: 75%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineM2PerHour">m²/hora:</label>
+                            <input type="number" id="machineM2PerHour" name="machineM2PerHour" step="0.01" min="0" style="width: 75%;" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineCondition">Estado/Condição:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="machineCondition" style="width: 85%;">
+                                <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione o estado</button>
+                                <div class="dropdown-content">
+                                    <div data-value="Novo">Novo</div>
+                                    <div data-value="Seminovo">Seminovo</div>
+                                    <div data-value="Usado - Bom">Usado - Bom</div>
+                                    <div data-value="Usado - Regular">Usado - Regular</div>
+                                    <div data-value="Usado - Ruim">Usado - Ruim</div>
+                                    <div data-value="Necessita Reparo">Necessita Reparo</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Coluna 3 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="machineLocation">Localização:</label>
+                            <input type="text" id="machineLocation" name="machineLocation">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineResponsible">Responsável:</label>
+                            <input type="text" id="machineResponsible" name="machineResponsible">
+                        </div>
+                        <div class="form-group">
+                            <label for="machineStatus">Status:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="machineStatus" style="width: 85%;">
+                                <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione o status</button>
+                                <div class="dropdown-content">
+                                    <div data-value="Ativa">Ativa</div>
+                                    <div data-value="Inativa">Inativa</div>
+                                    <div data-value="Em Manutenção">Em Manutenção</div>
+                                    <div data-value="Aguardando Peças">Aguardando Peças</div>
+                                    <div data-value="Descartada">Descartada</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="machineTechSpecs">Especificações Técnicas:</label>
+                            <textarea id="machineTechSpecs" name="machineTechSpecs" rows="2" style="width: calc(100% - 18px); resize: vertical;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="machineObservations">Observações:</label>
+                            <textarea id="machineObservations" name="machineObservations" rows="2" style="width: calc(100% - 18px); resize: vertical;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button type="submit" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Máquina</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Máquina -->
+<div id="editMachineModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeEditMachineModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2 style="margin-bottom: 15px; font-size: 1.4em;">Editar Máquina</h2>
+        <div class="modal-body">
+            <form id="editMachineForm" action="#">
+                <input type="hidden" id="editMachineId" name="editMachineId">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                    <!-- Coluna 1 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="editMachineName">Nome/Modelo:</label>
+                            <input type="text" id="editMachineName" name="machineName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineCode">Código:</label>
+                            <input type="text" id="editMachineCode" name="machineCode" required style="width: 70%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineBrand">Marca/Fabricante:</label>
+                            <input type="text" id="editMachineBrand" name="machineBrand">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineType">Tipo/Categoria:</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <div class="dropdown custom-select" tabindex="0" role="button" id="editMachineType" style="flex: 1;">
+                                    <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione um tipo</button>
+                                    <div class="dropdown-content">
+                                        <div data-value="Impressão Digital">Impressão Digital</div>
+                                        <div data-value="Impressão Offset">Impressão Offset</div>
+                                        <div data-value="Corte e Vinco">Corte e Vinco</div>
+                                        <div data-value="Acabamento">Acabamento</div>
+                                        <div data-value="Costura">Costura</div>
+                                        <div data-value="Laminação">Laminação</div>
+                                        <div data-value="Computador">Computador</div>
+                                        <div data-value="Outro">Outro</div>
+                                    </div>
+                                </div>
+                                <button type="button" onclick="openTipoMaquinaSelectionModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 6px; border-radius: 3px; cursor: pointer; font-size: 14px; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineSerial">Número de Série:</label>
+                            <input type="text" id="editMachineSerial" name="machineSerial">
+                        </div>
+                    </div>
+                    
+                    <!-- Coluna 2 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="editMachineAcquisitionDate">Data de Aquisição:</label>
+                            <input type="date" id="editMachineAcquisitionDate" name="machineAcquisitionDate" style="width: 75%; padding: 8px; border: 1px solid var(--cor-destaque, #9B64E3); border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; font-size: 0.9em;">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineValue">Valor de Aquisição:</label>
+                            <input type="text" id="editMachineValue" name="machineValue" style="width: 75%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineHourlyRate">Hora/Máquina:</label>
+                            <input type="text" id="editMachineHourlyRate" name="machineHourlyRate" style="width: 75%;" oninput="formatarMoeda(this)" placeholder="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineM2PerHour">m²/hora:</label>
+                            <input type="number" id="editMachineM2PerHour" name="machineM2PerHour" step="0.01" min="0" style="width: 75%;" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineCondition">Estado/Condição:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="editMachineCondition" style="width: 85%;">
+                                <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione o estado</button>
+                                <div class="dropdown-content">
+                                    <div data-value="Novo">Novo</div>
+                                    <div data-value="Seminovo">Seminovo</div>
+                                    <div data-value="Usado - Bom">Usado - Bom</div>
+                                    <div data-value="Usado - Regular">Usado - Regular</div>
+                                    <div data-value="Usado - Ruim">Usado - Ruim</div>
+                                    <div data-value="Necessita Reparo">Necessita Reparo</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Coluna 3 -->
+                    <div>
+                        <div class="form-group">
+                            <label for="editMachineLocation">Localização:</label>
+                            <input type="text" id="editMachineLocation" name="machineLocation">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineResponsible">Responsável:</label>
+                            <input type="text" id="editMachineResponsible" name="machineResponsible">
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineStatus">Status:</label>
+                            <div class="dropdown custom-select" tabindex="0" role="button" id="editMachineStatus" style="width: 85%;">
+                                <button type="button" tabindex="0" style="font-size: 0.85em;">Selecione o status</button>
+                                <div class="dropdown-content">
+                                    <div data-value="Ativa">Ativa</div>
+                                    <div data-value="Inativa">Inativa</div>
+                                    <div data-value="Em Manutenção">Em Manutenção</div>
+                                    <div data-value="Aguardando Peças">Aguardando Peças</div>
+                                    <div data-value="Descartada">Descartada</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineTechSpecs">Especificações Técnicas:</label>
+                            <textarea id="editMachineTechSpecs" name="machineTechSpecs" rows="2" style="width: calc(100% - 18px); resize: vertical;"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editMachineObservations">Observações:</label>
+                            <textarea id="editMachineObservations" name="machineObservations" rows="2" style="width: calc(100% - 18px); resize: vertical;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 15px;">
+                    <button type="submit" class="btn-primary" style="background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Atualizar Máquina</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Seleção de Tipos de Máquina -->
+<div id="tipoMaquinaSelectionModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 600px; width: 90%; max-height: 80vh; overflow: hidden; box-sizing: border-box;">
+        <span class="close-button" onclick="closeTipoMaquinaSelectionModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Selecionar Tipo de Máquina</h2>
+        <div class="modal-body" style="max-height: 60vh; overflow-y: auto; padding: 15px; box-sizing: border-box;">
+            <!-- Filtro de busca e botão novo tipo em linha -->
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; align-items: center;">
+                <input type="text" id="tipoMaquinaSearchInput" placeholder="Pesquisar tipo..." style="flex: 1; padding: 10px; border: 1px solid #9B64E3; border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; box-sizing: border-box;" oninput="filtrarTiposMaquinas()">
+                <button type="button" onclick="openNovoTipoModal()" style="background-color: rgba(155, 100, 227, 0.1); border: 1px solid #9B64E3; color: white; padding: 10px 15px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;" onmouseover="this.style.backgroundColor='#D8CEFE'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.1)'">+ Novo</button>
+            </div>
+            
+            <!-- Lista de tipos de máquina -->
+            <div id="tipoMaquinasList" style="display: grid; grid-template-columns: 1fr; gap: 10px; font-weight: bold; padding: 10px 0; border-bottom: 2px solid #9B64E3; color: white; margin-bottom: 10px;">
+                <div>Tipo de Máquina</div>
+            </div>
+            <div id="tipoMaquinasListContent">
+                <!-- Tipos de máquina serão carregados aqui -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Novo Tipo de Máquina -->
+<div id="novoTipoModal" class="modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; width: 90%; box-sizing: border-box; overflow: hidden;">
+        <span class="close-button" onclick="closeNovoTipoModal()" style="cursor: pointer; position: absolute; right: 15px; top: 15px; font-size: 24px; transition: all 0.3s ease;" onmouseover="this.style.color='#9B64E3'; this.style.textShadow='0 0 8px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.color=''; this.style.textShadow='none'">&times;</span>
+        <h2>Novo Tipo de Máquina</h2>
+        <div class="modal-body" style="padding: 15px; box-sizing: border-box;">
+            <form id="novoTipoForm">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="novoTipoNome" style="display: block; margin-bottom: 5px; color: white;">Nome do Tipo:</label>
+                    <input type="text" id="novoTipoNome" name="novoTipoNome" required style="width: 100%; padding: 10px; border: 1px solid var(--cor-destaque, #9B64E3); border-radius: 5px; background-color: rgba(255, 255, 255, 0.1); color: white; box-sizing: border-box;">
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 20px; background-color: rgba(155, 100, 227, 0.05); border: 1px solid #9B64E3; color: white; padding: 8px 16px; border-radius: 5px; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='#D8CEFE'; this.style.boxShadow='0 0 15px rgba(155, 100, 227, 0.8)'" onmouseout="this.style.backgroundColor='rgba(155, 100, 227, 0.05)'; this.style.boxShadow='none'">Salvar Tipo</button>
+            </form>
+        </div>
+    </div>
+</div>

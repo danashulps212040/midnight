@@ -1,0 +1,1101 @@
+<!-- Seção principal de gerenciamento de usuários -->
+<div class="user-management">
+    <!-- Filtros e busca de usuários -->
+    <div class="search-filters">
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Buscar usuário...">
+            <button type="button" id="searchButton">
+                <i class="search-icon">&#128269;</i>
+            </button>
+        </div>
+        <div class="filter-container">
+            <!-- Filtros de cargo e status desativados temporariamente -->
+            <!--
+            <div class="select custom-select" tabindex="0" role="button" id="filter-role-custom">
+                <button tabindex="0">Todos os Cargos</button>
+                <div>
+                    <a role="button" tabindex="0" href="#" data-value="all"><span>Todos os Cargos</span></a>
+                    <a role="button" tabindex="0" href="#" data-value="admin"><span>Administrador</span></a>
+                    <a role="button" tabindex="0" href="#" data-value="editor"><span>Editor</span></a>
+                    <a role="button" tabindex="0" href="#" data-value="viewer"><span>Visualizador</span></a>
+                </div>
+            </div>
+
+            <div class="select custom-select" tabindex="0" role="button" id="filter-status-custom">
+                <button tabindex="0">Todos os Status</button>
+                <div>
+                    <a role="button" tabindex="0" href="#" data-value="all"><span>Todos os Status</span></a>
+                    <a role="button" tabindex="0" href="#" data-value="active"><span>Ativo</span></a>
+                    <a role="button" tabindex="0" href="#" data-value="inactive"><span>Inativo</span></a>
+                </div>
+            </div>
+            -->
+        </div>
+    </div>
+    <!-- Estilos personalizados -->
+<style>
+        .search-filters {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(19, 4, 60, 0.69);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid #9B64E3;
+            border-radius: 10px;
+        }
+        .search-container {
+            display: flex;
+            margin-bottom: 15px;
+        }
+        #searchInput {
+            flex: 1;
+            padding: 10px;
+            border: 0.2px solid #9B64E3;
+            border-radius: 5px 0 0 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        #searchInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        #searchButton {
+            padding: 10px 15px;
+            background-color: rgba(155, 100, 227, 0.1);
+            border: 1px solid hsl(266, 69%, 64%);
+            border-left: none;
+            border-radius: 0 5px 5px 0;
+            color: white;
+            cursor: pointer;
+        }
+        #searchButton:hover {
+            background-color: #D8CEFE;
+        }
+        .filter-container {
+            display: flex;
+            gap: 10px;
+        }
+        select {
+            flex: 1;
+            padding: 10px;
+            border: 0.2px solid #9B64E3;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+        }
+        select, select option {
+            background-color: rgba(39, 1, 61, 0.527);
+            color: white;
+        }
+
+        select:hover {
+            background-color: rgba(49, 2, 110, 0.781);
+        }
+
+        .custom-select:hover {
+            box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+            border-color: #D8CEFE;
+        }
+
+        /* Estilos para o combobox customizado */
+        .custom-select {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--cor-destaque, #9B64E3);
+            border-radius: 5px;
+            position: relative;
+            width: 200px;
+            z-index: 10;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .custom-select > button {
+            padding: 10px;
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: left;
+            font-size: 0.9em;
+            width: 100%;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .custom-select > button:after {
+            content: "▼";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9B64E3;
+            font-size: 0.8em;
+            pointer-events: none;
+        }
+
+        .custom-select > div {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            height: 0;
+            transition: height 0.3s ease-in-out;
+            position: absolute;
+            width: calc(100% - 12px);
+            left: 6px;
+            background-color: rgba(19, 4, 60, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 5px;
+            margin-top: 5px;
+            z-index: 11;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .custom-select > div > button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            transition: background-color 0.2s ease;
+            background: none;
+            border: none;
+            text-align: left;
+        }
+        
+        .custom-select > div > button:first-child {
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .custom-select > div > button:last-child {
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .custom-select > div > button > span {
+            position: relative;
+            display: block;
+        }
+
+        .custom-select:hover > div,
+        .custom-select:focus-within > div {
+            height: auto;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .custom-select > div > button:hover,
+        .custom-select > div > button:focus {
+            background-color: rgba(155, 100, 227, 0.2);
+            color: var(--cor-destaque, #D8CEFE);
+        }
+    .profile-image-upload {
+        margin-bottom: 15px;
+    }
+    .profile-image-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    #profileImagePreview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #9B64E3;
+    }
+    .btn-secondary {
+        background-color: rgba(155, 100, 227, 0.1);
+        border: 1px solid #9B64E3;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #D8CEFE;
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+    }
+</style>
+    <!-- Botões de ação -->
+    <div class="user-actions">
+        <button class="btn-primary" onclick="openUserForm('add')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Novo Usuário
+        </button>
+    </div>
+    <!-- Lista de usuários -->
+    <div class="user-list-container">
+        <div class="user-list-header">
+            <div>Foto</div>
+            <div>Nome</div>
+            <div>Email</div>
+            <div>Permissões</div>
+            <div>Status</div>
+            <div>Ações</div>
+        </div>
+        <div class="user-list">
+            {% if error %}
+            <div class="user-item" style="justify-content: center; color: red;">
+                Erro ao carregar usuários: {{ error }}
+            </div>
+            {% else %}
+            {% for usuario in usuarios %}
+            <div class="user-item">
+                <div>
+                    {% if usuario.foto_de_perfil %}
+                    <img src="data:image/jpeg;base64,{{ usuario.foto_de_perfil }}" alt="Foto de perfil" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #9B64E3;">
+                    {% else %}
+                    <img src="/static/profile_images/default.png" alt="Foto de perfil padrão" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #9B64E3;">
+                    {% endif %}
+                </div>
+                <div>{{ usuario.nome }}</div>
+                <div>{{ usuario.email }}</div>
+                <div>{{ usuario.cargo }}</div>
+                <div>{{ usuario.status }}</div>
+                <div class="user-actions">
+                    <button class="action-btn" data-tooltip="Editar" onclick="openUserForm('edit', '{{ usuario.id }}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg></button>
+                    <button class="action-btn" data-tooltip="Excluir" onclick="excluirUsuario('{{ usuario.id }}')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                </div>
+            </div>
+            {% endfor %}
+            {% if not usuarios %}
+            <div class="user-item" style="justify-content: center; color: #666;">
+                Nenhum usuário cadastrado.
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <!-- Modal para Adicionar/Editar Usuário -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeUserForm()">&times;</span>
+            <h2 id="modalTitle">Novo Usuário</h2>
+            <div class="modal-body">
+                <div class="modal-layout">
+                    <div class="modal-form">
+                        <form id="userForm">
+                            <div class="form-group">
+                                <label for="userName">Nome:</label>
+                                <input type="text" id="userName" name="userName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userEmail">Email:</label>
+                                <input type="email" id="userEmail" name="userEmail" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="userPassword">Senha:</label>
+                                <input type="password" id="userPassword" name="userPassword">
+                            </div>
+                            <div class="form-group">
+                                <label for="userRoleModal">Cargo:</label>
+                                <div class="select custom-select" tabindex="0" role="button" id="userRoleModal" style="margin-bottom: 20px;">
+                                    <button tabindex="0" type="button">Selecione o Cargo</button>
+                                    <div>
+                                        <button role="button" tabindex="0" type="button" data-value="viewer"><span>Visualizador</span></button>
+                                        <button role="button" tabindex="0" type="button" data-value="editor"><span>Editor</span></button>
+                                        <button role="button" tabindex="0" type="button" data-value="admin"><span>Administrador</span></button>
+                                    </div>
+                                </div>
+                                <label for="userAccessLevelModal">Nível de Acesso:</label>
+                                <div class="select custom-select" tabindex="0" role="button" id="userAccessLevelModal" style="z-index: 1;">
+                                    <button tabindex="0" type="button">Nível de Acesso</button>
+                                    <div>
+                                        <button role="button" tabindex="0" type="button" data-value="1"><span>Básico (1)</span></button>
+                                        <button role="button" tabindex="0" type="button" data-value="3"><span>Intermediário (3)</span></button>
+                                        <button role="button" tabindex="0" type="button" data-value="5"><span>Avançado (5)</span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-profile">
+                        <div class="form-group">
+                            <label>Foto de Perfil:</label>
+                            <div class="profile-image-upload">
+                                <input type="file" id="userProfileImage" name="userProfileImage" accept="image/*" style="display: none;" onchange="document.getElementById('profileImagePreview').src = window.URL.createObjectURL(this.files[0]); document.getElementById('profileImagePreview').style.display = 'block';">
+                                <div class="profile-image-preview">
+                                    <img id="profileImagePreview" src="/static/profile_images/default.png" alt="Pré-visualização da imagem" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 2px solid #9B64E3; display: none;">
+                                    <button type="button" onclick="document.getElementById('userProfileImage').click()" class="btn-secondary">Selecionar Imagem</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" id="save-user-btn" class="btn-primary">Salvar Usuário</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Estilos personalizados -->
+<style>
+    :root {
+        --action-icon-color: #9B64E3; /* Cor dos ícones de ação para o tema claro */
+    }
+
+    [data-theme="dark"] {
+        --action-icon-color: #E0E0E0; /* Cor dos ícones de ação para o tema escuro */
+    }
+
+    .user-management {
+        padding: 20px;
+        padding-top: 90px;
+        background-color: var(--page-bg);
+        color: var(--text-color);
+    }
+    .user-actions {
+        margin-bottom: 20px;
+    }
+    .btn-primary {
+        background-color: rgba(155, 100, 227, 0.1);
+        border: 1px solid #9B64E3;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: background-color 0.3s ease;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    #save-user-btn {
+        margin-top: 80px;
+        margin-bottom: 5px;
+    }
+    .btn-primary:hover {
+        background-color: #D8CEFE;
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+    }
+    .user-list-container {
+        background-color: var(--order-card-bg);
+        border-radius: 8px;
+        padding: 15px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .user-list-header {
+        display: grid;
+        grid-template-columns: 80px 1.5fr 1.5fr 1fr 1fr 80px;
+        gap: 15px;
+        font-weight: bold;
+        padding: 15px 20px;
+        border-bottom: 2px solid var(--cor-destaque, #9B64E3);
+        color: var(--column-title-text);
+    }
+    .user-list {
+        margin-top: 10px;
+    }
+    .user-item {
+        display: grid;
+        grid-template-columns: 80px 1.5fr 1.5fr 1fr 1fr 80px;
+        gap: 15px;
+        padding: 12px 20px;
+        margin: 8px 0;
+        border-radius: 6px;
+        transition: background-color 0.2s ease;
+        align-items: center;
+    }
+    .user-item:hover {
+        background-color: var(--order-card-hover-bg);
+    }
+    .user-actions {
+        display: flex;
+        gap: 5px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        align-items: center;
+    }
+    .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 4px;
+        transition: background-color 0.2s ease;
+        color: var(--action-icon-color);
+    }
+    .action-btn:hover {
+        background-color: var(--action-btn-hover-bg);
+    }
+    .action-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 100;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .modal-content {
+        background-color: rgba(59, 12, 121, 0.29);
+        color: var(--sidebar-text-color);
+        margin: 0;
+        padding: 25px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 10px;
+        width: 80%;
+        max-width: 500px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .modal-body {
+        padding: 20px;
+    }
+    .modal-layout {
+        display: flex;
+        gap: 20px;
+    }
+    .modal-form {
+        flex: 1;
+    }
+    .modal-profile {
+        width: 300px;
+        border-left: 1px solid #9B64E3;
+        padding-left: 20px;
+    }
+
+    .close-button {
+        color: var(--sidebar-text-color);
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close-button:hover,
+    .close-button:focus {
+        color: var(--cor-destaque, #D8CEFE);
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-content h2 {
+        color: var(--sidebar-text-color);
+        margin-top: 0;
+        border-bottom: 1px solid var(--cor-destaque, #9B64E3);
+        padding-bottom: 10px;
+    }
+
+    .modal-content form label {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .modal-content form input[type="text"]:hover,
+    .modal-content form input[type="email"]:hover,
+    .modal-content form input[type="password"]:hover,
+    .modal-content form select:hover {
+        box-shadow: 0 0 15px rgba(155, 100, 227, 0.7);
+        border-color: #D8CEFE;
+    }
+
+    .modal-content form input[type="text"],
+    .modal-content form input[type="email"],
+    .modal-content form input[type="password"],
+    .modal-content form select {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .modal-content form select option {
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text-color);
+    }
+
+    .modal-content form button[type="submit"] {
+        width: auto;
+        padding: 12px 24px;
+        margin: 20px 0 10px;
+        border: 1px solid var(--cor-destaque, #9B64E3);
+        border-radius: 5px;
+    }
+    .profile-image-upload {
+        margin-bottom: 15px;
+        margin-top: 15px;
+        text-align: center;
+    }
+    .profile-image-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    #profileImagePreview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #9B64E3;
+    }
+    .btn-secondary {
+        background-color: rgba(155, 100, 227, 0.1);
+        border: 1px solid #9B64E3;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #D8CEFE;
+    }
+</style>
+
+<script>
+// Script para pré-visualização da imagem
+document.getElementById('userProfileImage').addEventListener('change', function(event) {
+    const reader = new FileReader();
+    const preview = document.getElementById('profileImagePreview');
+    reader.onload = function() {
+        preview.src = reader.result;
+        preview.style.display = 'block';
+    }
+    if (event.target.files[0]) {
+        reader.readAsDataURL(event.target.files[0]);
+    }
+});
+
+// Script para o combobox customizado
+const customSelects = document.querySelectorAll('.custom-select');
+window.addEventListener('DOMContentLoaded', () => {
+    customSelects.forEach(select => {
+        const button = select.querySelector('button');
+        const optionsContainer = select.querySelector('div');
+        const optionButtons = [...select.querySelectorAll('div > button')];
+
+        optionButtons.forEach(optionButton => {
+            optionButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const buttonText = optionButton.querySelector('span').textContent;
+                button.textContent = buttonText;
+                button.setAttribute('data-value', optionButton.getAttribute('data-value'));
+                optionsContainer.style.height = '0';
+                select.blur();
+                return false;
+            });
+        });
+
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (optionsContainer.style.height === '0px' || optionsContainer.style.height === '') {
+                customSelects.forEach(otherSelect => {
+                    if (otherSelect !== select) {
+                        otherSelect.querySelector('div').style.height = '0';
+                    }
+                });
+                optionsContainer.style.height = 'auto';
+            } else {
+                optionsContainer.style.height = '0';
+            }
+        });
+    });
+
+    document.addEventListener('click', (event) => {
+        customSelects.forEach(select => {
+            if (!select.contains(event.target)) {
+                select.querySelector('div').style.height = '0';
+            }
+        });
+    });
+});
+
+// Função para abrir o formulário de adicionar/editar usuário
+async function openUserForm(mode, id = null) {
+    const modal = document.getElementById('userModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const form = document.getElementById('userForm');
+    const saveButton = document.getElementById('save-user-btn');
+    const profileImagePreview = document.getElementById('profileImagePreview');
+    const userProfileImage = document.getElementById('userProfileImage');
+
+    // Resetar o formulário
+    form.reset();
+    profileImagePreview.src = '/static/profile_images/default.png';
+    profileImagePreview.style.display = 'none';
+    document.querySelector('#userRoleModal button').textContent = 'Selecione o Cargo';
+    document.querySelector('#userAccessLevelModal button').textContent = 'Nível de Acesso';
+    userProfileImage.value = ''; // Limpa o input de arquivo
+
+    if (mode === 'edit' && id) {
+        modalTitle.textContent = 'Editar Usuário';
+        saveButton.setAttribute('data-mode', 'edit');
+        saveButton.setAttribute('data-id', id);
+
+        try {
+            const response = await fetch(`/api/usuarios/${id}`);
+            if (response.ok) {
+                const result = await response.json();
+                const usuario = result.data;
+
+                // Preencher o formulário com os dados do usuário
+                document.getElementById('userName').value = usuario.nome || '';
+                document.getElementById('userEmail').value = usuario.email || '';
+                document.getElementById('userPassword').value = ''; // Não preenche a senha por segurança
+
+                // Atualizar os dropdowns
+                const cargoText = usuario.cargo.charAt(0).toUpperCase() + usuario.cargo.slice(1);
+                const cargoButton = document.querySelector('#userRoleModal > button');
+                cargoButton.textContent = cargoText;
+                cargoButton.setAttribute('data-value', usuario.cargo);
+
+                const nivelAcessoMap = {
+                    1: 'Básico (1)',
+                    3: 'Intermediário (3)',
+                    5: 'Avançado (5)'
+                };
+                const nivelAcessoText = nivelAcessoMap[usuario.nivel_de_acesso] || 'Nível de Acesso';
+                const nivelAcessoButton = document.querySelector('#userAccessLevelModal > button');
+                nivelAcessoButton.textContent = nivelAcessoText;
+                nivelAcessoButton.setAttribute('data-value', usuario.nivel_de_acesso);
+
+                // Atualizar a imagem de perfil se existir
+                if (usuario.foto_de_perfil) {
+                    profileImagePreview.src = `data:image/jpeg;base64,${usuario.foto_de_perfil}`;
+                    profileImagePreview.style.display = 'block';
+                }
+            } else {
+                const error = await response.json();
+                showNotificationModal(`Erro ao carregar usuário: ${error.message}`, 'error');
+                return;
+            }
+        } catch (error) {
+            showNotificationModal('Erro ao carregar usuário. Por favor, tente novamente.', 'error');
+            console.error('Erro:', error);
+            return;
+        }
+    } else {
+        modalTitle.textContent = 'Novo Usuário';
+        saveButton.setAttribute('data-mode', 'add');
+        saveButton.removeAttribute('data-id');
+    }
+
+    modal.style.display = 'block';
+}
+
+// Função para fechar o formulário
+function closeUserForm() {
+    document.getElementById('userModal').style.display = 'none';
+}
+
+// Função para excluir usuário
+async function excluirUsuario(id) {
+    // Mostra o modal de confirmação personalizado em vez do confirm() padrão
+    showConfirmationModal('Tem certeza que deseja excluir este usuário?', async () => {
+        // Esta função será executada quando o usuário confirmar
+        try {
+            const response = await fetch(`/api/usuarios/${id}`, {
+                method: 'DELETE'
+            });
+            const result = await response.json();
+            if (response.ok) {
+                showNotificationModal('Usuário excluído com sucesso!', 'success');
+                // Atualizar a lista em vez de recarregar a página
+                atualizarListaUsuarios();
+            } else {
+                showNotificationModal(`Erro ao excluir usuário: ${result.message}`, 'error');
+            }
+        } catch (error) {
+            showNotificationModal('Erro ao excluir usuário. Por favor, tente novamente.', 'error');
+            console.error('Erro:', error);
+        }
+    });
+}
+
+// Função para salvar usuário (adicionar ou editar)
+document.getElementById('save-user-btn').addEventListener('click', async function() {
+    const mode = this.getAttribute('data-mode');
+    const id = this.getAttribute('data-id');
+    const formData = new FormData();
+
+    // Captura os valores dos campos
+    const nome = document.getElementById('userName').value;
+    const email = document.getElementById('userEmail').value;
+    const senha = document.getElementById('userPassword').value;
+    const cargoBtn = document.querySelector('#userRoleModal > button');
+    const nivelAcessoBtn = document.querySelector('#userAccessLevelModal > button');
+    const cargo = cargoBtn.getAttribute('data-value') || cargoBtn.textContent.toLowerCase();
+    const nivelAcesso = nivelAcessoBtn.getAttribute('data-value') || nivelAcessoBtn.textContent;
+    const fotoInput = document.getElementById('userProfileImage');
+
+    // Validação básica
+    if (!nome || !email || (mode === 'add' && !senha) || cargo === 'Selecione o Cargo' || nivelAcesso === 'Nível de Acesso') {
+        showNotificationModal('Por favor, preencha todos os campos obrigatórios.', 'error');
+        return;
+    }
+
+    // Adiciona os campos ao FormData
+    formData.append('nome', nome);
+    formData.append('email', email);
+    if (senha) formData.append('senha', senha); // Senha é opcional ao editar
+    formData.append('cargo', cargo.toLowerCase());
+    const nivelAcessoNumero = parseInt(nivelAcesso.match(/\d+/)?.[0]) || 1;
+    formData.append('nivel_de_acesso', nivelAcessoNumero);
+    if (fotoInput.files[0]) {
+        formData.append('foto_de_perfil', fotoInput.files[0]);
+    }
+
+    try {
+        const url = mode === 'edit' ? `/api/usuarios/${id}` : '/api/usuarios';
+        const method = mode === 'edit' ? 'PUT' : 'POST';
+        const response = await fetch(url, {
+            method: method,
+            body: formData
+        });
+        const result = await response.json();
+
+        if (response.ok) {
+            showNotificationModal(mode === 'edit' ? 'Usuário atualizado com sucesso!' : 'Usuário criado com sucesso!', 'success');
+            // Fechar o modal
+            closeUserForm();
+            // Atualizar a lista em vez de recarregar a página
+            atualizarListaUsuarios();
+        } else {
+            showNotificationModal(`Erro ao ${mode === 'edit' ? 'atualizar' : 'criar'} usuário: ${result.message}`, 'error');
+        }
+    } catch (error) {
+        showNotificationModal(`Erro ao ${mode === 'edit' ? 'atualizar' : 'criar'} usuário. Por favor, tente novamente.`, 'error');
+        console.error('Erro:', error);
+    }
+});
+
+// Função para atualizar a lista de usuários via AJAX
+async function atualizarListaUsuarios() {
+    try {
+        const response = await fetch('/api/usuarios');
+        if (!response.ok) {
+            throw new Error('Erro ao buscar usuários');
+        }
+        
+        const result = await response.json();
+        const usuarios = result.data;
+        
+        // Seleciona o container da lista de usuários
+        const userList = document.querySelector('.user-list');
+        
+        // Limpa a lista atual
+        userList.innerHTML = '';
+        
+        if (usuarios && usuarios.length > 0) {
+            // Adiciona cada usuário à lista
+            usuarios.forEach(usuario => {
+                const userItem = document.createElement('div');
+                userItem.className = 'user-item';
+                
+                // Foto de perfil
+                const fotoDiv = document.createElement('div');
+                const fotoImg = document.createElement('img');
+                if (usuario.foto_de_perfil) {
+                    fotoImg.src = `data:image/jpeg;base64,${usuario.foto_de_perfil}`;
+                    fotoImg.alt = 'Foto de perfil';
+                } else {
+                    fotoImg.src = '/static/profile_images/default.png';
+                    fotoImg.alt = 'Foto de perfil padrão';
+                }
+                fotoImg.style = 'width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #9B64E3;';
+                fotoDiv.appendChild(fotoImg);
+                
+                // Nome, email, cargo e status
+                const nomeDiv = document.createElement('div');
+                nomeDiv.textContent = usuario.nome;
+                
+                const emailDiv = document.createElement('div');
+                emailDiv.textContent = usuario.email;
+                
+                const cargoDiv = document.createElement('div');
+                cargoDiv.textContent = usuario.cargo;
+                
+                const statusDiv = document.createElement('div');
+                statusDiv.textContent = usuario.status || 'Ativo';
+                
+                // Botões de ação
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'user-actions';
+                
+                const editBtn = document.createElement('button');
+                editBtn.className = 'action-btn';
+                editBtn.setAttribute('data-tooltip', 'Editar');
+                editBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"></path><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"></polygon></svg>`;
+                editBtn.onclick = function() { openUserForm('edit', usuario.id); };
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'action-btn';
+                deleteBtn.setAttribute('data-tooltip', 'Excluir');
+                deleteBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>`;
+                deleteBtn.onclick = function() { excluirUsuario(usuario.id); };
+                
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(deleteBtn);
+                
+                // Adiciona todos os elementos ao item do usuário
+                userItem.appendChild(fotoDiv);
+                userItem.appendChild(nomeDiv);
+                userItem.appendChild(emailDiv);
+                userItem.appendChild(cargoDiv);
+                userItem.appendChild(statusDiv);
+                userItem.appendChild(actionsDiv);
+                
+                // Adiciona o item à lista
+                userList.appendChild(userItem);
+            });
+        } else {
+            // Mensagem se não houver usuários
+            const noUsersDiv = document.createElement('div');
+            noUsersDiv.className = 'user-item';
+            noUsersDiv.style = 'justify-content: center; color: #666;';
+            noUsersDiv.textContent = 'Nenhum usuário cadastrado.';
+            userList.appendChild(noUsersDiv);
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar lista de usuários:', error);
+        const userList = document.querySelector('.user-list');
+        userList.innerHTML = `<div class="user-item" style="justify-content: center; color: red;">Erro ao carregar usuários: ${error.message}</div>`;
+    }
+}
+
+// Fechar o modal se clicar fora do conteúdo do modal
+window.onclick = function(event) {
+    const userModal = document.getElementById('userModal');
+    const confirmationModal = document.getElementById('confirmationModal');
+    const notificationModal = document.getElementById('notificationModal');
+    
+    if (event.target == userModal) {
+        userModal.style.display = "none";
+    } else if (event.target == confirmationModal) {
+        confirmationModal.style.display = "none";
+    } else if (event.target == notificationModal) {
+        notificationModal.style.display = "none";
+    }
+}
+
+// Função para mostrar o modal de confirmação
+let confirmationTimer = null;
+
+function showConfirmationModal(message, onConfirm) {
+    const modal = document.getElementById('confirmationModal');
+    const msg = document.getElementById('confirmationModalMessage');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa qualquer timer existente
+    if (confirmationTimer) {
+        clearInterval(confirmationTimer);
+    }
+    
+    msg.textContent = message;
+    modal.style.display = 'block';
+    
+    // Remove qualquer onclick existente e desabilita o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    let secondsLeft = 5;
+    confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+    
+    // Inicia o contador
+    confirmationTimer = setInterval(() => {
+        secondsLeft--;
+        if (secondsLeft <= 0) {
+            clearInterval(confirmationTimer);
+            confirmBtn.disabled = false;
+            confirmBtn.textContent = 'Confirmar';
+            
+            // Só adiciona o onclick depois do tempo
+            confirmBtn.onclick = function() {
+                closeConfirmationModal();
+                if (typeof onConfirm === 'function') {
+                    onConfirm();
+                }
+            };
+        } else {
+            confirmBtn.textContent = `Confirmar (${secondsLeft}s)`;
+        }
+    }, 1000);
+}
+
+// Função para fechar o modal de confirmação
+function closeConfirmationModal() {
+    const modal = document.getElementById('confirmationModal');
+    const confirmBtn = document.getElementById('confirmBtn');
+    
+    // Limpa o timer e reseta o botão
+    if (confirmationTimer) {
+        clearInterval(confirmationTimer);
+        confirmationTimer = null;
+    }
+    
+    // Remove o onclick e reseta o botão
+    confirmBtn.onclick = null;
+    confirmBtn.disabled = true;
+    confirmBtn.textContent = 'Confirmar';
+    
+    modal.style.display = 'none';
+}
+
+// Função para mostrar o modal de notificação
+function showNotificationModal(message, type) {
+    const iconContainer = document.getElementById('notificationIcon');
+    
+    if (type === 'success') {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#4CAF50">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 12L11 15L16 9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.5s" begin="0.3s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+                <animateTransform attributeName="transform" type="rotate" values="-15;0;15;0" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    } else {
+        iconContainer.innerHTML = `
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#F44336">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M8 8L16 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.3s" fill="freeze"/>
+                </path>
+                <path d="M16 8L8 16" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="15" stroke-dashoffset="15">
+                    <animate attributeName="stroke-dashoffset" values="15;0" dur="0.4s" begin="0.5s" fill="freeze"/>
+                </path>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.2;1" dur="0.8s" repeatCount="1" additive="sum"/>
+                <animateTransform attributeName="transform" type="rotate" values="0;15;-15;0" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        `;
+    }
+    
+    const modal = document.getElementById('notificationModal');
+    const title = document.getElementById('notificationModalTitle');
+    const msg = document.getElementById('notificationModalMessage');
+    const content = modal.querySelector('.notification-modal-content');
+
+    title.textContent = type === 'success' ? 'Sucesso!' : 'Erro!';
+    msg.textContent = message;
+    content.className = 'modal-content notification-modal-content ' + type;
+    modal.style.display = 'block';
+}
+
+// Função para fechar o modal de notificação
+function closeNotificationModal() {
+    document.getElementById('notificationModal').style.display = 'none';
+}
+</script>
+
+<!-- Modal de Confirmação -->
+<div id="confirmationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeConfirmationModal()">&times;</span>
+        <div id="confirmationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" fill="#FFC107">
+                    <animate attributeName="opacity" values="0;1" dur="0.3s" fill="freeze"/>
+                </circle>
+                <path d="M12 8V13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-dasharray="6" stroke-dashoffset="6">
+                    <animate attributeName="stroke-dashoffset" values="6;0" dur="0.3s" begin="0.3s" fill="freeze"/>
+                </path>
+                <circle cx="12" cy="16" r="1" fill="white">
+                    <animate attributeName="opacity" values="0;1" dur="0.2s" begin="0.6s" fill="freeze"/>
+                </circle>
+                <animateTransform attributeName="transform" type="scale" values="0.5;1.1;1" dur="0.8s" repeatCount="1" additive="sum"/>
+            </svg>
+        </div>
+        <h2>Confirmação</h2>
+        <p id="confirmationModalMessage"></p>
+        <div class="modal-buttons">
+            <button class="btn-secondary" onclick="closeConfirmationModal()">Cancelar</button>
+            <button id="confirmBtn" class="btn-primary">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Notificação -->
+<div id="notificationModal" class="modal">
+    <div class="modal-content notification-modal-content">
+        <span class="close-button" onclick="closeNotificationModal()">&times;</span>
+        <div id="notificationIcon" style="margin: 0 auto 20px; width: 64px; height: 64px;"></div>
+        <h2 id="notificationModalTitle"></h2>
+        <p id="notificationModalMessage"></p>
+        <button class="btn-primary" onclick="closeNotificationModal()">OK</button>
+    </div>
+</div>
+
+<style>
+    /* Estilos para os modais de confirmação e notificação */
+    .notification-modal-content {
+        max-width: 400px;
+        text-align: center;
+        padding: 30px;
+    }
+    .notification-modal-content .btn-primary {
+        margin: 0 auto; /* Centraliza o botão OK */
+        display: block; /* Garante que o margin auto funcione */
+    }
+    .notification-modal-content h2 {
+        border-bottom: none;
+        margin-bottom: 15px;
+        font-size: 1.5em;
+    }
+    .notification-modal-content p {
+        margin-bottom: 20px;
+        font-size: 1.1em;
+    }
+    .notification-modal-content .btn-primary {
+        margin-top: 0;
+        padding: 10px 20px;
+    }
+    .notification-modal-content.success h2 {
+        color: #4CAF50; /* Verde para sucesso */
+    }
+    .notification-modal-content.error h2 {
+        color: #F44336; /* Vermelho para erro */
+    }
+    .modal-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 20px auto 0;
+        width: 100%;
+        max-width: 300px;
+    }
+    .modal-buttons button {
+        min-width: 100px;
+        transition: all 0.3s ease;
+    }
+    
+    .modal-buttons button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
+</body>
+</html>

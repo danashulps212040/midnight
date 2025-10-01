@@ -4852,4 +4852,7 @@ if __name__ == '__main__':
     
     # Executar apenas o servidor Flask
     print("Iniciando servidor Flask sem GUI...")
-    flask_app.run(host='0.0.0.0', port=8000, debug=False)
+    import os
+    # Usar porta do Render ou 8000 localmente
+    port = int(os.environ.get('PORT', 8000))
+    flask_app.run(host='0.0.0.0', port=port, debug=False)

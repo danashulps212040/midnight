@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDV Test - iOS 12 Compatible</title>
+</head>
+<body>
+    <h1>PDV Test Page</h1>
+    <div id="productsGrid" style="border: 2px solid red; padding: 20px; min-height: 200px;">
+        <p>Grid será preenchido aqui...</p>
+    </div>
+    
+    <div id="debug-info" style="margin-top: 20px; padding: 10px; background: #f0f0f0;">
+        <h3>Debug Info:</h3>
+        <div id="debug-logs"></div>
+    </div>
+
+    <script>
+        // Log via console e API
+        function debugLog(message, level) {
+            console.log('[PDV-TEST]', level, message);
+            
+            var debugDiv = document.getElementById('debug-logs');
+            if (debugDiv) {
+                var p = document.createElement('p');
+                p.textContent = new Date().toLocaleTimeString() + ' - [' + level + '] ' + message;
+                p.style.color = level === 'ERROR' ? 'red' : (level === 'SUCCESS' ? 'green' : 'blue');
+                debugDiv.appendChild(p);
+            }
+            
+            // Log via Flask API
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/debug-log', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send(JSON.stringify({
+                    message: message,
+                    level: level,
+                    source: 'PDV-TEST'
+                }));
+            } catch (e) {
+                console.error('Erro no log Flask:', e);
+            }
+        }
+
+        // Função para carregar produtos (iOS 12 compatível)
+        function loadProducts() {
+            debugLog('Iniciando carregamento de produtos...', 'INFO');
+            debugLog('User Agent: ' + navigator.userAgent, 'INFO');
+            debugLog('URL atual: ' + window.location.href, 'INFO');
+            
+            var productsGrid = document.getElementById('productsGrid');
+            if (!productsGrid) {
+                debugLog('ERROR: Element productsGrid not found!', 'ERROR');
+                return;
+            }
+            
+            debugLog('Element productsGrid found', 'SUCCESS');
+            
+            // Fetch produtos da API
+            debugLog('Fazendo fetch para /api/produtos...', 'INFO');
+            
+            fetch('/api/produtos')
+                .then(function(response) {
+                    debugLog('Response recebido - Status: ' + response.status + ' | OK: ' + response.ok, 'INFO');
+                    
+                    if (!response.ok) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    
+                    return response.json();
+                })
+                .then(function(data) {
+                    debugLog('Dados recebidos - Status: ' + data.status + ' | Qtd: ' + (data.produtos ? data.produtos.length : 0), 'INFO');
+                    
+                    if (data.status === 'success') {
+                        var produtos = data.produtos || [];
+                        
+                        debugLog('Processando ' + produtos.length + ' produtos...', 'INFO');
+                        
+                        if (produtos.length === 0) {
+                            productsGrid.innerHTML = '<p style="color: orange;">Nenhum produto encontrado na API</p>';
+                            debugLog('Nenhum produto retornado pela API', 'WARNING');
+                        } else {
+                            var html = '<h3>Produtos encontrados (' + produtos.length + '):</h3>';
+                            
+                            for (var i = 0; i < Math.min(produtos.length, 5); i++) {
+                                var produto = produtos[i];
+                                html += '<div style="border: 1px solid #ccc; padding: 10px; margin: 5px;">';
+                                html += '<strong>' + produto.nome + '</strong><br>';
+                                html += 'ID: ' + produto.id + '<br>';
+                                html += 'Preço: R$ ' + (produto.preco || '0,00') + '<br>';
+                                html += 'Estoque: ' + (produto.estoque || 0);
+                                html += '</div>';
+                            }
+                            
+                            if (produtos.length > 5) {
+                                html += '<p>... e mais ' + (produtos.length - 5) + ' produtos</p>';
+                            }
+                            
+                            productsGrid.innerHTML = html;
+                            debugLog('Produtos renderizados no DOM com sucesso!', 'SUCCESS');
+                        }
+                    } else {
+                        debugLog('API Error: ' + data.message, 'ERROR');
+                        productsGrid.innerHTML = '<p style="color: red;">Erro na API: ' + data.message + '</p>';
+                    }
+                })
+                .catch(function(error) {
+                    debugLog('Exception: ' + error.message, 'ERROR');
+                    productsGrid.innerHTML = '<p style="color: red;">Erro ao carregar produtos: ' + error.message + '</p>';
+                });
+        }
+
+        // Inicializar quando página carrega
+        document.addEventListener('DOMContentLoaded', function() {
+            debugLog('DOMContentLoaded - Inicializando teste PDV...', 'INFO');
+            loadProducts();
+        });
+        
+        // Expor função globalmente
+        window.loadProducts = loadProducts;
+        
+        debugLog('Script carregado - Funções disponíveis', 'SUCCESS');
+    </script>
+</body>
+</html>
